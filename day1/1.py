@@ -3,7 +3,7 @@ x = []
 with open("1.txt", "r") as f:
     x = [i.strip() for i in f.readlines()]
 
-# Part 2
+# Part 1
 #ans = 0
 #for s in x:
 #  d = []
