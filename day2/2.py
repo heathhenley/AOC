@@ -60,8 +60,7 @@ def main():
     get_possible_games(
       results_dict, {"red": 12, "green": 13, "blue": 14})))
   
-  # Part 2 - Min number of red, green, blue to play all games?
-  # loop over games, sets, track max for each color
+  # Part 2 - Min number of red, green, blue to play each --> power --> sum
   print("Part 2", sum(get_game_power(results_dict)))
 
 
