@@ -22,3 +22,12 @@ number in the line. 🤦‍♂️
 There's probably a really nice sliding window approach
 that would make more sense for this problem, looking
 forward to seeing other solutions.
+
+### Day 4:
+This one was pretty easy, not complaining though! For part
+one I used a dictionary to track the count of winning numbers
+and then added their count to the match count for each of the
+numbers we had in the winning set. For part two, I used
+another dictionary to track the current count of cards, when
+cards win they update their count in the dictionary by however
+many copies their are of that card.
