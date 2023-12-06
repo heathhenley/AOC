@@ -31,3 +31,14 @@ numbers we had in the winning set. For part two, I used
 another dictionary to track the current count of cards, when
 cards win they update their count in the dictionary by however
 many copies their are of that card.
+
+### Day 5:
+I had a lot of trouble with the second part of this one. First
+was only a few minutes, but the second part couldn't be brute
+forced, at least in the time that I had. I ended up looking
+at the subreddit for help... we have to move through the maps
+in ranges instead, which is no big deal if the seed range doesn't
+overlap the map range. If it's overlapping, you can split it into
+two ranges, map the overlapping range through the map, and leave
+non overlapping ranges alone. It's day 5! I'm a little scared for
+the rest of the month. 😅
