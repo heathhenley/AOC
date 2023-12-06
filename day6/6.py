@@ -55,11 +55,12 @@ def bs_for_right_boundary(duration: int, record: int) -> int:
   return right_time
 
 def get_ways_to_win_long(duration: int, record: int) -> int:
-  # start at max_time and go left and right to find first
-  # time that will lose, that different is the number of ways to win
-  # get left boundary
+  # time for max dist = duration // 2
+  #   - because dist = time * (duration - time) --> d/dt = duration - 2 * time
+  #   - so at max d/dt is 0 and time = duration // 2
+  # start at max_time and go left and right to find first time
+  # that we will lose, everything in between is a winning choice
   start_time = bs_for_left_boundary(duration, record)
-  # get right boundary, same thing but start at max_time and go right
   end_time = bs_for_right_boundary(duration, record)
   return end_time - start_time
     
