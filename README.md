@@ -53,3 +53,13 @@ and binary search down to the left and the right to find the
 first time where you won't make it on each end - all the times
 in between will be the ways you can win. There's probably a math
 solution to this one, but I didn't think about it too hard.
+
+Update:
+Ah could have used math!
+  speed * (duration - speed) = speed ^ 2 + speed * duration
+  record < speed ^ 2 + speed * duration
+  record = (speed ^ 2 + speed * duration)
+  speed ^ 2 + speed * duration - record = 0
+
+  use quadratic formula to solve for speeds at the edges! Should
+  have thought about it a bit longer before jumping to binary search!
