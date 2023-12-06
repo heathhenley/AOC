@@ -30,7 +30,7 @@ and then added their count to the match count for each of the
 numbers we had in the winning set. For part two, I used
 another dictionary to track the current count of cards, when
 cards win they update their count in the dictionary by however
-many copies their are of that card.
+many copies there are of that card.
 
 ### Day 5:
 I had a lot of trouble with the second part of this one. First
