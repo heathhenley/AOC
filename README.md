@@ -42,3 +42,14 @@ overlap the map range. If it's overlapping, you can split it into
 two ranges, map the overlapping range through the map, and leave
 non overlapping ranges alone. It's day 5! I'm a little scared for
 the rest of the month. 😅
+
+### Day 6:
+Nice! This was an interesting problem. I found it easier than
+yesterday's problem. I didn't even bother with trying to brute
+force the solution for part 2 this time. The max distance you
+can travel in the race is if you wait until duration / 2 seconds
+to start moving. So with that, you can start at the max duration
+and binary search down to the left and the right to find the
+first time where you won't make it on each end - all the times
+in between will be the ways you can win. There's probably a math
+solution to this one, but I didn't think about it too hard.
