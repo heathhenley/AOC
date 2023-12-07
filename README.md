@@ -63,3 +63,12 @@ Ah could have used math!
 
   use quadratic formula to solve for speeds at the edges! Should
   have thought about it a bit longer before jumping to binary search!
+
+### Day 7:
+This was a super fun problem! A bit tricky, I sorted first on the
+hand rank and then to get a value for card rank between hands that
+have the same hand rank, I mapped the values to a number using
+card_value * 13 ^ card_index, 13 because there are 13 cards - it's
+like a base 13 number system. Made a couple mistakes handling the
+J's in the second part but I was able to track them down. Code is
+a mess today, might clean it up tomorrow.
