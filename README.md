@@ -79,4 +79,8 @@ Got a hint about the individual paths being fast to compute from
 a discord convo and that made it clear to me. Get the length of the path
 for each starting node along the directions and then find the lcm of
 all of them. The number is huge, so brute force would have taken
-impossible or just really slow at least.
+impossible or just really slow at least. The LCM trick also only works
+for a specific set of inputs (eg the paths are all multiples of the
+set of directions, etc) - I won't be surprised if there's a more
+general solution that ends up being required for a problem later in
+the month...
