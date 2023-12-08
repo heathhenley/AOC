@@ -72,3 +72,11 @@ card_value * 13 ^ card_index, 13 because there are 13 cards - it's
 like a base 13 number system. Made a couple mistakes handling the
 J's in the second part but I was able to track them down. Code is
 a mess today, might clean it up tomorrow.
+
+### Day 8:
+The second part was hard for me to wrap my head around for this one.
+Got a hint about the individual paths being fast to compute from
+a discord convo and that made it clear to me. Get the length of the path
+for each starting node along the directions and then find the lcm of
+all of them. The number is huge, so brute force would have taken
+impossible or just really slow at least.

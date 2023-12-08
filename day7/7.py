@@ -119,7 +119,8 @@ def main():
   input_file = sys.argv[1]
   print("Using input file", input_file)
 
-  # Part 1
+  # Part 1/2 - Modified part 1 for part 2 this time like a true
+  # professional lol, might fix up eventually.
   hands_bids = parse(read_input(input_file))
   hands_ranks = [
     hand_rank_map[get_hand_type(f)] for f in  make_hands_dict(hands_bids)]
