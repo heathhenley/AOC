@@ -18,3 +18,5 @@ echo "Creating directory %dayname%"
 mkdir %dayname%
 echo "Copy template file %dayname%\%dayname%.py"
 copy TEMPLATE.py %dayname%\%daynumber%.py
+
+set PYTHONPATH=%PYTHONPATH%;c:\dev\aoc2023

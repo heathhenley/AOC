@@ -84,3 +84,7 @@ for a specific set of inputs (eg the paths are all multiples of the
 set of directions, etc) - I won't be surprised if there's a more
 general solution that ends up being required for a problem later in
 the month...
+
+### Day 9:
+This one felt pretty straightforward, I think he was giving us a break
+after a strong start.
