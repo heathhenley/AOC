@@ -88,3 +88,23 @@ the month...
 ### Day 9:
 This one felt pretty straightforward, I think he was giving us a break
 after a strong start.
+
+### Day 10:
+This was the hardest day for me for sure. I had the idea figured out for both
+parts, but I ran into a lot of problems debugging and implementing correctly. I
+definitely could have used a better algorithm for part 1, I'm running two
+DFS, one to make an adjacency list and one to find the nodes in the path,
+mostly because I just wanted to work with the adjacency list (dictionary).
+I know the algorithm for part 2 right away because I've seen it before, I was
+trying to implement a simple version of it but I was having trouble with
+separating "crossing" the path with being "parallel but above or below the
+path". I ended up just looking up an implementation of "point in poly" instead
+of writing a simple custom one and that seemed to do the trick.
+
+Glad this one was as Sunday!
+
+References:
+- https://www.baeldung.com/cs/dfs-vs-bfs-vs-dijkstra
+- https://stackoverflow.com/questions/66585264/php-find-one-or-more-enclosed-area-in-a-two-dimensional-array
+- https://www.wikiwand.com/en/Point_in_polygon#Ray_casting_algorithm
+- https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
