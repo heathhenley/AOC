@@ -101,7 +101,20 @@ separating "crossing" the path with being "parallel but above or below the
 path". I ended up just looking up an implementation of "point in poly" instead
 of writing a simple custom one and that seemed to do the trick.
 
-Glad this one was as Sunday!
+Glad this one was on a Sunday!
+
+Reviewing other's solutions:
+- I removing information to try to work with a simplified version of the problem
+for the second part. I switched to using a 1 for anything in the path and a 0
+for anything not in the path. The problem with this is that it was tricky to
+determine if there was a crossing or now when there was an extended parallel
+path. The solution I saw used only a subset of the types of pipes (eg only 7, |,
+and L) - to count the crossings. This automatically handles the extended
+parallel paths because they don't have any crossings.
+
+Also definitely don't need two DFS for part 1, there's only two connections on
+the nice path so you can just make the adjacency list and then do a DFS from
+there to get the path.
 
 References:
 - https://www.baeldung.com/cs/dfs-vs-bfs-vs-dijkstra
