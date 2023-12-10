@@ -88,7 +88,7 @@ def symbol_to_adjacency_idx(symbol: str) -> list[tuple[int, int]]:
   return []
 
 def build_graph(grid: list[list[str]], start: tuple) -> dict:
-  ## build a graph from the grid using DSF and starting at S - I think this
+  ## build a graph from the grid using DFS and starting at S - I think this
   ## is better than just reading the grid and building a graph from it because
   ## we're only going to consider stuff that is reachable from S in some way
   stack = [start]
