@@ -49,22 +49,22 @@ def distance_between_galaxies_ex(
     galaxy1: tuple[int, int],
     galaxy2: tuple[int, int],
     rows_to_expand: list[int],
-    cols_to_expand: list[int]) -> int:
-  f = 1_000_000 # expansion factor
+    cols_to_expand: list[int],
+    expansion_factor: int) -> int:
   # count the number of rows to expand between the two galaxies
   rows_between = 0
   for row_idx in rows_to_expand:
     if row_idx > galaxy1[0] and row_idx < galaxy2[0] or (
         row_idx > galaxy2[0] and row_idx < galaxy1[0]
     ):
-      rows_between += f - 1
+      rows_between += expansion_factor - 1
   # count the number of columns to expand between the two galaxies
   cols_between = 0
   for col_idx in cols_to_expand:
     if col_idx > galaxy1[1] and col_idx < galaxy2[1] or (
         col_idx > galaxy2[1] and col_idx < galaxy1[1]
     ):
-      cols_between += f - 1
+      cols_between += expansion_factor - 1
   # distance between two points in the grid without diagonal movement
   return (
     abs(galaxy1[0] - galaxy2[0]) + rows_between
@@ -80,13 +80,14 @@ def get_galactic_distances(galaxies: list[tuple[int, int]]) -> list[list[int]]:
 def get_galactic_distances_expand(
     galaxies: list[tuple[int, int]],
     rows_to_expand: list[int],
-    cols_to_expand: list[int]) -> list[list[int]]:
+    cols_to_expand: list[int],
+    expansion_factor: int) -> list[list[int]]:
   distance = []
   for i in range(len(galaxies)):
     for j in range(i + 1, len(galaxies)):
       distance.append(
         distance_between_galaxies_ex(
-          galaxies[i], galaxies[j], rows_to_expand, cols_to_expand))
+          galaxies[i], galaxies[j], rows_to_expand, cols_to_expand, expansion_factor))
   return distance
 
 def part1(filename: str) -> int:
