@@ -121,3 +121,12 @@ References:
 - https://stackoverflow.com/questions/66585264/php-find-one-or-more-enclosed-area-in-a-two-dimensional-array
 - https://www.wikiwand.com/en/Point_in_polygon#Ray_casting_algorithm
 - https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
+
+
+### Day 11:
+This one was straightforward - probably trying to give us a break after
+yesterday's problem. For part 1 I just naively expanded the grid and then
+calculated the distances. For part 2, it would have been impossible to
+expand the grid that much, but you can just track the number of expanded
+rows and columns between the two galaxies. That tells you how many new
+rows/cols are added on expansion so you can add that to the distance.
