@@ -130,3 +130,24 @@ calculated the distances. For part 2, it would have been impossible to
 expand the grid that much, but you can just track the number of expanded
 rows and columns between the two galaxies. That tells you how many new
 rows/cols are added on expansion so you can add that to the distance.
+
+### Day 12:
+This is hard! I managed to naively solve part 1 by recursively generating
+all the options and counting the valid ones. It's not going to work for
+part 2 though. I'm going to have to think about this one more...
+
+Like the plant problem below, I think this a dp problem - I have no idea
+how to set up the subproblems at the moment though... tbd.
+
+Update:
+- need to make the subproblems smaller - eg chop off the part of the string that
+  has already matched and the groups that have been matched. So I think the
+  function almost is correct but it needs to consider the whole string all the
+  time. If the chunks are smaller more of them will get cached and it might
+  actually be fast enough to run the input.
+
+Refs:
+- https://leetcode.com/problems/number-of-ways-to-divide-a-long-corridor/
+  - this problem has some similar vibes
+- this also reminds me of the sticks and bars combinations problem but I'm not
+  sure how to apply that exactly at the moment (https://handwiki.org/wiki/Stars_and_bars_(combinatorics))
