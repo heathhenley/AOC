@@ -22,6 +22,7 @@ def check_valid(report: str, check: tuple) -> int:
   return True
 
 def get_ways(report: str, check: tuple) -> int:
+  """ Part 1 - naive approach, gens the whole seq before checking validity"""
   @cache
   def calc_combo(rep: str):
     # flip each ? to # or . recursively to
@@ -33,6 +34,48 @@ def get_ways(report: str, check: tuple) -> int:
             + calc_combo(rep.replace("?", ".", 1)))
   return calc_combo(report)
 
+def get_ways_part2(report: str, check: tuple) -> int:
+  @cache
+  def calc_combo(
+    rep: str, check: tuple, rep_idx: int, check_idx: int, hash_count: int):
+    # Stop condition
+    if rep_idx == len(rep):
+      if check_idx == len(check) and hash_count == 0:
+        return 1
+      elif check_idx == len(check) - 1 and hash_count == check[check_idx]:
+        return 1
+      return 0
+    # If it's a "#", then the group of "#"s is still going, move one in the
+    # string, increment the hash counter, and stay on the same check group
+    if rep[rep_idx] == "#":
+      return calc_combo(rep, check, rep_idx + 1, check_idx, hash_count + 1)
+    # If it's a ".", then the group of "#"s has ended (if not zero), move one
+    # in the string, reset the hash counter, and decide whether to move to the 
+    # next check
+    if rep[rep_idx] == ".":
+      if hash_count == 0:
+        return calc_combo(rep, check, rep_idx + 1, check_idx, 0)
+      if check_idx < len(check) and hash_count == check[check_idx]:
+        # we closed the group
+        return calc_combo(rep, check, rep_idx + 1, check_idx + 1, 0)
+       # we closed a group of hashes, but it wasn't the right size for the
+       # check group so we return 0
+      return 0
+    # We're here so we know it's a ? and id need to try both options
+    #
+    # if we put a hash, continue in the string, increment the hash counter,
+    # and stay on the same check group
+    use_hash = calc_combo(rep, check, rep_idx + 1, check_idx, hash_count + 1)
+    # if we use a dot, continue in the string, reset the hash counter, and
+    # decide whether to move to the next check
+    use_dot = 0
+    if hash_count == 0:
+      use_dot = calc_combo(rep, check, rep_idx + 1, check_idx, 0)
+    elif check_idx < len(check) and hash_count == check[check_idx]: # close idx
+      use_dot = calc_combo(rep, check, rep_idx + 1, check_idx + 1, 0)
+    return use_hash + use_dot
+  return calc_combo(report, tuple(check), 0, 0, 0)
+
 def part1(filename: str) -> int:
   # This uses the naive approach of just generating all possible
   # combinations (each ? is either a . or #) and checking them as they are
@@ -43,12 +86,25 @@ def part1(filename: str) -> int:
   count_ways = [get_ways(r, c) for r, c in zip(report, check)]
   return sum(count_ways)
 
+def expand(report: list[str], check: list[tuple], factor: int) -> tuple:
+  report = [
+    "?".join([r for _ in range(factor)]) for r in report
+  ]
+  # for each check group, expand it by factor and flatten it
+  check = [[c * factor for c in check]]
+  # flatten check list
+  check = [x for y in check for x in y]
+  return report, check
+
 def part2(filename: str) -> int:
   # recursive function is still taking the whole string then matching against
   # all of the groups in the check, which is still slow. Need to split it up
   # into smaller "subproblems" so that the the groups that are already matched
   # don't need to be checked again...
-  pass
+  report, check = parse(read_input(filename))
+  report, check = expand(report, check, factor=5)
+  count_ways = [get_ways_part2(r, c) for r, c in zip(report, check)]
+  return sum(count_ways)
 
 def main():
   if not sys.argv[1:]:

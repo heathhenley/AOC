@@ -146,6 +146,16 @@ Update:
   time. If the chunks are smaller more of them will get cached and it might
   actually be fast enough to run the input.
 
+Finally got it! Though I did not do it on my own, unfortunately. I was on the
+right track, but I wasn't able to figure out the correct way to form the
+subproblems so that it could be easily cached. The trick is that once you finish
+a group, you basically don't care about how you got there (eg you want to just
+add all the possible ways there were to resolve it). You can cache on where you
+are in the string, the current group you're working on, and the hash count (eg
+count of broken springs). I don't know that the idea of resolving one group at a
+time like that would have occurred to me on my own, but I'm glad I got to
+struggle with it for a while before looking at the subreddit.
+
 Refs:
 - https://leetcode.com/problems/number-of-ways-to-divide-a-long-corridor/
   - this problem has some similar vibes
