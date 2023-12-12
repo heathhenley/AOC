@@ -97,10 +97,10 @@ def expand(report: list[str], check: list[tuple], factor: int) -> tuple:
   return report, check
 
 def part2(filename: str) -> int:
-  # recursive function is still taking the whole string then matching against
-  # all of the groups in the check, which is still slow. Need to split it up
-  # into smaller "subproblems" so that the the groups that are already matched
-  # don't need to be checked again...
+  # same idea to recursively generate but checking along the way to
+  # to reuse subproblems (if you already completed first group, you
+  # know how many ways there were - so no need to run again for groups
+  # further along in the string)
   report, check = parse(read_input(filename))
   report, check = expand(report, check, factor=5)
   count_ways = [get_ways_part2(r, c) for r, c in zip(report, check)]
