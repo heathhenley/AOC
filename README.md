@@ -171,3 +171,11 @@ I think there is also a window approach that could work. Like the window is
 always as wide as the shortest distance to the edge of the map. The the first 
 half of the window is negative and the second half is positive. You can slide
 it across the map and check if the window is ever 0.
+
+Update: got it done after work. The first approach with row and column counts
+turned out to be a premature optimization and it was making the logic more
+difficult to implement. Instead, I just took each possible row/col as a
+reflection point and checked if the map was symmetric with two pointers, 
+expanding outwards to the left and right / top and bottom. The only change
+needed to get the second part to work was to check specifically for reflection
+points that were exactly off by one, instead of perfect reflections.

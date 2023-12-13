@@ -5,7 +5,6 @@ def parse_to_grids(lines: list) -> list:
   grids = []
   grid = []
   for line in lines:
-    print(line)
     if line == '':
       grids.append(grid)
       grid = []
@@ -14,102 +13,109 @@ def parse_to_grids(lines: list) -> list:
   grids.append(grid)
   return grids
 
-def counts(grid: list) -> tuple:
-  row_counts = []
-  col_counts = []
-  for row in grid:
-    row_counts.append(row.count('#'))
-  for i in range(len(grid[0])):
-    col_counts.append([row[i] for row in grid].count('#'))
-  return row_counts, col_counts
-
-def get_reflection_points(counts_grid) -> tuple[list, list]:
-  # find indices where two adjacent entries have the same value
-  # in the row_counts and col_counts
-  row_counts, col_counts = counts_grid
-  row_reflection_points = []
-  for j in range(len(row_counts) - 1):
-    if row_counts[j] == row_counts[j+1]:
-      row_reflection_points.append(j)
-  col_reflection_points = []
-  for j in range(len(col_counts) - 1):
-    if col_counts[j] == col_counts[j+1]:
-      col_reflection_points.append(j)
-  return row_reflection_points, col_reflection_points
-
-def get_valid_reflection_points(
-    grid: list, reflection_points: tuple[list, list]) -> list:
-  col_reflection_points, row_reflection_points = reflection_points
-  # check row reflection points
-  valid_row_points = []
-  print(row_reflection_points)
-  for row_point in row_reflection_points:
+def find_row_flip(grid: list) -> int:
+  for flip_row in range(1, len(grid)):
     valid = True
-    left = row_point
-    right = row_point + 1
-    # move left and right outwards, checking that the grid is symmetric
-    # at each step
-    while left >= 0 and right < len(grid):
-      # compare the rows at left and right
-      for i in range(len(grid[left])):
-        if grid[left][i] != grid[right][i]:
+    top = flip_row
+    bottom = flip_row - 1
+    while bottom >= 0 and top < len(grid):
+      for i in range(len(grid[0])):
+        if grid[top][i] != grid[bottom][i]:
+          valid = False
+          break
+      top += 1
+      bottom -= 1
+    if valid:
+      return flip_row
+
+def find_col_flip(grid: list) -> int:
+  for flip_col in range(0, len(grid[0]) - 1):
+    valid = True
+    left = flip_col
+    right = flip_col + 1
+    while left >= 0 and right < len(grid[0]):
+      for i in range(len(grid)):
+        if grid[i][left] != grid[i][right]:
           valid = False
           break
       left -= 1
       right += 1
     if valid:
-      valid_row_points.append(row_point)
-  # check col reflection points
-  valid_col_points = []
-  for col_point in col_reflection_points:
-    valid = True
-    top = col_point
-    bottom = col_point + 1
-    # move top and bottom outwards, checking that the grid is symmetric
-    # at each step
-    while top >= 0 and bottom < len(grid):
-      # compare the cols at top and bottom
+      return flip_col + 1
+
+def find_col_flip_off(grid: list) -> int:
+  """ Find a reflection line that is off by one"""
+  for flip_col in range(0, len(grid[0]) - 1):
+    valid = False
+    left = flip_col
+    right = flip_col + 1
+    diff = 0
+    while left >= 0 and right < len(grid[0]):
       for i in range(len(grid)):
-        if grid[i][top] != grid[i][bottom]:
-          valid = False
-          break
-      top -= 1
-      bottom += 1
+        if grid[i][left] != grid[i][right]:
+          diff += 1
+          if diff > 1:
+            valid = False
+            break
+          if diff == 1:
+            valid = True
+      left -= 1
+      right += 1
     if valid:
-      valid_col_points.append(col_point)
-  return valid_row_points, valid_col_points
+      return flip_col + 1
+
+def find_row_flip_off(grid: list) -> int:
+  for flip_row in range(1, len(grid)):
+    valid = False
+    top = flip_row
+    bottom = flip_row - 1
+    diff = 0
+    while bottom >= 0 and top < len(grid):
+      for i in range(len(grid[0])):
+        if grid[top][i] != grid[bottom][i]:
+          diff += 1
+          if diff > 1:
+            valid = False
+            break
+          if diff == 1:
+            valid = True
+      top += 1
+      bottom -= 1
+    if valid:
+      return flip_row
 
 def part1(filename: str) -> int:
   lines = read_input(filename)
   grids = parse_to_grids(lines)
-  print(len(grids))
-  # the rows or cols that we can reflect around are easier to see in counts
-  # but this can obviously give false positives. Could use it to screen out
-  # grids that are definitely not symmetric, and then check the candidates
-  # manually to see if they are symmetric. (eg start at possible reflection
-  # point with two 'pointers' and move them outwards, checking that the grid
-  # is symmetric at each step)
-  all_counts = [counts(g) for g in grids]
-  r, c = all_counts[0]
-  print(r)
-  print(c)
-  # Identify possible reflection points using row counts / col counts
-  # Check each possible reflection point:
-  #   - compute the distance from the point to teach hash, negative on left
-  #   of the point, positive on the right
-  #   - Add them up, if they are all zero then the grid is symmetric
-  all_possible = [get_reflection_points(c) for c in all_counts]
-  print(all_possible)
-  # check each possible reflection point
-  all_valid = [
-      get_valid_reflection_points(g, c) for g, c in zip(grids, all_possible)
-    ]
-  print(all_valid)
+  ans = 0
+  for g in grids:
+    r = find_row_flip(g)
+    c = find_col_flip(g)
+    if c:
+      ans += c
+    if r:
+      ans += r * 100 
+  return ans
   
   
 def part2(filename: str) -> int:
-  print("Using input file:", filename)
-  pass
+  # part 2 - we need to find a *different* reflection
+  # line from the one we found in part 1, by only
+  # changing one . to a # or vice versa
+  # 1. find the reflection lines (part1)
+  # 2. find a new line, that is exactly one off being valid
+  lines = read_input(filename)
+  grids = parse_to_grids(lines)
+  ans = 0
+  for g in grids:
+    # part 1 vals
+    r = find_row_flip_off(g)
+    c = find_col_flip_off(g)
+    if c:
+      ans += c
+    if r:
+      ans += r * 100 
+  return ans
 
 
 def main():
