@@ -102,8 +102,8 @@ def part2(filename: str) -> int:
   # part 2 - we need to find a *different* reflection
   # line from the one we found in part 1, by only
   # changing one . to a # or vice versa
-  # 1. find the reflection lines (part1)
-  # 2. find a new line, that is exactly one off being valid
+  #  - uses the same approach, but instead of looking
+  #    symmetry, it looks specifically for off by one
   lines = read_input(filename)
   grids = parse_to_grids(lines)
   ans = 0
