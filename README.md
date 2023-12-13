@@ -161,3 +161,13 @@ Refs:
   - this problem has some similar vibes
 - this also reminds me of the sticks and bars combinations problem but I'm not
   sure how to apply that exactly at the moment (https://handwiki.org/wiki/Stars_and_bars_(combinatorics))
+
+### Day 13:
+Working on this one now, I have two possible approaches in mind. The first is
+to compute the row counts and column counts for each row and column (the number
+of "#"s they have) because it's easier to rule points of symmetry out that way.
+Then I can just each possible point of symmetry.
+I think there is also a window approach that could work. Like the window is
+always as wide as the shortest distance to the edge of the map. The the first 
+half of the window is negative and the second half is positive. You can slide
+it across the map and check if the window is ever 0.
