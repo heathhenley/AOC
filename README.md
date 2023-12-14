@@ -179,3 +179,18 @@ reflection point and checked if the map was symmetric with two pointers,
 expanding outwards to the left and right / top and bottom. The only change
 needed to get the second part to work was to check specifically for reflection
 points that were exactly off by one, instead of perfect reflections.
+
+### Day 14:
+Completed part 1 - the one time I skip over doing the brute force solution,
+it seems like it might be needed for part 2 🤦‍♂️. Instead of actually moving
+the rocks, I counted the rocks between "#"s and used that to determine the
+weight when they fall. Part 2 is going to rotate, so it's got to do the
+same thing but in different directions. I'm trying to avoid actually simulating
+this and instead, maybe I can compute the weight, generate the new map from the
+weight, and then "rotate" and repeat.
+Update: looking good as far as repeating the sample input after 3 cycles, but
+I just realized that my weight calculation is wrong for the this part
+because it's coupled to the north tilt. Just need to make it separate and
+compute the weight, hopefully that will do it. Then need to find the cycle
+length and mod the requested cycles with it (the process seems to repeat a
+bunch after a certain number of cycles point).
