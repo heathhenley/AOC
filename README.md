@@ -194,3 +194,6 @@ because it's coupled to the north tilt. Just need to make it separate and
 compute the weight, hopefully that will do it. Then need to find the cycle
 length and mod the requested cycles with it (the process seems to repeat a
 bunch after a certain number of cycles point).
+
+Update: got it! I had way too much trouble trying to figure out the index for
+the cycle on this, bunch of off by one stuff, but the idea was there.

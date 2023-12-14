@@ -45,12 +45,6 @@ def process_and_move(col: str) -> list:
       col[idx] = '#' if col[idx] == '#' else '.'
     last = current
     current = col.index('#', last + 1) if "#" in col[last + 1:] else len(col)
-  if consist_o != col.count('O'):
-    print(col)
-    raise Exception("Inconsistent number of rocks (O's)")
-  if consist_h != col.count('#'):
-    print(col)
-    raise Exception("Inconsistent number of rocks (#'s)")
   return col
 
 def count_rocks(grid: list[list], rock_type: str) -> int:
@@ -80,32 +74,30 @@ def cycle(grid: str, n: int, m: int) -> list[list]:
     col = process_and_move(col)
     for j in range(len(grid[0])):
       grid[j][i] = col[j]
-  if rock_c != count_rocks(grid, 'O'):
-    raise Exception("Inconsistent number of rocks (O's)")
-
   # west tilt (right to left)
   for i in range(len(grid)):
     row = "".join(grid[i])
     grid[i][:] = process_and_move(row)[:]
-  if rock_c != count_rocks(grid, 'O'):
-    raise Exception("Inconsistent number of rocks (O's)")
-
   # south tilt (top to bottom) (flip for processing)
   for i in range(len(grid[0])):
     col = "".join(get_col(grid, i))
     col = process_and_move(col[::-1])[::-1]
     for j in range(len(grid)):
       grid[j][i] = col[j]
-  if rock_c != count_rocks(grid, 'O'):
-    raise Exception("Inconsistent number of rocks (O's)")
   # east tilt (left to right) (flip for processing)
   for i in range(len(grid)):
     row = "".join(grid[i])
     grid[i][:] = process_and_move(row[::-1])[::-1]
-  if rock_c != count_rocks(grid, 'O'):
-    raise Exception("Inconsistent number of rocks (O's)")    
   return grid
 
+def get_weight(grid: list[list]) -> int:
+  weight = 0
+  for j in range(len(grid[0])):
+    col = get_col(grid, j)
+    for idx, c in enumerate(col):
+      if c == 'O':
+        weight += len(col) - idx
+  return weight
 
 def part1(filename: str) -> int:
   grid = [[x for x in line] for line in read_input(filename)]
@@ -122,20 +114,34 @@ def part2(filename: str) -> int:
   #     the rocks and return the new grid
   #   - cache the results of each transformation so if it cycles
   #     we can just return the same result as before
+  num_cycles = 1_000_000_000
   grid = [[x for x in line] for line in read_input(filename)]
   n = len(grid)
   m = len(grid[0])
-  for i in range(12):
+  cache = {}
+  cycle_len = 0
+  start = 0
+  for i in range(num_cycles):
     grid_hash = "".join(["".join(row) for row in grid]) 
+    if grid_hash not in cache:
+      cache[grid_hash] = i
+    else:
+      print("Cycle found at", i)
+      start = i
+      cycle_len = i - cache[grid_hash]
+      print("Cycle length:", cycle_len)
+      break
     grid = cycle(grid_hash, n, m)
-    print("\nCycle", i)
-    for g in grid:
-      print("".join(g))
-    print("")
-    print(i, cycle.cache_info())
-  weight = 0  
-  # TODO compute weight
-  return weight
+    grid_hash = "".join(["".join(row) for row in grid])
+  
+  offset = (start - cycle_len)
+  index = (num_cycles - offset) % cycle_len + offset
+  for grid_hash, i in cache.items():
+    if i == index:
+      grid = read_grid_from_hash(grid_hash, n, m)
+      break
+  return get_weight(grid)
+
 
 def main():
   if not sys.argv[1:]:
