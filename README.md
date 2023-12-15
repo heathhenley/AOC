@@ -197,3 +197,9 @@ bunch after a certain number of cycles point).
 
 Update: got it! I had way too much trouble trying to figure out the index for
 the cycle on this, bunch of off by one stuff, but the idea was there.
+
+### Day 15:
+Straightforward today, had to do it at lunch time because we're busy tonight
+and I slept in too much to get it done before work. I relied on dictionary
+ordering in Python to maintain the right order, which is an implementation
+detail AFAIK and not guaranteed - it works though!
