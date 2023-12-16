@@ -1,3 +1,4 @@
+echo off
 echo "Create new AOC day from template"
 
 if "%1"=="" (

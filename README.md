@@ -203,3 +203,32 @@ Straightforward today, had to do it at lunch time because we're busy tonight
 and I slept in too much to get it done before work. I relied on dictionary
 ordering in Python to maintain the right order, which is an implementation
 detail AFAIK and not guaranteed - it works though!
+
+### Day 16:
+Part 1 seems like the pipe problem from earlier. Going to try to do the same
+and traverse using DFS but the trick here is that the visited criteria is
+going to depend on which direction we came from (and the direction we're
+going will depend on the direction we came from also).
+Part 1 was a little tedious but not too bad. Part 2 seems like more DP or
+caching but I'm not sure how to set it up yet. Basically need to check all the
+starting points on the edges and determine which gives the highest number
+of nodes in the path. Once you are at a node going a given direction, you
+know exactly how many nodes are in the path so no need to recompute it.
+
+Tried recursive so that caching was easier to understand, but too much recursion
+for the real input.
+
+I think instead, I'm going to try going backwards - for each node on the edge,
+if you could end there go backwards and see how many nodes you can get to. Then
+each node and direction will have a count of how many nodes are in the path in
+front of it. Then from each possible starting node, add the values from the
+node(s) it can reach next and take the max to get the right node to start from.
+
+TBD if that works, handling the directions is tedious (unrelated).
+
+Update: that's probably the right way, but I also realized it's not that hard
+to brute force this one... It's super slow, but "get a coffee" slow vs "end of
+the universe" slow.
+I'm going to try to get the start and then read some other people's solutions
+to see how they went about it.
+^ This worked, ran in about 10 minutes lol.
