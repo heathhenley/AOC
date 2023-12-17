@@ -232,3 +232,14 @@ the universe" slow.
 I'm going to try to get the start and then read some other people's solutions
 to see how they went about it.
 ^ This worked, ran in about 10 minutes lol.
+
+### Day 17:
+This seems like Dijsktra's algorithm problem - I tried to implement a recursive
+take / don't take approach but it has a bug somewhere. Going to switch to
+trying to implement Dijsktra's algorithm instead...
+
+Dijkstra's algorithm worked, for part 1 so far at least... I had bug with
+how I was counting consecutive straight steps that cost me a lot of time.
+
+Part 2 was pretty straightforward given part 1, which I appreciate given
+how much time I spent debugging part 1 lol.
