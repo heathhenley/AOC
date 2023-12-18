@@ -243,3 +243,11 @@ how I was counting consecutive straight steps that cost me a lot of time.
 
 Part 2 was pretty straightforward given part 1, which I appreciate given
 how much time I spent debugging part 1 lol.
+
+### Day 18:
+Part 1 one was pretty straightforward, I tried to get shoelace algo working
+to compute the area but I'm not getting the right answer so I'm doing
+something wrong. So to solve part 1, I just checked every point in the bbox
+of the path and counted the ones that were inside the path. Part 2 input is
+larger so this won't work, need to get something like shoelace to compute the
+area without actually generating points.
