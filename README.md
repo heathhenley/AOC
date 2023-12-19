@@ -251,3 +251,13 @@ something wrong. So to solve part 1, I just checked every point in the bbox
 of the path and counted the ones that were inside the path. Part 2 input is
 larger so this won't work, need to get something like shoelace to compute the
 area without actually generating points.
+
+Shoelace is the way to go, you have add the perimeter so that's what was
+going wrong. Had a rounding error as some the np calcs were floats to avoid
+overflow on the main input, that was dumb should have made them int64s.
+
+![Day 18](./day18/Figure_1_part1.png)
+
+and part 2 (just the path):
+
+![Day 18](./day18/Figure_2_part2_input.png)

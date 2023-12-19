@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import matplotlib.pyplot as plt
+import numpy as np
 import sys
 import time
 from common.utils import read_input
@@ -9,17 +10,11 @@ class Point:
   x: int
   y: int
 
-@dataclass
-class Edge:
-  v1: Point
-  v2: Point
-  color: int
 
 def walk(start: tuple, moves: list) -> list:
   # start at 0,0, apply moves to get path
   start = Point(0,0)
   path = [start]
-  edgelist = []
   for move in moves:
     # first string is direction, second is number of steps
     direction, steps, color = move[0], int(move[1]), int(move[2][2:-1], 16)
@@ -35,16 +30,34 @@ def walk(start: tuple, moves: list) -> list:
     elif direction == 'R':
       new_point = Point(last.x + steps, last.y)
     path.append(new_point)
-    edgelist.append(Edge(last, new_point, color))
-  return path, edgelist
+  return path
+
+def walk_pt2(start: tuple, moves: list) -> list:
+  # this is the same part 1 but I didn't feel like
+  # refactoring the code to make it work for both rn
+  # start at 0,0, apply moves to get path
+  start = Point(0,0)
+  path = [start]
+  for move in moves:
+    # first string is direction, second is number of steps
+    direction, steps = move
+    last = path[-1]
+    if direction == 'U':
+      new_point = Point(last.x, last.y + steps)
+    elif direction == 'D':
+      new_point = Point(last.x, last.y - steps)
+    elif direction == 'L':
+      new_point = Point(last.x - steps, last.y)
+    elif direction == 'R':
+      new_point = Point(last.x + steps, last.y)
+    path.append(new_point)
+  return path
 
 def shoelace_area(path: list) -> int:
-  # this is not working for some reason, but I don't know why and
-  # going to switch to a different approach
-  area = 0
-  for i in range(len(path)-1):
-    area += path[i].x * path[i+1].y - path[i+1].x * path[i].y
-  return abs(area) / 2
+  # using numpy here so that it's faster
+  y = np.array([p.y for p in path], dtype=np.int64)
+  x = np.array([p.x for p in path], dtype=np.int64)
+  return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1)))
 
 def perimeter(path: list) -> int:
   perimeter = 0
@@ -113,24 +126,73 @@ def is_point_in_poly(
     p1x, p1y = p2x, p2y
   return inside  
 
+def parse_move(move: str) -> list:
+  # parse hex color into direction and steps
+  move = move[2:-1]
+  distance = int(move[:-1], 16)
+  direction = int(move[-1]) 
+  if direction == 0:
+    direction = 'R'
+  elif direction == 1:
+    direction = 'D'
+  elif direction == 2:
+    direction = 'L'
+  elif direction == 3:
+    direction = 'U'
+  return [direction, distance]
+
+def correct_moves(moves: list) -> list:
+  # The 'corrected' moves for part 2
+  corrected = []
+  for move in moves:
+    corrected.append(parse_move(move[2]))
+  return corrected
+
+
+def shoelace_on_the_fly(moves: list) -> int:
+  # this one works better, less space!
+  # but then we can't plot the sweet path
+  area = 0
+  perim = 0
+  x, y = 0, 0
+  for dir, dist in moves:
+    dx, dy = 0, 0
+    if dir == 'U':
+      dy = dist
+    elif dir == 'D':
+      dy = -dist
+    elif dir == 'L':
+      dx = -dist
+    elif dir == 'R':
+      dx = dist
+    next_x = x + dx
+    next_y = y + dy
+    area += x * next_y - y*next_x
+    x = next_x
+    y = next_y
+    perim += dist
+  return abs(area) / 2 + perim / 2 + 1
+
 
 def part1(filename: str) -> int:
   moves = [x.split() for x in read_input(filename)]
   start = (0,0)
-  path, edgelist = walk(start, moves)
-  p_area = perimeter(path)
+  path = walk(start, moves)
+  #plt.plot([p.x for p in path], [p.y for p in path])
+  #plt.show()
   bbox = get_bbox(path)
   count_points, _ = find_enclosed(path, bbox)
-  return p_area + count_points
+  return perimeter(path) + count_points
 
 def part2(filename: str) -> int:
-  print("Using input file:", filename)
-  # This is much bigger than part 1, which is already
-  # slow checking each point. So we need to get shoelace
-  # working or some other way to get compute the area
-  # of the enclosed region without checking each point
-  pass
-
+  moves = [x.split() for x in read_input(filename)]
+  moves = correct_moves(moves)
+  return shoelace_on_the_fly(moves)
+  # this was the original part 2, but we don't actually need
+  # to store the path (accept for plotting)
+  # start = (0,0)
+  # path = walk_pt2(start, moves)
+  # return (perimeter(path) / 2 + 1)  + shoelace_area(path)
 
 def main():
   if not sys.argv[1:]:
