@@ -261,3 +261,11 @@ overflow on the main input, that was dumb should have made them int64s.
 and part 2 (just the path):
 
 ![Day 18](./day18/Figure_2_part2_input.png)
+
+### Day 19:
+Part 1 done! Got it done at lunch because I slept in today.
+I just parsed the parts and workflows and moved the parts through,
+didn't try anything fancy for part 1.
+Going to finish up after work with part 2 - looks like it's going
+to be completely different from part 1..., might have to think about it
+a bit...
