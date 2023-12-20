@@ -282,3 +282,6 @@ trying:
 - repeat until the workflow queue is empty
 - repeat until all the ranges have been processed
 - count the number of ranges that are in the final state
+
+I had to look at reddit for help, I had the right algorithm but I was
+doing some weird extra loop thing that I didn't need. 🤷‍♂️ Much better now.
