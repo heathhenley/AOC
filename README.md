@@ -269,3 +269,16 @@ didn't try anything fancy for part 1.
 Going to finish up after work with part 2 - looks like it's going
 to be completely different from part 1..., might have to think about it
 a bit...
+
+Update: I'm pretty sure I have a good approach but I'm struggling to get it
+working correctly. At least in the same ballpark as the sample input. I'm
+trying:
+- start with full range of possible values (1, 4000),... (1, 4000)
+- check the range against workflow
+- split it into ranges affected by the rule and ranges not affected
+- for the ranges affected, push the workflow that it maps to onto the queue
+- for the ranges not affected, push the new state onto the queue (it might be
+  affected by the next rule on another iteration)
+- repeat until the workflow queue is empty
+- repeat until all the ranges have been processed
+- count the number of ranges that are in the final state
