@@ -109,20 +109,12 @@ class State:
   s: tuple[int, int]
   wf_name: str
 
-def part2(filename: str) -> int:
-  workflows, _ = parse(read_input(filename))
-  workflows = {w.name: w for w in workflows} # easier to lookup
-  # plan is
-  # - start with min / max values
-  # - move through the workflow, apply rules - eg split
-  #   in to new min / max's and pass to the next workflow
-  # - repeat until we have processed all and we can see the
-  #   final min / max values in accepted
-  starting_wf_name = "in"
+
+def get_accepted_states(
+    workflows: dict[str, Workflow],
+    starting_wf_name: str = "in") -> list[State]:
   min_val = 1
   max_val = 4000
-  # state is this set of min max values
-  # each time we split on a filter
   starting_state = State(
     x=(min_val, max_val),
     m=(min_val, max_val),
@@ -133,111 +125,63 @@ def part2(filename: str) -> int:
   accepted = []
   state_queue = [starting_state]
   while state_queue:
-    for _ in range(len(state_queue)):
-      # get next unprocessed state
-      s = state_queue.pop(0)
-      # move this one through the workflows
-      # apply rules and add new states to the queue if needed
-      queue = [workflows[s.wf_name]]
-      while queue:
-        wf = queue.pop(0)
-        for rule in wf.rules:
-          # no condition, just move to next
-          condition, dest_wf = rule
-          print(s)
-          print(wf)
-          print(rule)
-          print(s.wf_name)
-          if condition is None:
-            if dest_wf == "A":
-              accepted.append(deepcopy(s))
-              break
-            if dest_wf == "R":
-              break
-            queue.append(workflows[dest_wf])
-            s.dest_wf = dest_wf
-            break
 
-          # apply condition to number ranges
-          k, op, v = condition
-          if op == ">":
-            # need to make new states for each split
-            current_min, current_max = getattr(s, k)
-            # the greater than part goes to the next workflow
-            if current_min > int(v):
-              if dest_wf == "A":
-                accepted.append(deepcopy(s))
-              elif dest_wf != "R":
-                queue.append(workflows[dest_wf])
-                s.wf_name = dest_wf
-              continue
-            if current_max <= int(v):
-              # it's all unaffected by this rule, just move on
-              continue
-            # here's the interesting bit
-            # we need to split the state into two, one to move on
-            # and one part that is not affected
-            # we can do this by creating a new state with the
-            # min / max values that are not affected by this rule
-            # and adding that to the state queue, but we have to adjust
-            # the min / max values of the current state to reflect the update
-            # from the rule
-            # we must have min < v and max > v here
-            # that part that is not affected is the min, v - 1
-            not_affected = (current_min, int(v) - 1)
-            # the part that is affected is v, max - move along and adjust
-            affected = (int(v), current_max)
-            setattr(s, k, affected)
-            if dest_wf == "A":
-              accepted.append(deepcopy(s))
-            elif dest_wf != "R":
-              queue.append(workflows[dest_wf])
-              s.wf_name = dest_wf
-            # add the not affected part to the queue, needs to be processed
-            new_state = deepcopy(s)
-            setattr(new_state, k, not_affected)
-            state_queue.append(new_state)
-            break # ned to stop applying rules to this state
+    s = state_queue.pop(0)
 
-          # same as above but for less than
-          if op == "<":
-            current_min, current_max = getattr(s, k)
-            if current_max < int(v):
-              # it's all affected by this rule push to next workflow
-              if dest_wf == "A":
-                accepted.append(deepcopy(s))
-              elif dest_wf != "R":
-                queue.append(workflows[dest_wf])
-                s.wf_name = dest_wf
-              continue
-            if current_min >= int(v):
-              # it's all unaffected by this rule, just move on
-              continue
-            # here's the interesting bit
-            # this time the affected part is the min, v - 1
-            # and the not affected part is v, max
-            affected = (current_min, int(v) - 1)
-            not_affected = (int(v), current_max)
-            setattr(s, k, affected)
-            if dest_wf == "A":
-              accepted.append(deepcopy(s))
-            elif dest_wf != "R":
-              queue.append(workflows[dest_wf])
-              s.wf_name = dest_wf
-            # add the not affected part to the queue, needs to be processed
-            new_state = deepcopy(s)
-            setattr(new_state, k, not_affected)
-            state_queue.append(new_state)
-            break # ned to stop applying rules to this state
-  seen = set()
-  ans = 0
-  for a in accepted:
-    if (a.x, a.m, a.a, a.s) in seen:
+    if s.wf_name == "A":
+      accepted.append(deepcopy(s))
       continue
-    seen.add((a.x, a.m, a.a, a.s))
-    print(a)
-    ans += count_numbers(a)
-  return ans
+
+    if s.wf_name == "R":
+      continue
+
+    wf = workflows[s.wf_name]
+
+    for rule in wf.rules:
+      condition, dest_wf = rule
+      # case with no conditions
+      if condition is None:
+        s.wf_name = dest_wf
+        state_queue.append(s)
+        continue
+      # apply condition to number ranges
+      k, op, v = condition
+      # split range if needed
+      s, new_state = split_on_condition(s, k, op, int(v))
+      if new_state is not None:
+        new_state.wf_name = dest_wf
+        state_queue.append(new_state)
+
+  return accepted
+
+
+def part2(filename: str) -> int:
+  workflows, _ = parse(read_input(filename))
+  workflows = {w.name: w for w in workflows} # easier to lookup
+  accepted = get_accepted_states(workflows)
+  return sum((count_numbers(a) for a in accepted))
+
+
+def split_on_condition(s: State, k: str, op: str, v: int) -> State:
+  mn, mx = getattr(s, k)
+  if op == ">":
+    if mn > v:
+      return s, None
+    new = deepcopy(s)
+    setattr(new, k, (v + 1, mx))
+    setattr(s, k, (mn, v))
+    return s, new
+  if op == "<":
+    if mx < v:
+      return s, None
+    new = deepcopy(s)
+    setattr(new, k, (mn, v - 1))
+    setattr(s, k, (v, mx))
+    return s, new
+
+  if op == "<":
+    pass
+
 
 def count_numbers(s: State) -> int:
   prod = 1
