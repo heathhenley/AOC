@@ -288,3 +288,11 @@ doing some weird extra loop thing that I didn't need. 🤷‍♂️ Much better 
 
 ### Day 20:
 Part 1 done at lunch today, going to have to try to tackle part 2 after work.
+
+Part 2 is done! Needed to figure out when all the parents of the node that
+feeds into 'rx' cycle. Then you can compute when they will all cycle using
+lcm of all of them. I had a bug checking for this because I was checking
+after the signals had completed. You actually have to check anytime 'rx' gets
+a signal because more could happen after that point and it will seem like the
+parents aren't flipping. Thanks to discord user invakid404 for the help with
+that - I would have taken a while to find that bug!

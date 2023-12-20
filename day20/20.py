@@ -1,3 +1,4 @@
+import math
 import sys
 import time
 from common.utils import read_input
@@ -41,6 +42,7 @@ class Conjunction(Module):
   def get_response(self, inp_label: str, sig: int) -> int | None:
     # update the state
     self.inputs[inp_label] = sig
+
     # if any input is low, output is high
     if 0 in self.inputs.values():
       return 1
@@ -83,6 +85,35 @@ def push_button(
     count_high += sig
   return count_signals - count_high, count_high
 
+def push_button_pt2(
+    mod_map: dict,
+    rx_parent_tracking: dict,
+    btn_idx: int=0,
+    start: str="broadcaster",
+    ref: str = 'rx') -> int:
+  """ Copy of part 1 approach but returns True if ref has only 1 low signal"""
+  start_mod = mod_map[start]
+  signal = start_mod.get_response("start", 0)
+  recvs = start_mod.outputs
+  signal_queue = [(signal, start_mod.label, recv) for recv in recvs]
+  while signal_queue:
+    sig, src, recv = signal_queue.pop(0)
+
+    # track the parent of rx when rx gets a signal
+    if recv == ref:
+      for parent, s in mod_map[src].inputs.items():
+        if parent not in rx_parent_tracking and s == 1:
+          rx_parent_tracking[parent] = btn_idx
+
+    # get the module
+    mod = mod_map[recv]
+    # get the response
+    resp = mod.get_response(src, sig)
+    # if there is a response, send it to the outputs
+    if resp is not None:
+      signal_queue.extend([(resp, mod.label, out) for out in mod.outputs])
+  return list(mod_map[ref].inputs.values()).count(0) == 1
+
 def add_connections(signals: list, module_map: dict) -> list:
   for mod, dsts in signals:
     for dst in dsts:
@@ -105,8 +136,20 @@ def part1(filename: str) -> int:
   return low * high
 
 def part2(filename: str) -> int:
-  pass
-
+  lines = read_input(filename)
+  signals = [parse_signal(line) for line in lines]
+  module_map = { mod.label: mod for mod, _ in signals}
+  signals, module_map = add_connections(signals, module_map)
+  buttons = 1
+  rx_parent_tracking = {}
+  while not push_button_pt2(module_map, rx_parent_tracking, buttons, ref='rx'):
+    # qt is the only module that sends a signal to rx, so we're looking for
+    # qt's parents to cycle
+    rx_parents = len(module_map['qt'].inputs)
+    if len(rx_parent_tracking) == rx_parents:
+      break
+    buttons += 1
+  return math.lcm(*rx_parent_tracking.values())
 
 def main():
   if not sys.argv[1:]:
