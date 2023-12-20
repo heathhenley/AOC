@@ -285,3 +285,6 @@ trying:
 
 I had to look at reddit for help, I had the right algorithm but I was
 doing some weird extra loop thing that I didn't need. 🤷‍♂️ Much better now.
+
+### Day 20:
+Part 1 done at lunch today, going to have to try to tackle part 2 after work.
