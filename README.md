@@ -302,3 +302,11 @@ that - I would have taken a while to find that bug!
 Used a normal BFS for part 1, any square found on an even number of steps is
 a valid square. Not sure what to do for part 2 yet, seems like an after work
 type problem...
+
+This was the hardest problem yet I think. I noticed the pattern in plotting
+them and scribbling little replicas of the tiles on paper, but I couldn't get
+a working solution out of that idea. I ended up looking at the subreddit for
+clues - and it turns out that it grows quadratically with steps, so you can
+just compute an answer with minor changes to the part 1 solution (so you can
+handle infinite boundaries) and then fit a quadratic to the points. Used numpy
+for that part.

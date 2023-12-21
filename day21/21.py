@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import sys
 import time
+import numpy as np
 from common.utils import read_input
 
 
@@ -21,26 +22,35 @@ def grid_to_img(grid: list) -> list:
   return img
 
 
-def walk_grid_bfs(grid: list, goal: int, start: tuple[int, int]) -> int:
-  # BFS, track even / odd and skip if further away than goal
+def walk_grid_bfs(
+    grid: list,
+    goal: int, # number steps
+    start: tuple[int, int], # (x, y)
+    periodic: bool = False, # if True, grid is infinite
+    parity: int = 0) -> int: # 0 = even, 1 = odd
+  # BFS - count if we come to this spot on the parity we care about
   queue = [(start, 0)]
-  dp = [[-1 for _ in range(len(grid[0]))] for _ in range(len(grid))]
+  seen = set()
+  count = 0
   while queue:
     (x, y), steps_from_start = queue.pop(0)
     if steps_from_start > goal:
       continue
-    if dp[x][y] != -1:
+    if (x, y) in seen:
       continue
-    dp[x][y] = steps_from_start % 2
+    seen.add((x, y))
+    # coords in original image
+    if x < 0 or y < 0 or x >= len(grid) or y >= len(grid[0]):
+      if not periodic:
+        continue
+    if grid[x % len(grid)][y % len(grid[0])] == '#':
+      continue
+    count += steps_from_start % 2 == parity
     # try all directions from here
     for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
       tx, ty = x + dx, y + dy
-      if tx < 0 or ty < 0 or tx >= len(grid) or ty >= len(grid[0]):
-        continue
-      if grid[tx][ty] == '#':
-        continue
       queue.append(((tx, ty), steps_from_start + 1))
-  return sum([x.count(0) for x in dp])
+  return count
 
 
 def find_start(grid: list) -> tuple[int, int]:
@@ -60,8 +70,26 @@ def part1(filename: str) -> int:
 
 
 def part2(filename: str) -> int:
-  print("Using input file:", filename)
-  pass
+  # Due to how the input is constructed, the number of spaces you
+  # can reach grows quadratically with the number of steps
+  # I didn't find this on my own, I looked the reddit. I was
+  # origially trying to find a pattern in the number of odd and
+  # even "tiles" you can reach, but I couldn't get it working. 
+  grid = [[x for x in line] for line in read_input(filename)]
+  start = find_start(grid)
+  steps = 26501365
+  w = len(grid)
+  hw = w // 2
+  a, b = [], []
+  for r in [hw, w + hw, 2 * w + hw]:
+    b.append(walk_grid_bfs(grid, r, start, True, r % 2))
+    a.append([r**2, r, 1])
+    #print(r, b[-1])
+  a = np.array(a)
+  b = np.array(b)
+  x = np.linalg.solve(a, b)
+  a, b, c = x
+  return int(np.round(a * steps**2 + b * steps + c))
 
 
 def main():
