@@ -296,3 +296,9 @@ after the signals had completed. You actually have to check anytime 'rx' gets
 a signal because more could happen after that point and it will seem like the
 parents aren't flipping. Thanks to discord user invakid404 for the help with
 that - I would have taken a while to find that bug!
+
+### Day 21:
+
+Used a normal BFS for part 1, any square found on an even number of steps is
+a valid square. Not sure what to do for part 2 yet, seems like an after work
+type problem...
