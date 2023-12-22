@@ -310,3 +310,21 @@ clues - and it turns out that it grows quadratically with steps, so you can
 just compute an answer with minor changes to the part 1 solution (so you can
 handle infinite boundaries) and then fit a quadratic to the points. Used numpy
 for that part.
+
+### Day 22:
+
+Got part 1 finished at lunch, going to try to tackle part 2 after work.
+
+I had this worked out a long time ago but I two stupid bugs that took me a
+while to track down - in the debugging I totally changed my approach, but
+I like the new way better. The first problem was updating the height of the
+bricks end z coord after I had already moved the start z coord (so its height)
+got messaged up. The second problem was that I was double counting the bricks
+in the support check - so some bricks were getting flagged as safe to remove,
+when really the support / supported_by dictionaries had duplicates.
+
+At first I made an "occupancy grid" to track the bricks, so it was the full
+size of the x, y, z coords available and stored true/false if there was a
+brick there. This actually worked - though it seems heavy. In my struggle to
+debug, I switched to just keeping a map of x, y, z where z is the highest
+z at that x, y. This uses less memory so and it's running fast enough I think.

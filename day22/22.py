@@ -31,6 +31,9 @@ def parse(line: str) -> Brick:
   start, end = line.strip().split("~")
   start = Cube(*map(int, start.split(",")))
   end = Cube(*map(int, end.split(",")))
+  assert start.x <= end.x
+  assert start.y <= end.y
+  assert start.z <= end.z
   return Brick(start, end, label=next_letter())
 
 def get_xyz_max(bricks: list[Brick]) -> tuple[int, int, int]:
@@ -40,16 +43,6 @@ def get_xyz_max(bricks: list[Brick]) -> tuple[int, int, int]:
     maxy = max(maxy, brick.end.y)
     maxz = max(maxz, brick.end.z)
   return maxx, maxy, maxz
-
-def get_grid(bricks: list[Brick]) -> list[list[list[bool]]]:
-  maxx, maxy, maxz = get_xyz_max(bricks)
-  grid = [[[False for _ in range(maxy + 1)] for _ in range(maxx + 1)] for _ in range(maxz + 1)]
-  for brick in bricks:
-    for x in range(brick.start.x, brick.end.x + 1):
-      for y in range(brick.start.y, brick.end.y + 1):
-        for z in range(brick.start.z, brick.end.z + 1):
-          grid[z][x][y] = True
-  return grid
 
 def print_bricks(bricks: list[Brick]):
   maxx, maxy, maxz = get_xyz_max(bricks)
@@ -63,7 +56,7 @@ def print_bricks(bricks: list[Brick]):
       else:
         print(".", end="")
     print()
-  
+
   print("YZ")
   for z in range(maxz, -1, -1):
     for y in range(maxy + 1):
@@ -75,51 +68,30 @@ def print_bricks(bricks: list[Brick]):
         print(".", end="")
     print()
 
-def is_supported(brick: Brick, grid: list[list[list[bool]]]) -> bool:
-  sx, sy, sz = brick.start.x, brick.start.y, brick.start.z
-  ex, ey, ez = brick.end.x, brick.end.y, brick.end.z
-  for x in range(sx, ex + 1):
-    for y in range(sy, ey + 1):
-      if grid[sz-1][x][y]:
-        return True
-  return False
-
 def process_bricks(bricks: list[Brick]):
-  maxx, maxy, maxz = get_xyz_max(bricks)
-  grid = get_grid(bricks)
-  stack = [*bricks][::-1]
-   # don't need stack if we move as much as possible but w/e
-  while stack:
-    brick = stack.pop()
+  # sort so we process the bottom bricks first
+  bricks.sort(key=lambda brick: brick.start.z)
 
-    # if it has nothing below it in z, in both
-    # x and y, then it can be moved down
-    # and the grids need to be updated
-    if brick.start.z == 1 or brick.end.z == 1:
-      # on the ground - all goood
-      continue
+  maxx, maxy, _ = get_xyz_max(bricks)
 
-    if is_supported(brick, grid):
-      continue # all good
+  # the height map is a 2d array of the highest z value for each x, y
+  height_map = [[0 for _ in range(maxx + 1)] for _ in range(maxy + 1)]
 
-    # update grid
+  for brick in bricks:
+    # find the highest z value for this bricks x, y range
+    z = 0 # z is the ground
+    h = brick.end.z - brick.start.z # height of the brick
+
     for x in range(brick.start.x, brick.end.x + 1):
       for y in range(brick.start.y, brick.end.y + 1):
-        for z in range(brick.start.z, brick.end.z + 1):
-          grid[z][x][y] = False
-    
-    # brick can move down
-    brick.start.z -= 1
-    brick.end.z -= 1
-
-    # update grid
+        z = max(height_map[x][y], z)
+    # update the height map in the x, y range this brick covers
     for x in range(brick.start.x, brick.end.x + 1):
       for y in range(brick.start.y, brick.end.y + 1):
-        for z in range(brick.start.z, brick.end.z + 1):
-          grid[z][x][y] = True
-    
-    # add to stack (because we're only move 1z at a time)
-    stack.append(brick)
+        height_map[x][y] = z + 1 + h
+    # move the brick to z + 1
+    brick.start.z = z + 1
+    brick.end.z = z + 1 + h
 
 def get_support_graph(bricks: list[Brick]) -> dict[str, set[str]]:
   supported_by_graph = collections.defaultdict(list)
@@ -134,9 +106,12 @@ def get_support_graph(bricks: list[Brick]) -> dict[str, set[str]]:
         # does it overlap in x and y?
         for x in range(brick.start.x, brick.end.x + 1):
           for y in range(brick.start.y, brick.end.y + 1):
-            if other_brick.start.x <= x <= other_brick.end.x and other_brick.start.y <= y <= other_brick.end.y:
-              supported_by_graph[other_brick.label].append(brick.label)
-              supports_graph[brick.label].append(other_brick.label)
+            if (other_brick.start.x <= x <= other_brick.end.x
+                and other_brick.start.y <= y <= other_brick.end.y):
+              if brick.label not in supported_by_graph[other_brick.label]:
+                supported_by_graph[other_brick.label].append(brick.label)
+              if other_brick.label not in supports_graph[brick.label]:
+                supports_graph[brick.label].append(other_brick.label)
   return supported_by_graph, supports_graph
 
 def count_removeable_bricks(bricks: list[Brick]) -> int:
@@ -151,21 +126,18 @@ def count_removeable_bricks(bricks: list[Brick]) -> int:
   count = 0
   supported_by, supports = get_support_graph(bricks)
   for brick in bricks:
-    if not supports[brick.label]:
+    if len(supports[brick.label]) == 0:
       count += 1
       continue
-    for supported_brick in supports[brick.label]:
-      if len(supported_by[supported_brick]) > 1:
-        count += 1
-        break
+    # check that all bricks it supports have other support
+    if all(len(supported_by[b]) > 1 for b in supports[brick.label]):
+      count += 1
   return count
 
 def part1(filename: str) -> int:
   bricks = [parse(line) for line in read_input(filename)]
-  bricks.sort(key=lambda brick: brick.start.z)
-  process_bricks(bricks) # modifies bricks in place 
-  supported_by, supports = get_support_graph(bricks)
-  return count_removeable_bricks(bricks) 
+  process_bricks(bricks) # modifies bricks coords in place
+  return count_removeable_bricks(bricks)
 
 def part2(filename: str) -> int:
   print("Using input file:", filename)
