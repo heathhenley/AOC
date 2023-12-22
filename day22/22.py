@@ -102,12 +102,21 @@ def process_bricks(bricks: list[Brick]):
     if is_supported(brick, grid):
       continue # all good
 
+    # update grid
+    for x in range(brick.start.x, brick.end.x + 1):
+      for y in range(brick.start.y, brick.end.y + 1):
+        for z in range(brick.start.z, brick.end.z + 1):
+          grid[z][x][y] = False
+    
     # brick can move down
     brick.start.z -= 1
     brick.end.z -= 1
 
-    # update grid (not efficient but w/e)
-    grid = get_grid(bricks)
+    # update grid
+    for x in range(brick.start.x, brick.end.x + 1):
+      for y in range(brick.start.y, brick.end.y + 1):
+        for z in range(brick.start.z, brick.end.z + 1):
+          grid[z][x][y] = True
     
     # add to stack (because we're only move 1z at a time)
     stack.append(brick)
