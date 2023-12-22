@@ -20,6 +20,7 @@ def main():
   print("Part 1:", part1(input_file))
   toc = time.perf_counter()
   print(f"  Part 1 took {toc - tic:0.4f} seconds")
+
   tic = time.perf_counter()
   print("Part 2:", part2(input_file))
   toc = time.perf_counter()
