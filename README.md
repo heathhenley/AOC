@@ -328,3 +328,9 @@ size of the x, y, z coords available and stored true/false if there was a
 brick there. This actually worked - though it seems heavy. In my struggle to
 debug, I switched to just keeping a map of x, y, z where z is the highest
 z at that x, y. This uses less memory so and it's running fast enough I think.
+
+Finally got part 2 done, had a lot of issues counting the bricks that were
+depending on the brick I was removing - it turned out to be wayyy easier to
+just use a set in the graph instead of a list, switching that simplified the
+logic enough for my smooth brain to handle it lol. Before that I was using a
+count to compare the child's parents to the list of nodes already removed.
