@@ -353,3 +353,8 @@ While it's plugging away, thinking about how to speed it up...
 Input looks like:
 
 ![Day 23](./day23/maze.png)
+
+This was a cool trick! Condenses all the nodes that are only connected to two
+other nodes, so that's all that is left are the intersections and the weight
+of the edges between them (the number of nodes squished together). Then you can
+brute force it just like part 1 because it's way smaller.

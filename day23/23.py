@@ -119,8 +119,6 @@ def make_graph(grid: list) -> dict[tuple[int, int], list[tuple[int, int]]]:
 
 def walk_graph_dfs(
     graph: dict[tuple[int, int], list[tuple[int, int]]], start, end) -> int:
-  """ This works in that it finds the correct, max length path, but it
-  there is a loop somewhere that, I haven't figured out the stop condition."""
   stack = [(start, set(), 0)]
   longest = 0
   while stack:
