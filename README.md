@@ -334,3 +334,18 @@ depending on the brick I was removing - it turned out to be wayyy easier to
 just use a set in the graph instead of a list, switching that simplified the
 logic enough for my smooth brain to handle it lol. Before that I was using a
 count to compare the child's parents to the list of nodes already removed.
+
+### Day 23:
+Probably going to be a hard one - I'm assuming that just brute forcing it
+won't work. Going to try anyway though...
+The ideas I have to try are:
+- dfs - each time we hit the target node return the path len and take the max
+- backtracking - add to seen set, recurse, remove from seen set type thing,
+  need to figure out how to keep paths separate
+
+Update: dfs worked for part 1, but it's probably going to be too slow for part2.
+It's been running for a couple minutes now and it's not done yet, so I guess
+removing the restrictions on movement makes a big difference in a grid this
+big.
+
+While it's plugging away, thinking about how to speed it up...
