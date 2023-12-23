@@ -44,30 +44,6 @@ def get_xyz_max(bricks: list[Brick]) -> tuple[int, int, int]:
     maxz = max(maxz, brick.end.z)
   return maxx, maxy, maxz
 
-def print_bricks(bricks: list[Brick]):
-  maxx, maxy, maxz = get_xyz_max(bricks)
-  print("XZ")
-  for z in range(maxz, -1, -1):
-    for x in range(maxx + 1):
-      for brick in bricks:
-        if brick.start.x <= x <= brick.end.x and brick.start.z <= z <= brick.end.z:
-          print(brick.label, end="")
-          break
-      else:
-        print(".", end="")
-    print()
-
-  print("YZ")
-  for z in range(maxz, -1, -1):
-    for y in range(maxy + 1):
-      for brick in bricks:
-        if brick.start.y <= y <= brick.end.y and brick.start.z <= z <= brick.end.z:
-          print(brick.label, end="")
-          break
-      else:
-        print(".", end="")
-    print()
-
 def process_bricks(bricks: list[Brick]):
   # sort so we process the bottom bricks first
   bricks.sort(key=lambda brick: brick.start.z)
@@ -102,7 +78,6 @@ def get_support_graph(bricks: list[Brick]) -> dict[str, set[str]]:
         continue
       if brick.end.z + 1 == other_brick.start.z:
         # other_brick is above brick in z (directly above)
-
         # does it overlap in x and y?
         for x in range(brick.start.x, brick.end.x + 1):
           for y in range(brick.start.y, brick.end.y + 1):
@@ -115,15 +90,8 @@ def get_support_graph(bricks: list[Brick]) -> dict[str, set[str]]:
   return supported_by_graph, supports_graph
 
 def count_removeable_bricks(bricks: list[Brick]) -> int:
- # what can we remove?
-  # any brick that:
-  #  - supports nothing (easy case)
-  #  - is supporting sometihng that has other support
-  # So take each brick:
-  #  - if it supports nothing, count it as removed
-  #  - check the bricks it supports
-  #    - if any of those bricks have other support, count it as removed
   count = 0
+  # better names: parents, children = get_support_graph(bricks)
   supported_by, supports = get_support_graph(bricks)
   for brick in bricks:
     if len(supports[brick.label]) == 0:
@@ -134,14 +102,41 @@ def count_removeable_bricks(bricks: list[Brick]) -> int:
       count += 1
   return count
 
+
+def sum_of_bricks_that_fall(bricks: list[Brick]) -> int:
+
+  parents, children = get_support_graph(bricks)
+
+  # helper 
+  def dfs(brick: Brick) -> int:
+    count = 0
+    removed_bricks = set()
+    to_remove = [brick.label]
+    while to_remove:
+      bk = to_remove.pop(0)
+      removed_bricks.add(bk)
+      for child in children[bk]:
+        # using a set here was key to getting this log to work
+        # was trying to use a count for a while and it too messy
+        still_up = set(parents[child]) - removed_bricks
+        if len(still_up) == 0:
+          count += 1
+          to_remove.append(child)
+    return count
+
+  return sum(dfs(brick) for brick in bricks)
+
+
 def part1(filename: str) -> int:
   bricks = [parse(line) for line in read_input(filename)]
   process_bricks(bricks) # modifies bricks coords in place
   return count_removeable_bricks(bricks)
 
+
 def part2(filename: str) -> int:
-  print("Using input file:", filename)
-  pass
+  bricks = [parse(line) for line in read_input(filename)]
+  process_bricks(bricks) # modifies bricks coords in place
+  return sum_of_bricks_that_fall(bricks)
 
 
 def main():
