@@ -349,3 +349,7 @@ removing the restrictions on movement makes a big difference in a grid this
 big.
 
 While it's plugging away, thinking about how to speed it up...
+
+Input looks like:
+
+![Day 23](./day23/maze.png)
