@@ -138,12 +138,14 @@ def walk_graph_dfs(
       stack.append((neighbor, path.copy(), dist + weight))
   return longest
 
+
 def part1(filename: str) -> int:
   lines = read_input(filename)
   grid = [[x for x in line] for line in lines]
   start, end = get_start(grid), get_end(grid)
   return walk_grid_dfs(grid, start, end)
-  
+
+
 def part2(filename: str) -> int:
   lines = read_input(filename)
   grid = [[x for x in line] for line in lines]
