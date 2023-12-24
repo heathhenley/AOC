@@ -2,7 +2,8 @@ import sys
 import time
 
 import numpy as np
-import scipy.optimize as opt
+import matplotlib.pyplot as plt
+from sympy import Symbol, solve_poly_system
 
 from common.utils import read_input
 
@@ -54,105 +55,24 @@ def count_collisions(
         collisions += 1
   return collisions
 
-
-def distance(rock, hailstone):
-  # rocks vector is (x + vt, y + vt, z + vt)
-  # same for hailstone
-  rpos, rvel = np.array(rock[0]), np.array(rock[1])
-  hpos, hvel = np.array(hailstone[0]), np.array(hailstone[1])
-  r = rpos - hpos
-  cross = np.cross(hvel, rvel)
-  dist = np.array([r, cross]) / np.linalg.norm(cross)
-  dist = np.linalg.norm(dist)
-  return dist
-
-def get_obj(rock, hailstones):
-  obj = 0
-  for i in range(len(hailstones)):
-    obj += abs(distance(rock, hailstones[i]))
-  return obj
-
-
-def find_best_path(hailstones):
-  # this isn't working - it's converging to a min obj value
-  # but it's not 0 - which I was hoping it would be meaning
-  # it found a path with min distance of 0 between all hailstones
-  # going to try a different approach
-  xrock = [0, 0, 0]
-  vrock = [10, 10, 1]
-  dx = 0.00001
-  dv = 0.00001
-  dodx = [0, 0, 0]
-  dodv = [0, 0, 0]
-  step = 0.1
-  obj, prev_obj = None, None
-  while not prev_obj or obj is None or abs(obj - prev_obj) > 0.0001:
-    prev_obj = obj
-    obj = get_obj([xrock, vrock], hailstones)
-    for i in range(3):
-      # x dirs
-      tmp = xrock[i]
-      xrock[i] += dx
-      obj2 = get_obj([xrock, vrock], hailstones)
-      dodx[i] = (obj2 - obj) / dx
-      xrock[i] = tmp
-
-      # v dirs
-      tmp = vrock[i]
-      vrock[i] += dv
-      obj2 = get_obj([xrock, vrock], hailstones)
-      dodv[i] = (obj2 - obj) / dv
-      vrock[i] = tmp
-
-    # apply updates based on dodx and dodv
-    for i in range(3):
-      xrock[i] -= step * dodx[i]
-      vrock[i] -= step * dodv[i]
-  print(f"obj: {obj}")
-  print(f"  xrock: {xrock}, vrock: {vrock}")
-
-
-def get_rhs_3d(x1, x2, axis: tuple = (0, 1)):
-  return np.array(
-    [x1[0] - x2[0], # x's
-     x1[1] - x2[1], # y's
-     x1[2] - x2[2]] # z's
-  )
-
-def get_lhs_3d(v1, v2):
-  return np.array(
-    [[-v1[0], v2[0]], # x's coord v
-     [-v1[1], v2[1]], # y's coord v
-     [-v1[2], v2[2]]] # z's coord v
-  )
-
-def solve_for_path_crossing_3d(hailstone1, hailstone2):
-  pos1, vel1 = hailstone1
-  pos2, vel2 = hailstone2
-  rhs = get_rhs_3d(pos1, pos2)
-  lhs = get_lhs_3d(vel1, vel2)
-  try:
-    t = np.linalg.solve(lhs, rhs)
-    return t
-  except np.linalg.LinAlgError:
-    print("singular matrix")
-    return None
-
-def get_f(xrock, vrock, ti, hailstones):
-  F = np.zeros((len(hailstones) * 3, 1))
-  print(len(hailstones))
-  for i in range(len(hailstones)):
-    hpos, hvel = np.array(hailstones[i][0]), np.array(hailstones[i][1])
+def get_coeffient_matrix(hailstones, vrock):
+  nr = len(hailstones) * 3 # number of rows = number of hailstones * ndim
+  nc = len(hailstones) + 4 # number of columns = number of hailstones + 4
+  A = np.zeros((len(hailstones) * 3, len(hailstones) + 4))
+  for i, hailstone in enumerate(hailstones):
+    pos, vel = hailstone
     for j in range(3):
-      F[ i * 3 + j] = ti[i] * (hvel[j] - vrock[j]) + hpos[j] - xrock[j]
-  return F.reshape((12,))
+      A[i * 3 + j, i] = vel[j] - vrock[j]
+      A[i * 3 + j, nc-3 + j] = 1
+  return A
 
-def find_best_path2(hailstones):
-  x0 = np.ones((12,))
-  f = lambda x: get_f(x[0:3], x[3:6], x[6:], hailstones[:4])
-  s = opt.fsolve(f, x0)
-  print(s)
-
+def get_rhs_3d(hailstones):
+  b = np.zeros(len(hailstones) * 3)
+  for i, hailstone in enumerate(hailstones):
+    pos, _ = hailstone
+    for j in range(3):
+      b[i * 3 + j] = -pos[j]
+  return b
 
 def find_best_path3(hailstones):
   # pick a velocity vector
@@ -161,14 +81,32 @@ def find_best_path3(hailstones):
   for vi in range(vmin, vmax+1):
     for vj in range(vmin, vmax+1):
       for vk in range(vmin, vmax+1):
-        # solve for t
-        
-  
+        # solve for t, x, y, z
+        vrock = [vi, vj, vk]
+        A = get_coeffient_matrix(hailstones[0:4], vrock)
+        b = get_rhs_3d(hailstones[0:4])
+        try:
+          x = np.linalg.solve(A, b)
+          print(x)
+        except np.linalg.LinAlgError:
+          print("singular matrix")
+          continue
 
-
-          
-
-
+def find_best_path4(hailstones):
+  # using sympy for now, have to go to dinner
+  x, y, z = Symbol('x'), Symbol('y'), Symbol('z')
+  vx, vy, vz = Symbol('vx'), Symbol('vy'), Symbol('vz')
+  eqs = []
+  times = []
+  for idx, hailstone in enumerate(hailstones[:3]):
+    pos, vel = hailstone
+    t = Symbol(f't{idx}')
+    eqs.append(x + vx * t - pos[0] - vel[0] * t)
+    eqs.append(y + vy * t - pos[1] - vel[1] * t)
+    eqs.append(z + vz * t - pos[2] - vel[2] * t)
+    times.append(t)
+  sol = solve_poly_system(eqs, *([x, y, z, vx, vy, vz] + times))
+  return sol
 
 def part1(filename: str) -> int:
   hailstones = [parse(line) for line in read_input(filename)]
@@ -178,7 +116,7 @@ def part1(filename: str) -> int:
 
 def part2(filename: str) -> int:
   hailstones = [parse(line) for line in read_input(filename)]
-  print(find_best_path3(hailstones))
+  return sum(find_best_path4(hailstones)[0][:3])
 
 
 def main():
