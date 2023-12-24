@@ -55,45 +55,8 @@ def count_collisions(
         collisions += 1
   return collisions
 
-def get_coeffient_matrix(hailstones, vrock):
-  nr = len(hailstones) * 3 # number of rows = number of hailstones * ndim
-  nc = len(hailstones) + 4 # number of columns = number of hailstones + 4
-  A = np.zeros((len(hailstones) * 3, len(hailstones) + 4))
-  for i, hailstone in enumerate(hailstones):
-    pos, vel = hailstone
-    for j in range(3):
-      A[i * 3 + j, i] = vel[j] - vrock[j]
-      A[i * 3 + j, nc-3 + j] = 1
-  return A
-
-def get_rhs_3d(hailstones):
-  b = np.zeros(len(hailstones) * 3)
-  for i, hailstone in enumerate(hailstones):
-    pos, _ = hailstone
-    for j in range(3):
-      b[i * 3 + j] = -pos[j]
-  return b
-
-def find_best_path3(hailstones):
-  # pick a velocity vector
-  vmin, vmax = -250, 250
-  # what are the equations if we pick a velocity vector? (they're linear now)
-  for vi in range(vmin, vmax+1):
-    for vj in range(vmin, vmax+1):
-      for vk in range(vmin, vmax+1):
-        # solve for t, x, y, z
-        vrock = [vi, vj, vk]
-        A = get_coeffient_matrix(hailstones[0:4], vrock)
-        b = get_rhs_3d(hailstones[0:4])
-        try:
-          x = np.linalg.solve(A, b)
-          print(x)
-        except np.linalg.LinAlgError:
-          print("singular matrix")
-          continue
-
 def find_best_path4(hailstones):
-  # using sympy for now, have to go to dinner
+  # using sympy
   x, y, z = Symbol('x'), Symbol('y'), Symbol('z')
   vx, vy, vz = Symbol('vx'), Symbol('vy'), Symbol('vz')
   eqs = []
@@ -107,6 +70,7 @@ def find_best_path4(hailstones):
     times.append(t)
   sol = solve_poly_system(eqs, *([x, y, z, vx, vy, vz] + times))
   return sol
+
 
 def part1(filename: str) -> int:
   hailstones = [parse(line) for line in read_input(filename)]
