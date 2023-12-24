@@ -358,3 +358,22 @@ This was a cool trick! Condenses all the nodes that are only connected to two
 other nodes, so that's all that is left are the intersections and the weight
 of the edges between them (the number of nodes squished together). Then you can
 brute force it just like part 1 because it's way smaller.
+
+### Day 24:
+Part 1 done! Excited that it's not a grid problem today, mostly all math. Part
+1 solved for the times that the two paths cross (in their own t coordinate) and
+checked whether they were both positive (in the future) if they existed.
+
+Part 2 is more difficult - but I'm going to try the following:
+
+- guess the params for the rock
+- compute the distance between the path of the rock and all other paths
+- minimize the distance between the paths using derivatives
+
+^ this way isn't working - it's converging but not to the right answer. Trying
+a different approach now...
+
+
+Solve for exact times directly instead of path distance? This is nonlinear...
+but could use Newton's method to solve it, Jacobian is easy to get
+analytically...
