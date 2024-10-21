@@ -2,32 +2,25 @@
 package main
 
 import (
-//	"fmt"
 	"aoc/utils"
 )
 
 
 func part1(data string) int {
+	floorMap := map[rune]int{'(': 1, ')': -1}
 	floor := 0
 	for _, c := range data {
-		if c == '(' {
-			floor++
-		} else if c == ')' {
-			floor--
-		}
+		floor += floorMap[c]
 	}
 	return floor
 }
 
 
 func part2(data string) int {
+	floorMap := map[rune]int{'(': 1, ')': -1}
 	floor := 0
 	for i, c := range data {
-		if c == '(' {
-			floor++
-		} else if c == ')' {
-			floor--
-		}
+		floor += floorMap[c]
 		if floor == -1 {
 			return i + 1
 		}
