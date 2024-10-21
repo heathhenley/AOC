@@ -5,13 +5,30 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
 
-type funcType func(string) int
 
-func TimeIt(fn funcType) funcType {
+func Min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+
+func Max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+
+
+func TimeIt(fn func(string) int) func(string) int {
 	return func(data string) int {
 		start := time.Now()
 		result := fn(data)
@@ -23,13 +40,14 @@ func TimeIt(fn funcType) funcType {
 
 
 func ReadFile(fileName string) string {
-	data, err := ioutil.ReadFile(fileName)
+	bytes, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return string(data)
+	data := string(bytes)
+	data = strings.TrimSpace(data)
+	return strings.ReplaceAll(data, "\r\n", "\n")
 }
-
 
 
 func Map[T any, U any](arr []T, fn func(T) U) []U {
@@ -62,6 +80,6 @@ func ProblemSetUp(part1func func(string) int, part2func func(string) int) {
 		os.Exit(1)
 	}
 	data := ReadFile(args[0])
-	fmt.Println("Part 1:", TimeIt(part1func)(string(data)))
-	fmt.Println("Part 2:", TimeIt(part2func)(string(data)))
+	fmt.Println("Part 1:", TimeIt(part1func)(data))
+	fmt.Println("Part 2:", TimeIt(part2func)(data))
 }
