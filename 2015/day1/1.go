@@ -2,8 +2,7 @@
 package main
 
 import (
-	"fmt"
-	"os"
+//	"fmt"
 	"aoc/utils"
 )
 
@@ -38,11 +37,5 @@ func part2(data string) int {
 
 
 func main() {
-	args := os.Args[1:]
-	if len(args) < 1 {
-		fmt.Println("Filename required as argument")
-		fmt.Println("  Usage: go run script <filename>")
-		os.Exit(1)
-	}
-	utils.ProblemSetUp(part1, part2, args[0])
+	utils.ProblemSetUp(part1, part2)
 }
