@@ -8,11 +8,9 @@ import (
 
 func part1(data string) int {
 	floorMap := map[rune]int{'(': 1, ')': -1}
-	floor := 0
-	for _, c := range data {
-		floor += floorMap[c]
-	}
-	return floor
+	return utils.Reduce([]rune(data), func(accum int, cur rune) int {
+		return accum + floorMap[cur]
+	}, 0)
 }
 
 

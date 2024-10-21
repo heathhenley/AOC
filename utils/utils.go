@@ -30,6 +30,26 @@ func ReadFile(fileName string) string {
 	return string(data)
 }
 
+
+
+func Map[T any, U any](arr []T, fn func(T) U) []U {
+	result := make([]U, len(arr))
+	for i, v := range arr {
+		result[i] = fn(v)
+	}
+	return result
+}
+
+
+func Reduce[T any, U any](arr []T, fn func(accum U, cur T) U, init U) U {
+	latest := init
+	for _, v := range arr {
+		latest = fn(latest, v)
+	}
+	return latest
+}
+
+
 /*
 	 Write the functions for each part and pass them in (this part is the same
    each day, so saves a bunch of copy pasta)
