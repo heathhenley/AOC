@@ -1,24 +1,28 @@
 import re
+
+# This was before I had a nice little template and committed to making things
+# a little more organized. I just slapped out this code to get the answer
+
 x = []
-with open("1.txt", "r") as f:
+with open("input.txt", "r") as f:
     x = [i.strip() for i in f.readlines()]
 
 # Part 1
-#ans = 0
-#for s in x:
-#  d = []
-#  for i in range(len(s)):
-#    if s[i] in "0123456789":
-#      d.append(s[i])
-#      break
-#  s = s[::-1]
-#  for i in range(len(s)):
-#    if s[i] in "0123456789":
-#      d.append(s[i])
-#      break
-#  print(s, d)
-#  ans += int("".join(d))
-#print("part1:", ans)
+ans = 0
+for s in x:
+  d = []
+  for i in range(len(s)):
+    if s[i] in "0123456789":
+      d.append(s[i])
+      break
+  s = s[::-1]
+  for i in range(len(s)):
+    if s[i] in "0123456789":
+      d.append(s[i])
+      break
+  print(s, d)
+  ans += int("".join(d))
+print("part1:", ans)
 
 # Part 2
 m = {
