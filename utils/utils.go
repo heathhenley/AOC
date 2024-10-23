@@ -27,6 +27,18 @@ func Max(a, b int) int {
 }
 
 
+func Pow(base, exp uint64) uint64 {
+	if exp == 0 {
+		return 1
+	}
+	result := base
+	for i := uint64(1); i < exp; i++ {
+		result *= base
+	}
+	return result
+}
+
+
 
 func TimeIt(fn func(string) int) func(string) int {
 	return func(data string) int {
