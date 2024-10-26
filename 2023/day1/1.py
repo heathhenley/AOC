@@ -30,6 +30,7 @@ def get_number(match: str) -> int:
 
 def get_all_match_idx(
     line: str, targets: list, idx_accum: list = [], curr: int = 0) -> list:
+  """ Recursively find the indices of the targets in the line. """
   if not line or not targets or curr == len(line):
     return idx_accum
   for t in targets:
@@ -40,6 +41,7 @@ def get_all_match_idx(
 
 
 def get_calibration_value(line: str) -> int:
+  """ For the elves! """
   try:
     left = int(re.search(r'\d{1}', line).group(0))
     right = int(re.search(r'\d{1}', line[::-1]).group(0))
@@ -50,6 +52,7 @@ def get_calibration_value(line: str) -> int:
 
 
 def get_calibration_value_with_words(line: str) -> int:
+  """ For the elves! """
   targets = list(words_to_numbers.keys()) + list(digits)
   matches = []
   # find the indices of all the matches (words or digits)
