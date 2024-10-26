@@ -29,10 +29,11 @@ def get_number(match: str) -> int:
 
 
 def get_all_match_idx(
-    line: str, targets: list, idx_accum: list = [], curr: int = 0) -> list:
+    line: str, targets: list, idx_accum: list = None, curr: int = 0) -> list:
   """ Recursively find the indices of the targets in the line. """
   if not line or not targets or curr == len(line):
     return idx_accum
+  idx_accum = idx_accum or []
   for t in targets:
     if t in line[curr:]:
       idx = line[curr:].index(t) + curr
@@ -54,9 +55,8 @@ def get_calibration_value(line: str) -> int:
 def get_calibration_value_with_words(line: str) -> int:
   """ For the elves! """
   targets = list(words_to_numbers.keys()) + list(digits)
-  matches = []
   # find the indices of all the matches (words or digits)
-  if not(matches := get_all_match_idx(line, targets, matches)):
+  if not(matches := get_all_match_idx(line, targets)):
     raise ValueError("This should not happen if the input is correct")
   # then grab the first and last match idx and use them
   matches.sort(key=lambda x: x["index"])
