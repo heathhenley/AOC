@@ -47,6 +47,7 @@ def part1(filename: str) -> int:
   # there's only one line in the input, but my little test input has multiple
   return sum(map(process_moves_part1, read_input(filename)))
 
+
 @timeit
 def part2(filename: str) -> int:
   print("Using input file:", filename)
