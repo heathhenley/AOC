@@ -2,15 +2,11 @@
 echo Create new AOC day from template
 
 if "%1"=="" (
-  echo Run with the day number as the first argument:
-  echo Usage: new.bat year number
-  exit /b 1
+  goto :usage
 )
 
 if "%2"=="" (
-  echo Run with the day number as the first argument:
-  echo Usage: new.bat year number
-  exit /b 1
+  goto :usage
 )
 
 set year=%1
@@ -29,4 +25,10 @@ echo Copy template file %daydir%\%dayname%.py
 copy TEMPLATE.py %daydir%\%daynumber%.py
 
 call set_pythonpath.bat
-cd %daydir%
+rem cd %daydir%
+exit /b 0
+
+:usage
+echo Usage: new.bat year number
+echo Example: new.bat 2020 1
+exit /b 1
