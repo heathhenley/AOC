@@ -23,6 +23,8 @@ echo Creating directory %daydir%
 mkdir %daydir%
 echo Copy template file %daydir%\%dayname%.py
 copy TEMPLATE.py %daydir%\%daynumber%.py
+echo Copy template file %daydir%\%dayname%.go
+copy TEMPLATE.go %daydir%\%daynumber%.go
 
 call set_pythonpath.bat
 rem cd %daydir%

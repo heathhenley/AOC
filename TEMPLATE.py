@@ -1,14 +1,14 @@
 from common.utils import problem_harness, timeit
 
+
 @timeit
 def part1(filename: str) -> int:
-  print("Using input file:", filename)
-  pass
+  return 0
+
 
 @timeit
 def part2(filename: str) -> int:
-  print("Using input file:", filename)
-  pass
+  return 0
 
 
 def main():
