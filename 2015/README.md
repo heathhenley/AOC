@@ -12,3 +12,16 @@ This was also straight forward, just calculating what it asked for. Good
 practice for reading files and parsing strings in Go, I finished Python in a few
 minutes, but then spent quite a while trying how to split / parse / convert etc
 in Go - but that's to be expected on day 2 of using GO.
+
+### Day 3: Perfectly Spherical Houses in a Vacuum
+Basically just walked a path and marked houses as visited.
+
+### Day 4: The Ideal Stocking Stuffer
+Straightforward 'mining' with different difficulty levels. Would have been
+harder to implement md5 from scratch but I'm not really interested in that.
+
+### Day 5: Doesn't He Have Intern-Elves For This?
+Checking whether strings meet certain criteria, this also felt straight
+forward, in python at least. I'm going to have more trouble in go _I think_.
+--> UPDATE: go wasn't bad because it has strings.Contains and strings.Count - so
+very similar to python here. I expected it to have nothing 🤷‍♂️
