@@ -1,4 +1,4 @@
-from common.utils import problem_harness, timeit
+from common.utils import problem_harness, timeit, read_input
 
 
 @timeit
