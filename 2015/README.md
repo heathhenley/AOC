@@ -25,3 +25,9 @@ Checking whether strings meet certain criteria, this also felt straight
 forward, in python at least. I'm going to have more trouble in go _I think_.
 --> UPDATE: go wasn't bad because it has strings.Contains and strings.Count - so
 very similar to python here. I expected it to have nothing 🤷‍♂️
+
+
+### Day 6: Probably a Fire Hazard
+Hardest part of this one was parsing the input - skipping go for this one, I get
+it, don't feel like I would gain anything by doing this one in go. Might start
+using go first...
