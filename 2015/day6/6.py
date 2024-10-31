@@ -1,6 +1,5 @@
 from typing import Tuple, NamedTuple
 
-
 from common.utils import problem_harness, timeit, read_input
 
 
@@ -23,7 +22,6 @@ Grid = NamedTuple("Grid", [("lights", list), ("size", int)])
 Light = NamedTuple("Light", [("x", int), ("y", int), ("state", int)])
 Cmd = NamedTuple("Cmd",
   [("cmd", str), ("start", Tuple[int, int]), ("end", Tuple[int, int])])
-
 
 
 def parse_line(line: str) -> Cmd:
@@ -69,6 +67,7 @@ def part2(filename: str) -> int:
 
 def main():
   problem_harness(part1, part2)
+
 
 if __name__ == '__main__':
   main()
