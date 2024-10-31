@@ -4,7 +4,10 @@ from typing import List
 
 def min_distance(
         robot: List[int], factory: List[List[int]]) -> int:
-  """ This is the basic recursive version """
+  """ This is the basic recursive version.
+  
+  Recursion error on some of the inputs, and **a lot** slower.
+  """
   robot.sort()
   factory.sort(key=lambda x: x[0])
 
@@ -14,7 +17,6 @@ def min_distance(
       flat_factory.append(pos)
 
 
-  # the recursive function but memoized
   def min_distance(robot_idx, factory_idx):
     if robot_idx == len(robot):
       return 0
