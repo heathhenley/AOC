@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -52,7 +51,7 @@ func TimeIt(fn func(string) int) func(string) int {
 
 
 func ReadFile(fileName string) string {
-	bytes, err := ioutil.ReadFile(fileName)
+	bytes, err := os.ReadFile(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}

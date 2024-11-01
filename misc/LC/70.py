@@ -3,7 +3,7 @@
 from functools import cache
 import time
 
-@cache
+#@cache
 def climbStairs(n: int) -> int:
   # This is the recursive solution, we can memoize it
   # base cases
@@ -30,8 +30,8 @@ def climbStairsDP(n: int) -> int:
 
 
 def main():
-  for i in range(1, 10):
-    n = 2**i
+  for i in range(1, 40):
+    n = i
     print("n:", n)
     tic = time.perf_counter()
     try:
