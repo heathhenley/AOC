@@ -1,6 +1,7 @@
 # LC 1957 - Delete Characters to Make Fancy String
 import time
 
+
 def makeFancyString(s: str) -> str:
   # Simple way without caring about string building
   if len(s) < 3:
