@@ -26,8 +26,14 @@ forward, in python at least. I'm going to have more trouble in go _I think_.
 --> UPDATE: go wasn't bad because it has strings.Contains and strings.Count - so
 very similar to python here. I expected it to have nothing 🤷‍♂️
 
-
 ### Day 6: Probably a Fire Hazard
 Hardest part of this one was parsing the input - skipping go for this one, I get
 it, don't feel like I would gain anything by doing this one in go. Might start
 using go first...
+
+### Day 7: Some Assembly Required
+There must be a nice way to do this, I got it work but just iterating and
+resolving operations until there were all integers left. I guess you could start
+with the input nodes, and push anything that depends on them to a queue, and so
+on, and then resolve in order so you don't have to do weird iterations and
+checking.
