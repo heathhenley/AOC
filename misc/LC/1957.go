@@ -22,7 +22,6 @@ func makeFancyString(s string) string {
 	return sb.String()
 }
 
-
 // Why is this so bad? Is it copying the string every time?
 func makeFancyStringBAD(s string) string {
 	if len(s) < 3 {
@@ -37,7 +36,6 @@ func makeFancyStringBAD(s string) string {
 	}
 	return out
 }
-
 
 // a couple test cases
 var testCases = []struct {
@@ -66,7 +64,7 @@ func main() {
 		}
 	}
 	elapsed := time.Since(start)
-	fmt.Printf("'Good way' execution time: %0.5f\n", elapsed.Seconds())
+	fmt.Printf("'Good way' execution time: %d ms\n", elapsed.Milliseconds())
 
 	// the long string
 	start = time.Now()
@@ -75,7 +73,10 @@ func main() {
 	}
 	elapsed = time.Since(start)
 	fmt.Printf(
-		"'Good way' execution time (Long string): %0.5f\n", elapsed.Seconds())
+		"'Good way' execution time (Long string): %d ms\n", elapsed.Milliseconds())
+	fmt.Printf(
+		"'Good way' execution time (Long string): %d micros\n",
+		elapsed.Microseconds())
 
 	// test the function with the normal test cases
 	start = time.Now()
@@ -85,7 +86,7 @@ func main() {
 		}
 	}
 	elapsed = time.Since(start)
-	fmt.Printf("'Bad way' execution time: %0.5f\n", elapsed.Seconds())
+	fmt.Printf("'Bad way' execution time: %d ms\n", elapsed.Milliseconds())
 
 	// the long string
 	start = time.Now()
@@ -94,7 +95,8 @@ func main() {
 	}
 	elapsed = time.Since(start)
 	fmt.Printf(
-		"'Bad way' execution time (Long string): %0.5f\n", elapsed.Seconds())
-	
-
+		"'Bad way' execution time (Long string): %d ms\n", elapsed.Milliseconds())
+	fmt.Printf(
+		"'Bad way' execution time (Long string): %d micros\n",
+		elapsed.Microseconds())
 }
