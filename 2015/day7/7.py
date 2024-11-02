@@ -62,13 +62,16 @@ def get_value_at_node(label: str, graph: Dict) -> int:
   return graph[label]
 
 
+res = {} # save for part 2
+
 @timeit
 def part1(filename: str) -> int:
   graph = dict()
   for line in read_input(filename):
     cmd, out = [x.strip() for x in line.split("->")]
     graph[out] = parse_cmd(cmd)
-  return get_value_at_node('a', graph)
+  res['a'] = get_value_at_node('a', graph)
+  return res['a']
 
 
 @timeit
@@ -77,7 +80,7 @@ def part2(filename: str) -> int:
   for line in read_input(filename):
     cmd, out = [x.strip() for x in line.split("->")]
     graph[out] = parse_cmd(cmd)
-  graph['b'] = part1(filename)
+  graph['b'] = res['a']
   return get_value_at_node('a', graph)
 
 
