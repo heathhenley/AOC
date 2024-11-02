@@ -37,3 +37,8 @@ resolving operations until there were all integers left. I guess you could start
 with the input nodes, and push anything that depends on them to a queue, and so
 on, and then resolve in order so you don't have to do weird iterations and
 checking.
+
+UPDATE: Got it set up with the recursive solution, way cleaner - but I bet it
+would hit a wall with a larger input and would have to be rewritten to be
+iterative again. Wish I had thought of that first as it's much nicer and was
+a bit easier to debug.
