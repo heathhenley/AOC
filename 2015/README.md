@@ -42,3 +42,11 @@ UPDATE: Got it set up with the recursive solution, way cleaner - but I bet it
 would hit a wall with a larger input and would have to be rewritten to be
 iterative again. Wish I had thought of that first as it's much nicer and was
 a bit easier to debug.
+
+### Day 8: Matchsticks
+This was straight forward - got python done in a few minutes and then took a
+while to get go working, just because I'm not familiar with regexp, escaping,
+etc, in go yet. Python you can also eval the string in the first part to get
+the printed version, so it was a little easier to fly through that part in 
+python. In go I just actually replaced the necessary characters and then took
+the differences.
