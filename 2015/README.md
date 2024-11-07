@@ -50,3 +50,13 @@ etc, in go yet. Python you can also eval the string in the first part to get
 the printed version, so it was a little easier to fly through that part in 
 python. In go I just actually replaced the necessary characters and then took
 the differences.
+
+### Day 9: All in a Single Night
+This was fun! Wondering when we would see some path finding type questions, I've
+only completed 2023 and there were a lot in there. I used a dfs to find all the
+paths that went through all nodes just once and tracked the min / max distances,
+and tried starting from each node (it allowed starting from any node).
+
+### Day 10: Elves Look, Elves Say
+This was easy, but a good one to get me more go practice, especially with
+strings. Go version is ~9x faster than python.
