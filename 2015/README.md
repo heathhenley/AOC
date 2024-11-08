@@ -7,6 +7,9 @@ position of the first time the count is -1.
 
 Using it as a chance to learn go, but after solving in python.
 
+Also went back to do this in Ocaml - man that's a mind f for me. I think what
+takes me 2 minutes in took me 2 hours in Ocaml, but gotta start somewhere.
+
 ### Day 2: I Was Told There Would Be No Math
 This was also straight forward, just calculating what it asked for. Good
 practice for reading files and parsing strings in Go, I finished Python in a few
