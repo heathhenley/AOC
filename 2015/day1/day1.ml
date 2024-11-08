@@ -15,10 +15,9 @@ let traverse_floors str =
   let rec traverse lst floor =
     (* match first element, increment, and recurse *)
     match lst with
-    | [] -> floor
-    | first :: rest ->
-      if first = '(' then traverse rest (floor + 1)
-      else traverse rest (floor - 1)
+    | first :: rest when first = '(' -> traverse rest (floor + 1)
+    | first :: rest when first = ')' -> traverse rest (floor - 1)
+    | _ -> floor
   in traverse char_list 0
 
 
@@ -29,11 +28,10 @@ let find_basement str =
   let rec traverse lst idx floor =
     (* match first element, increment, and recurse *)
     match lst with
-    | [] -> idx
-    | first :: rest ->
-      if floor = -1 then idx
-      else if first = '(' then traverse rest (idx + 1) (floor + 1)
-      else traverse rest (idx + 1) (floor - 1)
+    | _ when floor = -1 -> idx
+    | first :: rest when first = '(' -> traverse rest (idx + 1) (floor + 1)
+    | first :: rest when first = ')' -> traverse rest (idx + 1) (floor - 1)
+    | _ -> idx
   in traverse char_list 0 0
 
 
