@@ -16,6 +16,10 @@ practice for reading files and parsing strings in Go, I finished Python in a few
 minutes, but then spent quite a while trying how to split / parse / convert etc
 in Go - but that's to be expected on day 2 of using GO.
 
+UPDATE: went back to do this in Ocaml - starting to make more sense but it's
+still hard to do everything without iteration. Also got my env set up correctly
+now so that vscode is working with ocaml-lsp ✅
+
 ### Day 3: Perfectly Spherical Houses in a Vacuum
 Basically just walked a path and marked houses as visited.
 
