@@ -22,9 +22,14 @@ if exist %daydir% (
 echo Creating directory %daydir%
 mkdir %daydir%
 echo Copy template file %daydir%\%dayname%.py
-copy TEMPLATE.py %daydir%\%daynumber%.py
+copy templates\TEMPLATE.py %daydir%\%daynumber%.py
 echo Copy template file %daydir%\%dayname%.go
-copy TEMPLATE.go %daydir%\%daynumber%.go
+copy templates\TEMPLATE.go %daydir%\%daynumber%.go
+echo Copy template file %daydir%\%dayname%.ml
+copy templates\TEMPLATE.ml %daydir%\day%daynumber%.ml
+copy templates\dune-project %daydir%\dune-project
+echo (executable (name day%daynumber% )) > %daydir%\dune
+
 
 call set_pythonpath.bat
 rem cd %daydir%
