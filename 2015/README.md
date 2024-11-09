@@ -67,3 +67,16 @@ and tried starting from each node (it allowed starting from any node).
 ### Day 10: Elves Look, Elves Say
 This was easy, but a good one to get me more go practice, especially with
 strings. Go version is ~9x faster than python.
+
+### Day 11: Corporate Policy
+Boom! Did this on in Ocaml first - took quite a while to get it tbh, but mostly
+it was really tedious to get all the checks right.
+
+I looked at the the password as a base 26 number so the approach is:
+1. convert to a base 10 number
+2. increment by 1
+3. convert back to base 26
+4. check if it meets the criteria
+There a lot of conversions so it's not efficient at all, but it works and the 
+Ocaml syntax and the FP approach in general are both starting to come together 
+for me.
