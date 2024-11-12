@@ -80,3 +80,6 @@ I looked at the the password as a base 26 number so the approach is:
 There a lot of conversions so it's not efficient at all, but it works and the 
 Ocaml syntax and the FP approach in general are both starting to come together 
 for me.
+
+### Day 12: JSAbacusFramework.io
+This was straight forward but good to get more practice with recursion.
