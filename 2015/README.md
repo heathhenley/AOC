@@ -83,3 +83,7 @@ for me.
 
 ### Day 12: JSAbacusFramework.io
 This was straight forward but good to get more practice with recursion.
+
+## Day 17: No Such Thing as Too Much
+This is the coin change problem, part two is a slight variation on it. I did it
+using top down recursion, don't need to memoize because the input is small.
