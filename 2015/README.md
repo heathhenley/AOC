@@ -84,6 +84,23 @@ for me.
 ### Day 12: JSAbacusFramework.io
 This was straight forward but good to get more practice with recursion.
 
+### Day 13: Knights of the Dinner Table
+Got all the permutations and then calculated the happiness for each, nothing too
+fancy.
+
+### Day 14: Reindeer Olympics
+Can calculate the distance for each reindeer using a cycle for part 1, but for
+part 2 I had to just simulate it because of the scoring system.
+
+### Day 15: Science for Hungry People
+Brute forced this one too - though I looked at how you could set it up as an
+optimization problem - it works to solve the continuous case and then round -
+but it's sensitive to the initial guess. It's small enough that brute force is
+fine.
+
+### Day 16
+This was also straight forward, parsing and checking the criteria.
+
 ## Day 17: No Such Thing as Too Much
 This is the coin change problem, part two is a slight variation on it. I did it
 using top down recursion, don't need to memoize because the input is small.
