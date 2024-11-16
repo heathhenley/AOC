@@ -104,3 +104,9 @@ This was also straight forward, parsing and checking the criteria.
 ## Day 17: No Such Thing as Too Much
 This is the coin change problem, part two is a slight variation on it. I did it
 using top down recursion, don't need to memoize because the input is small.
+
+# Day 19: Medicine for Rudolph
+This was was kind of hard - the first part was straight forward, but the second
+part was tricking - tried to brute force it and that was really bad. Went back-
+wards instead (start with the target molecule) and that turned out to be the
+way to do it.
