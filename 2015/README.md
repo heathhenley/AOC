@@ -110,3 +110,17 @@ This was was kind of hard - the first part was straight forward, but the second
 part was tricking - tried to brute force it and that was really bad. Went back-
 wards instead (start with the target molecule) and that turned out to be the
 way to do it.
+
+# Day 20: Infinite Elves and Infinite Houses
+Did this one by getting all the factors of the number and using them to compute
+the gifts for each house. Had some issues with the logic for part 2 - I was
+trying to build it into the factor function, but in the end it was easier to get
+all the factors and then filter the ones that were too big out.
+
+# Day 21: RPG Simulator 20XX
+This was super brutal but mostly because I had mistake in the "who won" logic -
+naturally I didn't think it was there and it was subtle enough that it didn't
+happen all the time, so that took quite a while to debug. Also some silly things
+due to not understanding ocaml well yet - but got it done!
+Solved by recursively making all the possible choices, and then checking them,
+memoizing the results helped a ton.

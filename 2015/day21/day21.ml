@@ -1,17 +1,4 @@
-(* the items that are available in the shop *)
-[@@@ocaml.warning "-69"] (* disable warning for unused field name (name) *)
-type shopItem = {
-  name: string;
-  cost: int;
-  damage: int;
-  armor: int;
-}
-
-type character = {
-  hp: int;
-  damage: int;
-  armor: int;
-}
+(* Day 21 - 2015 *)
 (*
 Weapons:    Cost  Damage  Armor
 Dagger        8     4       0
@@ -36,8 +23,19 @@ Defense +2   40     0       2
 Defense +3   80     0       3
 *)
 
+[@@@ocaml.warning "-69"] (* disable warning for unused field name (name) *)
+type shopItem = {
+  name: string;
+  cost: int;
+  damage: int;
+  armor: int;
+}
+type character = {
+  hp: int;
+  damage: int;
+  armor: int;
+}
 
-(* tell ocaml these are items *)
 let weapons = [|
   {name = "Dagger"; cost = 8; damage = 4; armor = 0};
   {name = "Shortsword"; cost = 10; damage = 5; armor = 0};
@@ -136,7 +134,7 @@ let min_cost_to_win boss player =
   (* start with -1 for all items, except weapon (we must have a weapon) *)
   min_cost (0) (-1) (-1) (-1) max_int
 
-
+(* Get the max cost of items you could buy and still lose to the boss *)
 let max_cost_to_lose boss player =
   let memo = Hashtbl.create 10000 in
   let rec max_cost w a r1 r2 current_max =
@@ -173,7 +171,6 @@ let max_cost_to_lose boss player =
   in 
   (* start with -1 for all items, except weapon (we must have a weapon) *)
   max_cost (0) (-1) (-1) (-1) 0
-
 
 let part1 _ =
   let boss = {hp = 103; damage = 9; armor = 2} in 
