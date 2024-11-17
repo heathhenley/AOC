@@ -140,7 +140,7 @@ let min_cost_to_win boss player =
       in
       let neighbor_costs = List.map (min_cost current_cost) (neighbors s) in
       let best_cost =
-        List.fold_left (fun acc x -> min acc x) current_cost neighbor_costs
+        List.fold_left min current_cost neighbor_costs
       in Hashtbl.add memo s best_cost;
   best_cost in 
   min_cost max_int initialGearState
