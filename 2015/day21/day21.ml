@@ -59,6 +59,15 @@ let rings = [|
   {name = "Defense +3"; cost = 80; damage = 0; armor = 3};
 |]
 
+type gearState = {
+  weapon: int;
+  armor: int;
+  ring1: int;
+  ring2: int;
+}
+
+let initialGearState = {weapon = 0; armor = -1; ring1 = -1; ring2 = -1}
+
 let time_function f arg =
   let start_time = Sys.time () in
   let result = f arg in
@@ -67,122 +76,105 @@ let time_function f arg =
   Printf.printf "Elapsed time: %.6f seconds\n" elapsed_time;
   result
 
-let get_damage w r1 r2 =
+let get_damage s =
   (* if -1, 0 for that category - else get the appropriate thing *)
-  let w_damage = if w = -1 then 0 else weapons.(w).damage in
-  let r1_damage = if r1 = -1 then 0 else rings.(r1).damage in
-  let r2_damage = if r2 = -1 then 0 else rings.(r2).damage in
+  let w_damage = if s.weapon = -1 then 0 else weapons.(s.weapon).damage in
+  let r1_damage = if s.ring1 = -1 then 0 else rings.(s.ring1).damage in
+  let r2_damage = if s.ring2 = -1 then 0 else rings.(s.ring2).damage in
   w_damage + r1_damage + r2_damage
 
-let get_defense a r1 r2 =
-  let a_armor = if a = -1 then 0 else armor.(a).armor in
-  let r1_armor = if r1 = -1 then 0 else rings.(r1).armor in
-  let r2_armor = if r2 = -1 then 0 else rings.(r2).armor in
+let get_defense s =
+  let a_armor = if s.armor = -1 then 0 else armor.(s.armor).armor in
+  let r1_armor = if s.ring1 = -1 then 0 else rings.(s.ring1).armor in
+  let r2_armor = if s.ring2 = -1 then 0 else rings.(s.ring2).armor in
   a_armor + r1_armor + r2_armor
 
-let player_will_win boss player_hp player_dmg player_armor =
-  let player_damage_per_turn = max 1 (player_dmg - boss.armor) in
-  let boss_damage_per_turn = max 1 (boss.damage - player_armor) in
+let get_cost_of_gear (s: gearState) =
+  (if s.weapon = -1 then 0 else weapons.(s.weapon).cost) +
+  (if s.armor = -1 then 0 else armor.(s.armor).cost) +
+  (if s.ring1 = -1 then 0 else rings.(s.ring1).cost) +
+  (if s.ring2 = -1 then 0 else rings.(s.ring2).cost)
+
+let player_will_win (boss: character) (player: character) (s: gearState) =
+  let player_damage = get_damage s in
+  let player_defense = get_defense s in
+  let player_damage_per_turn = max 1 (player_damage - boss.armor) in
+  let boss_damage_per_turn = max 1 (boss.damage - player_defense) in
   let player_turns_to_win = boss.hp / player_damage_per_turn in
-  let boss_turns_to_win = player_hp / boss_damage_per_turn in
-  let player_hp_left = player_hp - boss_turns_to_win * boss_damage_per_turn in
+  let boss_turns_to_win = player.hp / boss_damage_per_turn in
+  let player_hp_left = player.hp - boss_turns_to_win * boss_damage_per_turn in
     (player_turns_to_win < boss_turns_to_win)
     || (player_turns_to_win = boss_turns_to_win && player_hp_left > 0)
 
-let cost_of_gear w a r1 r2 =
-  (if w = -1 then 0 else weapons.(w).cost) +
-  (if a = -1 then 0 else armor.(a).cost) +
-  (if r1 = -1 then 0 else rings.(r1).cost) +
-  (if r2 = -1 then 0 else rings.(r2).cost)
+let valid_gear_state s =
+  let r1 = s.ring1 in
+  let r2 = s.ring2 in
+  (r1 = -1 || r2 = -1 || r1 <> r2) && (
+    s.weapon < Array.length weapons
+    && s.armor < Array.length armor
+    && s.ring1 < Array.length rings
+    && s.ring2 < Array.length rings
+  )
+
+let neighbors s =
+  let n = 
+  [{s with weapon = s.weapon + 1};
+   {s with armor = s.armor + 1};
+   {s with ring1 = s.ring1 + 1};
+   {s with ring2 = s.ring2 + 1};]
+  in List.filter valid_gear_state n
+
 
 (* Get the min cost of items you need to buy in the shop to be able
 to beat the boss*)
 let min_cost_to_win boss player =
   let memo = Hashtbl.create 10000 in
-  let rec min_cost w a r1 r2 current_min =
-    if Hashtbl.mem memo (w, a, r1, r2) then
-      Hashtbl.find memo (w, a, r1, r2)
-    else
-      let player_damage = get_damage w r1 r2 in
-      let player_defense = get_defense a r1 r2 in
-      let cost = cost_of_gear w a r1 r2 in
-      let wins = player_will_win boss player.hp player_damage player_defense in
-      let two_diff_rings = r1 = -1 || r2 = -1 || r1 <> r2 in
-      let current_min  =
-        if (wins && two_diff_rings) then (min cost current_min)
-        else current_min
+  let rec min_cost current s =
+    match Hashtbl.find_opt memo s with
+    | Some v ->  v
+    | None ->
+      let current_cost = 
+        if player_will_win boss player s
+        then get_cost_of_gear s
+        else current
       in
-      (* if any out of bounds, skip *)
-      if w = (Array.length weapons) - 1
-        || a = (Array.length armor) - 1
-        || r1 = (Array.length rings) - 1
-        || r2 = (Array.length rings) - 1 then
-        let result = current_min in
-        Hashtbl.add memo (w, a, r1, r2) result;
-        result
-      else
-        (* try all combinations *)
-        let w_iter = min_cost (w + 1) a r1 r2 current_min in
-        let a_iter = min_cost w (a + 1) r1 r2 current_min in
-        let r1_iter = min_cost w a (r1 + 1) r2 current_min in
-        let r2_iter = min_cost w a r1 (r2 + 1) current_min in
-        let result = min (
-          min (min a_iter w_iter) (min r1_iter r2_iter)) current_min in
-        Hashtbl.add memo (w, a, r1, r2) result;
-        result
-  in 
-  (* start with -1 for all items, except weapon (we must have a weapon) *)
-  min_cost (0) (-1) (-1) (-1) max_int
+      let neighbor_costs = List.map (min_cost current_cost) (neighbors s) in
+      let best_cost =
+        List.fold_left (fun acc x -> min acc x) current_cost neighbor_costs
+      in Hashtbl.add memo s best_cost;
+  best_cost in 
+  min_cost max_int initialGearState
 
-(* Get the max cost of items you could buy and still lose to the boss *)
+(* Get the max cost of items you need to buy in the shop but still lose *)
 let max_cost_to_lose boss player =
   let memo = Hashtbl.create 10000 in
-  let rec max_cost w a r1 r2 current_max =
-    if Hashtbl.mem memo (w, a, r1, r2) then
-      Hashtbl.find memo (w, a, r1, r2)
-    else
-      let player_damage = get_damage w r1 r2 in
-      let player_defense = get_defense a r1 r2 in
-      let cost = cost_of_gear w a r1 r2 in
-      let wins = player_will_win boss player.hp player_damage player_defense in
-      let two_diff_rings = r1 = -1 || r2 = -1 || r1 <> r2 in
-      let current_max  =
-        if ((not wins) && two_diff_rings) then (max cost current_max)
-        else current_max;
+  let rec max_cost current s =
+    match Hashtbl.find_opt memo s with
+    | Some v ->  v
+    | None ->
+      let current_cost = 
+        if player_will_win boss player s
+        then current
+        else get_cost_of_gear s
       in
-      (* if any out of bounds, skip *)
-      if w = (Array.length weapons) - 1
-        || a = (Array.length armor) - 1
-        || r1 = (Array.length rings) - 1
-        || r2 = (Array.length rings) - 1 then
-        let result = current_max in
-        Hashtbl.add memo (w, a, r1, r2) result;
-        result
-      else
-        (* try all combinations *)
-        let w_iter = max_cost (w + 1) a r1 r2 current_max in
-        let a_iter = max_cost w (a + 1) r1 r2 current_max in
-        let r1_iter = max_cost w a (r1 + 1) r2 current_max in
-        let r2_iter = max_cost w a r1 (r2 + 1) current_max in
-        let result = max (
-          max (max a_iter w_iter) (max r1_iter r2_iter)) current_max in
-        Hashtbl.add memo (w, a, r1, r2) result;
-        result
-  in 
-  (* start with -1 for all items, except weapon (we must have a weapon) *)
-  max_cost (0) (-1) (-1) (-1) 0
+      let neighbor_costs = List.map (max_cost current_cost) (neighbors s) in
+      let best_cost =
+        List.fold_left (fun acc x -> max acc x) current_cost neighbor_costs
+      in Hashtbl.add memo s best_cost;
+  best_cost in 
+  max_cost 0 initialGearState
 
 let part1 _ =
   let boss = {hp = 103; damage = 9; armor = 2} in 
   let player = {hp = 100; damage = 0; armor = 0} in
-  let min_costf = min_cost_to_win boss player in 
-  Printf.printf "Part 1: %d\n" (min_costf)
+  let min_cost = min_cost_to_win boss player in 
+  Printf.printf "Part 1: %d\n" (min_cost)
 
 let part2 _ =
   let boss = {hp = 103; damage = 9; armor = 2} in 
   let player = {hp = 100; damage = 0; armor = 0} in
-  let max_costf = max_cost_to_lose boss player in
-  Printf.printf "Part 2: %d\n" (max_costf)
+  let max_cost = max_cost_to_lose boss player in 
+  Printf.printf "Part 2: %d\n" (max_cost)
   
 (* Pass the input filename in on the command line *)
 let () = time_function part1 "";
