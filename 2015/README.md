@@ -124,3 +124,12 @@ happen all the time, so that took quite a while to debug. Also some silly things
 due to not understanding ocaml well yet - but got it done!
 Solved by recursively making all the possible choices, and then checking them,
 memoizing the results helped a ton.
+
+# Day 22: Wizard Simulator 20XX
+This was pretty tedious to debug but managed to get it working. Chose to switch
+back to python again for this one. The same type game as Day 21, except you
+have spells that you can choose from and they have different effects. So it
+sort of makes a tree of all the possible choices you can make with recursion.
+The key optimization that makes it not take forever is to exit early if you
+have already spent more mana than the current minimum - there's no need to play
+out the rest of those games.
