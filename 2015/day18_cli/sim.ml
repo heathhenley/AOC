@@ -71,7 +71,7 @@ let init _model = Command.Noop
 
 (* get a random grid *)
 let initial_model =
-  let model = { rows = 40; cols = 60; grid = [||]; steps = 0 } in
+  let model = { rows = 20; cols = 60; grid = [||]; steps = 0 } in
   let grid = Array.make_matrix model.rows model.cols false in
   Array.iteri (fun row _ ->
     Array.iteri (fun col _ ->
