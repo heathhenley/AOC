@@ -133,3 +133,23 @@ sort of makes a tree of all the possible choices you can make with recursion.
 The key optimization that makes it not take forever is to exit early if you
 have already spent more mana than the current minimum - there's no need to play
 out the rest of those games.
+
+# Day 23: Opening the Turing Lock
+This one is a mini assembly language - it was good practice to do some pattern
+matching in Ocaml.
+
+# Day 24: It Hangs in the Balance
+In this one you have a list of presents that are all some weight - they need
+to be split into 3 evenly weighted groups. We are interested in the single group
+with the least number of presents in it, when there are more than one way to
+have the minimum number of presents, we want the one with the smallest product.
+
+I first tried to generate all the possible combinations of presents in different
+groups - but this is actually not needed. You can just generate combinations
+that sum to the target weight and then filter for the ones that we're interested
+in (the smallest number, etc). The other groups don't actually matter.
+
+# Day 25: Let It Snow
+Calculated the next number and next row / col each time - just stopping when
+the target row / col was reached. I made the mistake of trying to actually store
+it at first, and that was getting complicated - wasn't needed at all though.

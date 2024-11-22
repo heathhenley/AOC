@@ -6,10 +6,12 @@ let read_file_to_string filename =
   close_in ic;
   s
 
-let split_on_newline str =
-  let split = String.split_on_char '\n' str in
-  split
-
+  let split_on_newline str =
+    let split = str
+    |> String.split_on_char '\n'
+    |> List.map String.trim
+    |> List.filter (fun x -> String.length x > 0) in
+    split
 
 let time_function f arg =
   let start_time = Sys.time () in
