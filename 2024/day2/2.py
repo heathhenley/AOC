@@ -6,9 +6,7 @@ def is_safe(level: list) -> bool:
   max_diff = max([abs(level[i] - level[i+1]) for i in range(len(level)-1)])
   if not 1 <= max_diff <= 3:
     return False
-  if not all(d > 0 for d in diff) and not all(d < 0 for d in diff):
-    return False
-  return True
+  return all(d > 0 for d in diff) or all(d < 0 for d in diff)
 
 
 def is_safe_with_remove(level: list) -> bool:
