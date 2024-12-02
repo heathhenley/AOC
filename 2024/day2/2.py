@@ -13,37 +13,30 @@ def is_safe(level: list) -> bool:
   return True
 
 
+def is_safe_with_remove(level: list) -> bool:
+  if is_safe(level):
+    return True
+  return any(is_safe(level[:i] + level[i+1:]) for i in range(len(level)))
+
+
 @timeit
 def part1(filename: str) -> int:
-  safe_count = 0
-  for line in read_input(filename, sep=" "):
-    level = [int(x) for x in line]
-    if is_safe(level):
-      safe_count += 1
-  return safe_count
+  return sum(
+    [is_safe([int(x) for x in line]) for line in read_input(filename, sep=" ")]
+  )
 
 
 @timeit
 def part2(filename: str) -> int:
-  safe_count = 0
-  for line in read_input(filename, sep=" "):
-    level = [int(x) for x in line]
-    # if we can remove a single element and still have a safe level
-    # then we can count this one as safe
-    if is_safe(level):
-      safe_count += 1
-      continue
-    # if it's not safe - just naively try to remove each element and check if
-    # it's safe now
-    for i in range(len(level)):
-      if is_safe(level[:i] + level[i+1:]):
-        safe_count += 1
-        break
-  return safe_count
+  return sum(
+    [is_safe_with_remove(
+      [int(x) for x in l]) for l in read_input(filename, sep=" ")]
+  )
 
 
 def main():
   problem_harness(part1, part2)
+
 
 if __name__ == '__main__':
   main()
