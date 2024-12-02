@@ -14,3 +14,5 @@ I realized that the levels (rows) were not very long so it wasn't a big deal to
 just brute force and try them all instead of trying to find a better way to find
 out of the level can be made valid. Had a bit of trouble getting it going in
 Ocaml - mostly with getting the diff list to work (just use mapi instead of map2)
+
+EDIT: An example of the linear time solution in Python on reddit: https://www.reddit.com/r/adventofcode/comments/1h4ncyr/comment/m00dpfi/

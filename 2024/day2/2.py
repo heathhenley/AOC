@@ -4,9 +4,7 @@ from common.utils import problem_harness, timeit, read_input
 def is_safe(level: list) -> bool:
   diff = [level[i] - level[i+1] for i in range(len(level)-1)]
   max_diff = max([abs(level[i] - level[i+1]) for i in range(len(level)-1)])
-  if max_diff > 3:
-    return False
-  if max_diff < 1:
+  if not 1 <= max_diff <= 3:
     return False
   if not all(d > 0 for d in diff) and not all(d < 0 for d in diff):
     return False
