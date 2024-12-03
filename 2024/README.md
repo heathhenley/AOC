@@ -30,3 +30,6 @@ hour to figure out what I was doing wrong.
 I did the same regex to get the numbers, and to also get the do() and don't()
 switches, tracked the indices of the switches and only applied the mults when
 the switch was on. Cleaning up and adding an Ocaml solution tomorrow am!
+
+EDIT: added part 1 Ocaml solution before work - part 2 will take some more
+thinking (need to figure out how to do it functionally instead of imperatively)
