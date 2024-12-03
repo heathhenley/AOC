@@ -6,13 +6,6 @@ let read_file_to_string filename =
   close_in ic;
   s
 
-  let split_on_newline str =
-    let split = str
-    |> String.split_on_char '\n'
-    |> List.map String.trim
-    |> List.filter (fun x -> String.length x > 0) in
-    split
-
 let time_function f arg =
   let start_time = Sys.time () in
   let result = f arg in
@@ -21,13 +14,13 @@ let time_function f arg =
   Printf.printf "Elapsed time: %.6f seconds\n" elapsed_time;
   result
 
+
 let get_all_matches ptn str =
   let rec get_all_matches' ptn str start acc =
     try
       let _ = Str.search_forward ptn str start in
-      let x = int_of_string @@ Str.matched_group 1 str in
-      let y = int_of_string @@ Str.matched_group 2 str in
-      get_all_matches' ptn str (Str.match_end ()) ((x, y)::acc)
+      let m = Str.matched_group 0 str in
+      get_all_matches' ptn str (Str.match_end ()) (m::acc)
     with Not_found -> acc
   in
   get_all_matches' ptn str 0 []
@@ -37,14 +30,35 @@ let part1 filename =
   let mult_ptn = Str.regexp {|mul(\([0-9]+\),\([0-9]+\))|} in
   let file_contents = read_file_to_string filename in
   let matches = get_all_matches mult_ptn file_contents in
-  let res = List.fold_left (fun acc (x, y) -> acc + x * y) 0 matches in
+  let res = List.fold_left (
+    fun acc m ->
+      match m with
+      | s ->
+        let _ = Str.string_match mult_ptn s 0 in
+        let x = int_of_string @@ Str.matched_group 1 s in
+        let y = int_of_string @@ Str.matched_group 2 s in
+        acc + x * y
+  ) 0 matches in
   Printf.printf "Part 1: %d\n" res
 
 
 let part2 filename =
+  let mult_ptn = Str.regexp {|mul(\([0-9]+\),\([0-9]+\))\|do()\|don't()|} in
   let file_contents = read_file_to_string filename in
-  let _ = split_on_newline file_contents in
-  Printf.printf "Part 2: %d\n" 0
+  let matches = List.rev (get_all_matches mult_ptn file_contents) in
+  let rec get_result enabled acc matches =
+    match matches with
+    | [] -> acc
+    | hd::tl when hd = "do()" -> get_result true acc tl
+    | hd::tl when hd = "don't()" -> get_result false acc tl
+    | hd::tl when enabled ->
+      let _ = Str.string_match mult_ptn hd 0 in
+      let x = int_of_string @@ Str.matched_group 1 hd in
+      let y = int_of_string @@ Str.matched_group 2 hd in
+      get_result enabled (acc + x * y) tl
+    | _::tl -> get_result enabled acc tl
+    in 
+  Printf.printf "Part 2: %d\n" (get_result true 0 matches)
   
 
 (* Pass the input filename in on the command line *)
