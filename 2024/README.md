@@ -33,3 +33,6 @@ the switch was on. Cleaning up and adding an Ocaml solution tomorrow am!
 
 EDIT: added part 1 Ocaml solution before work - part 2 will take some more
 thinking (need to figure out how to do it functionally instead of imperatively)
+
+EDIT2: cleaned up python part 2 more - thinking about how to do it in ocaml gave
+me a better idea of how to do in general I think, tbd
