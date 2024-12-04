@@ -49,17 +49,15 @@ def part1(filename: str) -> int:
 @timeit
 def part2(filename: str) -> int:
   lines = read_input(filename)
-  # read into 2d array
   grid = [list(l) for l in lines]
 
   # start on A this time - the middle needs to be an A and we need two
-  # MAS's diagonally crossing
+  # MASs diagonally crossing
   count = 0
   for row in range(len(grid)):
     for col in range(len(grid[0])):
       if grid[row][col] != "A":
         continue
-      # word one is up left and down right neighbors
       check = 0
       for d in dirs_part2:
         word = ""
