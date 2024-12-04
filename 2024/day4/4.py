@@ -22,7 +22,7 @@ dirs_part2 = [
 ]
 
 
-def dir_to_word(grid, row, col, d):
+def direction_to_word(grid, row, col, d):
   """ get the word at row, col by applying the dr, dc offsets in d """
   word = ""
   for dr, dc in d:
@@ -46,7 +46,7 @@ def part1(filename: str) -> int:
       if grid[row][col] != "X":
         continue
       count += sum(
-        [dir_to_word(grid, row, col, d) == "XMAS" for d in dirs_part1]
+        [direction_to_word(grid, row, col, d) == "XMAS" for d in dirs_part1]
       )
   return count
 
@@ -63,7 +63,7 @@ def part2(filename: str) -> int:
       if grid[row][col] != "A":
         continue
       for d in dirs_part2:
-        word = dir_to_word(grid, row, col, d)
+        word = direction_to_word(grid, row, col, d)
         if word != "MAS" and word != "SAM":
           break
       else:
