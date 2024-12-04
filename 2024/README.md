@@ -45,3 +45,10 @@ right (I know now I was off by about 20 in my real input so I must have missed
 a case). Switched it to check all directions when it finds an 'X' (part 1), then
 the same idea for part 2 (but with 'A' instead of 'X', and in the middle instead
 of in the start)
+
+EDIT: Added Ocaml solution at lunchtime to get some more practice. Basically
+the same as the python solution, but figuring out the recursion traversal was a
+bit tricky for me, I was double counting / revisting in the early versions.
+Otherwise it's the same, look at each spot, make the word that you find in each
+direction starting there (part 1) or centered there (part 2), and then check if
+it's the word we're looking for.
