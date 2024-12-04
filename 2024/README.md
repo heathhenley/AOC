@@ -36,3 +36,12 @@ thinking (need to figure out how to do it functionally instead of imperatively)
 
 EDIT2: cleaned up python part 2 more - thinking about how to do it in ocaml gave
 me a better idea of how to do in general I think, tbd
+
+### Day 4
+Scanning around a grid to look for words (it's a word search puzzle). At first I
+thought it would be really fast to just scan left/right, up/down, and then use
+the diagonal traverse to check for diagonal - it was running but not quite 
+right (I know now I was off by about 20 in my real input so I must have missed 
+a case). Switched it to check all directions when it finds an 'X' (part 1), then
+the same idea for part 2 (but with 'A' instead of 'X', and in the middle instead
+of in the start)

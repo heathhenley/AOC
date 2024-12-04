@@ -17,7 +17,6 @@ def part1(filename: str) -> int:
 def part2(filename: str) -> int:
   # one pattern to match them all
   ptn = re.compile(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)")
-
   enabled, s = True, 0
   # one loop to find them
   for m in ptn.finditer("".join(read_input(filename))):
