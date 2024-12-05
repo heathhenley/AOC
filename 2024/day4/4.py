@@ -22,7 +22,7 @@ dirs_part2 = [
 ]
 
 
-def direction_to_word(grid, row, col, d):
+def direction_to_word(grid, row, col, d) -> str | None:
   """ get the word at row, col by applying the dr, dc offsets in d """
   word = ""
   for dr, dc in d:

@@ -1,8 +1,7 @@
 from common.utils import problem_harness, timeit, read_input
 
 
-@timeit
-def part1(filename: str) -> int:
+def parse_input(filename: str):
   orders = []
   updates = []
   for line in read_input(filename):
@@ -14,19 +13,7 @@ def part1(filename: str) -> int:
       updates.append(line)
   orders = [list(map(int, order.split("|"))) for order in orders] 
   updates = [list(map(int, update.split(","))) for update in updates]
- 
-  good_updates = []
-  for update in updates:
-    for order in orders:
-      if order[0] in update and order[1] in update:
-        idx_0 = update.index(order[0])
-        idx_1 = update.index(order[1])
-        if idx_0 > idx_1:
-          break
-    else:
-      good_updates.append(update)
-
-  return sum([l[len(l)//2] for l in good_updates])
+  return orders, updates
 
 
 def is_bad(update, orders):
@@ -40,29 +27,16 @@ def is_bad(update, orders):
 
 
 @timeit
-def part2(filename: str) -> int:
-  orders = []
-  updates = []
-  for line in read_input(filename):
-    if not line:
-      continue
-    if "|" in line:
-      orders.append(line)
-    else:
-      updates.append(line)
-  orders = [list(map(int, order.split("|"))) for order in orders] 
-  updates = [list(map(int, update.split(","))) for update in updates]
- 
-  bad_updates = []
-  for update in updates:
-    for order in orders:
-      if order[0] in update and order[1] in update:
-        idx_0 = update.index(order[0])
-        idx_1 = update.index(order[1])
-        if idx_0 > idx_1:
-          bad_updates.append(update)
-          break
+def part1(filename: str) -> int:
+  orders, updates = parse_input(filename)
+  good_updates = [u for u in updates if not is_bad(u, orders)]
+  return sum([l[len(l)//2] for l in good_updates])
 
+@timeit
+def part2(filename: str) -> int:
+  orders, updates = parse_input(filename)
+  bad_updates = [u for u in updates if is_bad(u, orders)]
+  # fix the bad updates by continuously swapping the bad elements
   updates = [] 
   while bad_updates:
     bad_update = bad_updates.pop()
@@ -78,7 +52,7 @@ def part2(filename: str) -> int:
       bad_updates.append(bad_update)
     else:
       updates.append(bad_update) 
-  return sum([l[len(l)//2] for l in updates])
+  return sum([u[len(u)//2] for u in updates])
 
 
 def main():
