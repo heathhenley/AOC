@@ -32,6 +32,7 @@ def part1(filename: str) -> int:
   good_updates = [u for u in updates if not is_bad(u, orders)]
   return sum([l[len(l)//2] for l in good_updates])
 
+
 @timeit
 def part2(filename: str) -> int:
   orders, updates = parse_input(filename)
