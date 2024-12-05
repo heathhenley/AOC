@@ -1,3 +1,4 @@
+from functools import cmp_to_key
 from common.utils import problem_harness, timeit, read_input
 
 
@@ -26,34 +27,28 @@ def is_bad(update, orders):
   return False
 
 
+def cmp(a, b, orders):
+  for lower, upper in orders:
+    if a == lower and b == upper:
+      return -1 
+    if a == upper and b == lower:
+      return 1
+  return 0
+
 @timeit
 def part1(filename: str) -> int:
   orders, updates = parse_input(filename)
   good_updates = [u for u in updates if not is_bad(u, orders)]
   return sum([l[len(l)//2] for l in good_updates])
 
-
 @timeit
 def part2(filename: str) -> int:
   orders, updates = parse_input(filename)
-  bad_updates = [u for u in updates if is_bad(u, orders)]
-  # fix the bad updates by continuously swapping the bad elements
-  updates = [] 
-  while bad_updates:
-    bad_update = bad_updates.pop()
-    for lower, upper in orders:
-      if lower in bad_update and upper in bad_update:
-        idx_l = bad_update.index(lower)
-        idx_u = bad_update.index(upper)
-        if idx_l > idx_u:
-          bad_update[idx_l], bad_update[idx_u] = bad_update[idx_u], bad_update[idx_l]
-          break
-    # it could be bad again for another order push it back in if it is
-    if is_bad(bad_update, orders):
-      bad_updates.append(bad_update)
-    else:
-      updates.append(bad_update) 
-  return sum([u[len(u)//2] for u in updates])
+  bad_updates = [
+    sorted(u, key=cmp_to_key(lambda a, b: cmp(a, b, orders)))
+    for u in updates if is_bad(u, orders)
+  ]
+  return sum([l[len(l)//2] for l in bad_updates])
 
 
 def main():

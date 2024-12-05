@@ -67,3 +67,6 @@ sort function and a custom compare function (checking the conditions). I was
 originally trying to do that in python too, but I didn't remember how to use a
 custom compare function (not just key function) but I get it now - might
 re-write it to use that in python too (need to use cmp_to_key from functools)
+
+EDIT: reworked python to use cmp_to_key and a custom compare function for the
+sort - it's a lot cleaner and ~5x faster
