@@ -52,3 +52,18 @@ bit tricky for me, I was double counting / revisting in the early versions.
 Otherwise it's the same, look at each spot, make the word that you find in each
 direction starting there (part 1) or centered there (part 2), and then check if
 it's the word we're looking for.
+
+### Day 5
+Part 1 was checking the conditions to determine which 'updates' were in the
+right order - I just looped through and checked them. Part 2 was to sort them
+based on the conditions given - I started to implement a topo sort, but noticed
+that that updates are all relatively small and had a hunch that I was
+overthinking it (again) - so I just sorted them by swapping elements when the
+condition was not met, and then repeating until it was sorted, I think it's kind
+of bubble sort.
+In Ocaml for part 2 - I put the conditions into a hashtable to make it easier to
+use them to check if the condition was met, and then sorted using the built-in
+sort function and a custom compare function (checking the conditions). I was
+originally trying to do that in python too, but I didn't remember how to use a
+custom compare function (not just key function) but I get it now - might
+re-write it to use that in python too (need to use cmp_to_key from functools)
