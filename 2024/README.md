@@ -70,3 +70,13 @@ re-write it to use that in python too (need to use cmp_to_key from functools)
 
 EDIT: reworked python to use cmp_to_key and a custom compare function for the
 sort - it's a lot cleaner and ~5x faster
+
+### Day 6
+Part 1 was walking on the grid until an obstacle was hit, and then turning right
+until leaving the grid - tracked the path and checked the number of unique
+grids visited. Part 2 was running the same walk, but adding one '#' to the grid to see if it makes a cycle. More or less brute forced it except you only need to
+try to put obstacles in the path followed by part 1.
+
+I did it in python originally and then in Ocaml - for some reason, my ocaml is
+running slower than my python solution... would like to understand that better 
+lol.
