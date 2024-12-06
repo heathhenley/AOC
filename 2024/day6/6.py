@@ -42,6 +42,7 @@ def get_visited(grid, g_pos):
     curr_dir = arrow_turns[curr_dir]
   return visited, False
 
+
 def find_start(grid):
   rows = len(grid)
   cols = len(grid[0])
@@ -50,6 +51,7 @@ def find_start(grid):
       if grid[i][j]  in ['^', 'v', '<', '>']:
         return (i, j)
   return None 
+
 
 @timeit
 def part1(filename: str) -> int:
@@ -62,7 +64,6 @@ def part1(filename: str) -> int:
 def part2(filename: str) -> int:
   grid = [list(line.strip()) for line in read_input(filename)]
   start = find_start(grid)
-   
   original_visited = list(get_visited(grid, start)[0])
   obstacle_positions = set()
   # we only need to check the places we visited on the original path
