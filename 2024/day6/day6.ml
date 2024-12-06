@@ -93,16 +93,16 @@ let rec remove_duplicates seen = function
 
 
 let walk grid row col dir =
-  let visited = VisitedSet.empty in
+  let visited = Hashtbl.create 4000 in
   let rec walk' row col dir visited =
     (*Printf.printf "Walking to (%d, %d) facing %c\n" row col dir;*)
     if not (valid_bounds grid row col) then
       (visited, false)
-    else if VisitedSet.mem (row, col, dir) visited then
+    else if Hashtbl.mem visited (row, col, dir) then
       (visited, true)
     else
       (* save this location + dir *)
-      let visited = VisitedSet.add (row, col, dir) visited in
+      let () = Hashtbl.add visited (row, col, dir) () in
       (* peek ahead *)
       let (row_offset, col_offset) = dir_to_offset dir in
       let new_row = row + row_offset in
@@ -119,6 +119,8 @@ let walk grid row col dir =
   in
   walk' row col dir visited
 
+let list_of_keys ht =
+  Hashtbl.fold (fun k _ acc -> k :: acc) ht []
 
 let part1 filename =
   let file_contents = read_file_to_string filename in
@@ -126,7 +128,7 @@ let part1 filename =
   let grid = full_grid_of_input_lines lines in
   let (row, col, dir) = find_start grid |> Option.get in
   let visited, _ = walk grid row col dir in
-  let unique_spots = remove_duplicates [] (VisitedSet.elements visited) in
+  let unique_spots = remove_duplicates [] (list_of_keys visited) in
   Printf.printf "Part 1: %d\n" (List.length unique_spots)
 
 
@@ -136,7 +138,7 @@ let part2 filename =
   let grid = full_grid_of_input_lines lines in
   let (srow, scol, sdir) = find_start grid |> Option.get in
   let v, _ = walk grid srow scol sdir in
-  let unique_spots = remove_duplicates [] (VisitedSet.elements v) in
+  let unique_spots = remove_duplicates [] (list_of_keys v) in
   let cycles = List.fold_left (
     fun acc (row, col) ->
       if row = srow && col = scol then
