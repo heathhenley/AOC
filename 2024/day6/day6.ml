@@ -135,20 +135,17 @@ let part2 filename =
   let lines = split_on_newline file_contents in
   let grid = full_grid_of_input_lines lines in
   let (srow, scol, sdir) = find_start grid |> Option.get in
-  let v, is_loop = walk grid srow scol sdir in
-  Printf.printf "Start is a loop? %b\n" is_loop;
+  let v, _ = walk grid srow scol sdir in
   let unique_spots = remove_duplicates [] (VisitedSet.elements v) in
   let cycles = List.fold_left (
     fun acc (row, col) ->
       if row = srow && col = scol then
         acc
       else
-        let new_grid = Array.copy grid in
         let _, is_loop =
           grid.(row).(col) <- '#';
-          walk new_grid srow scol sdir in
+          walk grid srow scol sdir in
           grid.(row).(col) <- '.';
-          Printf.printf "Loop at (%d, %d)? %b\n" row col is_loop;
           acc + (if is_loop then 1 else 0)
   ) 0 unique_spots in
   Printf.printf "Part 2: %d\n" cycles
