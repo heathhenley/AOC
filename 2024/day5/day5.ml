@@ -1,10 +1,10 @@
-
 let read_file_to_string filename =
   let ic = open_in filename in
   let n = in_channel_length ic in
   let s = really_input_string ic n in
   close_in ic;
   s
+
 
 let split_on_newline str =
   let split = str
@@ -13,6 +13,7 @@ let split_on_newline str =
   |> List.filter (fun x -> String.length x > 0) in
   split
 
+
 let time_function f arg =
   let start_time = Sys.time () in
   let result = f arg in
@@ -20,6 +21,7 @@ let time_function f arg =
   let elapsed_time = end_time -. start_time in
   Printf.printf "Elapsed time: %.6f seconds\n" elapsed_time;
   result
+
 
 let parse_input lines =
   let orders =  lines
@@ -35,6 +37,7 @@ let parse_input lines =
   in
   (orders, updates)
 
+
 let is_good update orders =
   List.for_all (
     fun order ->
@@ -48,17 +51,6 @@ let is_good update orders =
   ) orders
 
 
-let part1 filename =
-  let file_contents = read_file_to_string filename in
-  let lines = split_on_newline file_contents in
-  let orders, updates = parse_input lines in
-  let good_updates = List.filter (fun x -> is_good x orders) updates in
-  let sum_middle = List.fold_left (
-    fun acc x ->
-      acc + List.nth x (List.length x / 2)
-  ) 0 good_updates in
-  Printf.printf "Part 1: %d\n" sum_middle
-
 let orders_to_map orders =
   let ht = Hashtbl.create (List.length orders) in
   List.iter (
@@ -69,13 +61,26 @@ let orders_to_map orders =
   ) orders;
   ht
 
+
+let part1 filename =
+  let orders, updates = filename
+  |> read_file_to_string
+  |> split_on_newline
+  |> parse_input in
+  let sum_middle = updates
+  |> List.filter (fun x -> is_good x orders)
+  |> List.fold_left (fun acc x -> acc + List.nth x (List.length x / 2)) 0  in
+  Printf.printf "Part 1: %d\n" sum_middle
+
 let part2 filename =
-  let file_contents = read_file_to_string filename in
-  let lines = split_on_newline file_contents in
-  let orders, updates = parse_input lines in
-  let bad_updates = List.filter (fun x -> not (is_good x orders)) updates in
+  let orders, updates = filename
+  |> read_file_to_string
+  |> split_on_newline
+  |> parse_input in
   let orders_map = orders_to_map orders in
-  let fixed_bad_updates = List.map (
+  let sum_middle = updates
+  |> List.filter (fun x -> not (is_good x orders))
+  |> List.map (
     fun x ->
       List.sort (fun a b ->
         match Hashtbl.find_opt orders_map a with
@@ -86,11 +91,8 @@ let part2 filename =
             List.exists (fun y -> y = a) lst then -1
           else 0
       ) x
-  ) bad_updates in
-  let sum_middle = List.fold_left (
-    fun acc x ->
-      acc + List.nth x (List.length x / 2)
-  ) 0 fixed_bad_updates in
+  )
+  |> List.fold_left (fun acc x -> acc + List.nth x (List.length x / 2)) 0  in
   Printf.printf "Part 2: %d\n" sum_middle
   
 
