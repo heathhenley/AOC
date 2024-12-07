@@ -42,6 +42,7 @@ let is_solvable args target with_cat =
   let rec solve args target curr =
     match args with
     | [] -> curr = target
+    | _ when curr > target -> false
     | hd :: tl ->
         solve tl target (curr + hd)
         || solve tl target (curr * hd)

@@ -10,9 +10,11 @@ def is_solveable(target, args, with_cat=False):
     if idx == len(args):
       return curr == target
     return (
-      solve(curr + args[idx], idx + 1)
-      or solve(curr * args[idx], idx + 1)
-      or (with_cat and solve(cat(curr, args[idx]), idx + 1))
+      curr <= target and (
+        solve(curr + args[idx], idx + 1)
+        or solve(curr * args[idx], idx + 1)
+        or (with_cat and solve(cat(curr, args[idx]), idx + 1))
+      )
     )
   return solve(args[0], 1)
 
