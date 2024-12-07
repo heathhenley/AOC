@@ -93,3 +93,8 @@ so they have 2^n-1 and 3^n-1 possibilities for the ops in the expression - just
 checked them all and if it matched the target number, I added it to the count. I
 bet there's a DP solution to this maybe? Will check out the subreddit later, and
 revisit this one in Ocaml tomorrow.
+
+EDIT: I realized that I was exiting too early in the recursive soln in stead of
+or'ing all the subcases together  - oh well - would have been a bit faster. I
+just implemented in ocaml - and IMO it's really nice, honestly should have done
+this one in ocaml first, I just like the string manipulation in python better
