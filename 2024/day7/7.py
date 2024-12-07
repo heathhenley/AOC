@@ -12,11 +12,13 @@ def is_solveable(target, args, with_cat=False):
     )
   return solve(args[0], 1)
 
+
 def parse(line):
   target, args = line.split(':')
   target = int(target)
   args = list(map(int, args.strip().split(' ')))
   return target, args
+
 
 @timeit
 def part1(filename: str) -> int:
