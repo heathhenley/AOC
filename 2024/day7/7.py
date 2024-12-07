@@ -1,6 +1,10 @@
 from common.utils import problem_harness, timeit, read_input
 
 
+def cat(a, b):
+  return int(str(a) + str(b))
+
+
 def is_solveable(target, args, with_cat=False):
   def solve(curr, idx):
     if idx == len(args):
@@ -8,7 +12,7 @@ def is_solveable(target, args, with_cat=False):
     return (
       solve(curr + args[idx], idx + 1)
       or solve(curr * args[idx], idx + 1)
-      or (with_cat and solve(int(str(curr) + str(args[idx])), idx + 1))
+      or (with_cat and solve(cat(curr, args[idx]), idx + 1))
     )
   return solve(args[0], 1)
 
