@@ -110,7 +110,7 @@ let walk grid row col dir =
       if not (valid_bounds grid new_row new_col) then
         (visited, false)
       else
-        match grid.(new_row).(new_col) with
+        match Array.unsafe_get (Array.unsafe_get grid new_row) new_col with
         | '#' -> (* only turn *)
           let new_dir = turn_right dir in
           walk' row col new_dir visited

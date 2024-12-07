@@ -80,3 +80,16 @@ try to put obstacles in the path followed by part 1.
 I did it in python originally and then in Ocaml - for some reason, my ocaml is
 running slower than my python solution... would like to understand that better 
 lol.
+
+### Day 7
+We have a bunch of expressions like 156: 15 6 - for part 1 the goal is to
+figure out if you can get to the number on the left by applying + or * to the
+numbers on the right, from left to right. Part 2 is the same, but with a
+concatenation op thrown in there.
+Honestly couldn't really get going on this one - I went the recursive route
+first and I think I as almost there but I had some weird bugs that were tough to
+track down, so I switched to do it iteratively. Part 1 has 2 ops, part 2 has 3,
+so they have 2^n-1 and 3^n-1 possibilities for the ops in the expression - just
+checked them all and if it matched the target number, I added it to the count. I
+bet there's a DP solution to this maybe? Will check out the subreddit later, and
+revisit this one in Ocaml tomorrow.
