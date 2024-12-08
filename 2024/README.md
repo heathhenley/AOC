@@ -99,6 +99,10 @@ or'ing all the subcases together  - oh well - would have been a bit faster. I
 just implemented in ocaml - and IMO it's really nice, honestly should have done
 this one in ocaml first, I just like the string manipulation in python better
 
+EDIT2: Read about how others solved and implemented the backwards solution - if
+you start from the right and go left you can trim out way more possibilities
+and it runs way faster.
+
 ### Day 8
 This was a cool one - a little bit hard to parse the problem description to be
 honest - but it was finding the two locations (antinodes) that were along the 
