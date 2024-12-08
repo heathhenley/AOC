@@ -98,3 +98,15 @@ EDIT: I realized that I was exiting too early in the recursive soln in stead of
 or'ing all the subcases together  - oh well - would have been a bit faster. I
 just implemented in ocaml - and IMO it's really nice, honestly should have done
 this one in ocaml first, I just like the string manipulation in python better
+
+### Day 8
+This was a cool one - a little bit hard to parse the problem description to be
+honest - but it was finding the two locations (antinodes) that were along the 
+same slope of each pair of specific points in the grid, as long as each 
+"antinode" point was 2 times the distance between one of the points, and 1 
+times the distance from the other - I just point 1 + 2 * (dr, dc) and point 2 -
+2 * (dr, dc) - where (dr, dc) is the vector between the two points. For part to
+is the same idea, but you need to get the all the valid grid points on the line
+between them. The trick I think was to get the gcd and then use it to reduce the
+slope to make sure you step through all the int grid points on the line. Did it
+in Python to start, will do it in Ocaml "tomorrow" (today).
