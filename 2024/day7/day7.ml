@@ -32,24 +32,39 @@ let parse_line line =
   (left, args)
 
 
-let cat a b =
+let endswith a b =
+  let astr = string_of_int a in
+  let bstr = string_of_int b in
+  let alen = String.length astr in
+  let blen = String.length bstr in
+  if alen <= blen then false
+  else
+    let rec endswith' a b alen blen =
+      if blen = 0 then true
+      else if astr.[alen - 1] <> bstr.[blen - 1] then false
+      else endswith' a b (alen - 1) (blen - 1)
+    in
+    endswith' astr bstr alen blen
+
+let unconcat a b =
   let sa = string_of_int a in
   let sb = string_of_int b in
-  int_of_string (sa ^ sb)
+  int_of_string (String.sub sa 0 (String.length sa - String.length sb))
 
-
-let is_solvable args target with_cat =
-  let rec solve args target curr =
-    match args with
-    | [] -> curr = target
-    | _ when curr > target -> false
-    | hd :: tl ->
-        solve tl target (curr + hd)
-        || solve tl target (curr * hd)
-        || (with_cat && solve tl target (cat curr hd))
-  in
-  solve args target 0
-
+let is_solveable_opt args target with_cat =
+  let args_arr = Array.of_list args in
+  let rec solve a target idx =
+    let add = target - a.(idx) >= a.(0) in
+    let mult = target mod a.(idx) = 0 in
+    let contains = with_cat && endswith target a.(idx) in
+    match idx with
+    | 0 -> a.(0) = target
+    | _ ->
+      (add && solve a (target - a.(idx)) (idx - 1))
+      || (mult && solve a (target / a.(idx)) (idx - 1))
+      || (contains && solve a (unconcat target a.(idx))  (idx - 1))
+  in 
+  solve args_arr target (Array.length args_arr - 1)
 
 let part1 filename =
   let ans = filename
@@ -58,7 +73,7 @@ let part1 filename =
   |> List.fold_left (
     fun acc line ->
       let (target, args) = parse_line line in
-      acc + (if is_solvable args target false then target else 0)
+      acc + (if is_solveable_opt args target false then target else 0)
   ) 0 in
   Printf.printf "Part 1: %d\n" ans
 
@@ -70,7 +85,7 @@ let part2 filename =
   |> List.fold_left (
     fun acc line ->
       let (target, args) = parse_line line in
-      acc + (if is_solvable args target true then target else 0)
+      acc + (if is_solveable_opt args target true then target else 0)
   ) 0 in
   Printf.printf "Part 2: %d\n" ans
   
