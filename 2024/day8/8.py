@@ -34,6 +34,8 @@ def find_antinodes(grid, antennas, all_mults=False):
             anti_nodes[freq].add((n2r, n2c))
           continue
 
+        # this turned out not to be neccessary in the input, because the
+        # input has all gcds as 1
         gcd = math.gcd(dr, dc)
         dr //= gcd
         dc //= gcd
