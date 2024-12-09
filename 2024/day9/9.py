@@ -38,7 +38,6 @@ def part1(filename: str) -> int:
     else:
       for _ in range(d):
         memory.append(MemoryBlock(fileidx=None))
-
   left, right = 0, len(memory) - 1
   while left < right:
     if memory[left].fileidx is not None:
@@ -63,7 +62,6 @@ def part2(filename: str) -> int:
   disk_map = [int(x) for x in list(read_input(filename)[0])]
   memory = []
   for idx, d in enumerate(disk_map):
-    #print(idx, d)
     if idx % 2 == 0:
       memory.append(MemoryBlockWithSize(
         fileidx=idx // 2,
@@ -71,60 +69,6 @@ def part2(filename: str) -> int:
       ))
     else:
       memory.append(MemoryBlockWithSize(fileidx=None, size=int(d)))
-
-  #print_blocks_with_size(memory)
-
-#  right = len(memory) - 1
-#  while right > 0:
-#    if memory[right].fileidx is None:
-#      right -= 1
-#      continue
-#    block_size = 0
-#    k = right
-#    fid = memory[right].fileidx
-#    while memory[k].fileidx == fid:
-#      block_size += 1
-#      k -= 1
-#    # find the first free block big enough to fit the current block
-#    for start, length in map.items():
-#      if block_size <= length:
-#        break
-#    else:
-#      # need to move along to the nex file - we can't fit the current one
-#      right -= block_size
-#      continue
-#
-#    
-#    # find the left most block that can fit the current file
-#    for idx, block in enumerate(memory):
-#      if block.fileidx is None:
-#        start = idx
-#        while memory[idx].fileidx is None:
-#          idx += 1
-#        if idx - start >= block_size:
-#          break
-#    else:
-#      # we can't fit the file anywhere, need to skip to the next file
-#      while fid == memory[right].fileidx:
-#        right -= 1
-#        continue
-#    # we can fit the file blocks, so move them
-#    for _ in range(block_size):
-#      print(start, right)
-#      memory[start] = memory[right]
-#      memory[right] = MemoryBlock(fileidx=None)
-#      start += 1
-#      right -= 1
-#
-#    if fid == 0:
-#      break
-#
-#  checksum = 0
-#  for idx, block in enumerate(memory):
-#    if block.fileidx is not None:
-#      checksum += idx * block.fileidx
-#  return checksum
-
   # go backwards to try to move each one once?
   left, right = 0, len(memory) - 1
   while right > 0:
