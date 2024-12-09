@@ -8,14 +8,15 @@ class MemoryBlock:
   size: int = 0
 
 
-def print_blocks_with_size(blocks):
+def print_blocks_with_size(blocks: list[MemoryBlock]):
   s = ''
   for block in blocks:
     c = str(block.fileidx) if block.fileidx is not None else '.'
     s += c * block.size
   print(s)
 
-def map_to_memory(disk_map, part1=True):
+
+def map_to_memory(disk_map= list[int], part1=True) -> list[MemoryBlock]:
   memory = []
   for idx, d in enumerate(disk_map):
     if part1:
@@ -28,6 +29,20 @@ def map_to_memory(disk_map, part1=True):
         fileidx=idx // 2 if idx % 2 == 0 else None, size=d
       ))
   return memory
+
+
+def expand(m: list[MemoryBlock]) -> list[MemoryBlock]:
+  # expand the memory blocks to be size 1
+  expanded = []
+  for block in m:
+    for _ in range(block.size):
+      expanded.append(MemoryBlock(fileidx=block.fileidx))
+  return expanded
+
+
+def checksum(m: list[MemoryBlock]) -> int:
+  return sum(idx * block.fileidx for idx, block in enumerate(m)
+             if block.fileidx is not None)
 
 
 @timeit
@@ -47,16 +62,11 @@ def part1(filename: str) -> int:
       right -= 1
       continue
     # swap them
-    memory[left] = memory[right]
-    memory[right] = MemoryBlock(fileidx=None)
+    memory[left], memory[right] = memory[right], memory[left]
     left += 1
     right -= 1
-  
-  checksum = 0
-  for idx, block in enumerate(memory):
-    if block.fileidx is not None:
-      checksum += idx * block.fileidx
-  return checksum
+
+  return checksum(memory)
 
 
 @timeit
@@ -67,6 +77,9 @@ def part2(filename: str) -> int:
   # take each block starting from the right - if it's a file, find the first
   # empty block from the left that it can fit in and put it there - don't need
   # the while because we only have to try once for each file block
+  # this approach technically works for part 1 style input as well, but it's
+  # slower to do that way (moving one by one and looping all the back up to next
+  # empty block - instead of keeping the left pointer updated like part 1 does)
   for right in range(len(memory) - 1, -1, -1):
     for left in range(right):
       ml = memory[left]
@@ -76,24 +89,12 @@ def part2(filename: str) -> int:
           ml.size -= mr.size
           memory.insert(left, MemoryBlock(fileidx=mr.fileidx, size=mr.size))
           mr.fileidx = None
-
-  # make it like part 1 just get it over with (all size 1 blocks)
-  m = []
-  for idx, block in enumerate(memory):
-    for _ in range(block.size):
-      m.append(MemoryBlock(fileidx=block.fileidx))
-
-  checksum = 0
-  for idx, block in enumerate(m):
-    if block.fileidx is not None:
-      checksum += idx * block.fileidx
-  return checksum
-
-
+  return checksum(expand(memory))
 
 
 def main():
   problem_harness(part1, part2)
+
 
 if __name__ == '__main__':
   main()
