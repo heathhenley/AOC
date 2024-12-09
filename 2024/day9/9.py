@@ -34,7 +34,6 @@ def map_to_memory(disk_map, part1=True):
 def part1(filename: str) -> int:
   disk_map = [int(x) for x in list(read_input(filename)[0])]
   memory = map_to_memory(disk_map, part1=True)
-  print_blocks_with_size(memory)
 
   # just one loop this time, tracks the next free block (they are all size 1 so 
   # it doesn't matter for this part)
@@ -64,26 +63,19 @@ def part1(filename: str) -> int:
 def part2(filename: str) -> int:
   disk_map = [int(x) for x in list(read_input(filename)[0])]
   memory = map_to_memory(disk_map, part1=False)
-  print_blocks_with_size(memory)
 
-
-  # don't need the while actually - just trying once for each full block
+  # take each block starting from the right - if it's a file, find the first
+  # empty block from the left that it can fit in and put it there - don't need
+  # the while because we only have to try once for each file block
   for right in range(len(memory) - 1, -1, -1):
     for left in range(right):
       ml = memory[left]
       mr = memory[right]
       if mr.fileidx is not None and ml.fileidx is None:
-        # if there is space - take this one 
         if ml.size >= mr.size:
           ml.size -= mr.size
           memory.insert(left, MemoryBlock(fileidx=mr.fileidx, size=mr.size))
-          #memory = (
-          #  memory[:left]
-          #  + [MemoryBlock(fileidx=mr.fileidx, size=mr.size)]
-          #  + memory[left:]
-          #)
           mr.fileidx = None
-    right -= 1
 
   # make it like part 1 just get it over with (all size 1 blocks)
   m = []
