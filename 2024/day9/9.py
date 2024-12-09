@@ -5,18 +5,8 @@ from common.utils import problem_harness, timeit, read_input
 @dataclass
 class MemoryBlock:
   fileidx: int = None
-
-@dataclass
-class MemoryBlockWithSize:
-  fileidx: int = None
   size: int = 0
 
-
-def print_blocks(blocks):
-  s = ''
-  for block in blocks:
-    s += str(block.fileidx) if block.fileidx is not None else '.'
-  print(s)
 
 def print_blocks_with_size(blocks):
   s = ''
@@ -25,31 +15,44 @@ def print_blocks_with_size(blocks):
     s += c * block.size
   print(s)
 
+def map_to_memory(disk_map, part1=True):
+  memory = []
+  for idx, d in enumerate(disk_map):
+    if part1:
+      memory.extend([
+        MemoryBlock(fileidx=idx // 2 if idx % 2 == 0 else None, size=1)
+        for _ in range(d)]
+      )
+    else:
+      memory.append(MemoryBlock(
+        fileidx=idx // 2 if idx % 2 == 0 else None, size=d
+      ))
+  return memory
+
+
 @timeit
 def part1(filename: str) -> int:
   disk_map = [int(x) for x in list(read_input(filename)[0])]
-  memory = []
-  for idx, d in enumerate(disk_map):
-    if idx % 2 == 0:
-      for _ in range(d):
-        memory.append(MemoryBlock(
-          fileidx=idx // 2
-        ))
-    else:
-      for _ in range(d):
-        memory.append(MemoryBlock(fileidx=None))
+  memory = map_to_memory(disk_map, part1=True)
+  print_blocks_with_size(memory)
+
+  # just one loop this time, tracks the next free block (they are all size 1 so 
+  # it doesn't matter for this part)
   left, right = 0, len(memory) - 1
   while left < right:
+    # need to find free block on left and taken block on right
     if memory[left].fileidx is not None:
       left += 1
-    elif memory[right].fileidx is None:
+      continue
+    if memory[right].fileidx is None:
       right -= 1
-    else:
-      memory[left] = memory[right]
-      memory[right] = MemoryBlock(fileidx=None)
-      left += 1
-      right -= 1
-
+      continue
+    # swap them
+    memory[left] = memory[right]
+    memory[right] = MemoryBlock(fileidx=None)
+    left += 1
+    right -= 1
+  
   checksum = 0
   for idx, block in enumerate(memory):
     if block.fileidx is not None:
@@ -60,18 +63,12 @@ def part1(filename: str) -> int:
 @timeit
 def part2(filename: str) -> int:
   disk_map = [int(x) for x in list(read_input(filename)[0])]
-  memory = []
-  for idx, d in enumerate(disk_map):
-    if idx % 2 == 0:
-      memory.append(MemoryBlockWithSize(
-        fileidx=idx // 2,
-        size=int(d)
-      ))
-    else:
-      memory.append(MemoryBlockWithSize(fileidx=None, size=int(d)))
-  # go backwards to try to move each one once?
-  left, right = 0, len(memory) - 1
-  while right > 0:
+  memory = map_to_memory(disk_map, part1=False)
+  print_blocks_with_size(memory)
+
+
+  # don't need the while actually - just trying once for each full block
+  for right in range(len(memory) - 1, -1, -1):
     for left in range(right):
       ml = memory[left]
       mr = memory[right]
@@ -79,18 +76,16 @@ def part2(filename: str) -> int:
         # if there is space - take this one 
         if ml.size >= mr.size:
           ml.size -= mr.size
-          memory = (
-            memory[:left]
-            + [MemoryBlockWithSize(fileidx=mr.fileidx, size=mr.size)]
-            + memory[left:]
-          )
+          memory.insert(left, MemoryBlock(fileidx=mr.fileidx, size=mr.size))
+          #memory = (
+          #  memory[:left]
+          #  + [MemoryBlock(fileidx=mr.fileidx, size=mr.size)]
+          #  + memory[left:]
+          #)
           mr.fileidx = None
     right -= 1
 
-  #print_blocks_with_size(memory)
-
-
-  # make it like part 1 just get it over with
+  # make it like part 1 just get it over with (all size 1 blocks)
   m = []
   for idx, block in enumerate(memory):
     for _ in range(block.size):
