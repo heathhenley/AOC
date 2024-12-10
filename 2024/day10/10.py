@@ -9,75 +9,49 @@ def find_starts(grid: list[list[int]]) -> list[tuple[int, int]]:
         starts.append((i, j))
   return starts
 
+
 def valid(grid: list[list[int]], i: int, j: int) -> bool:
   return i >= 0 and i < len(grid) and j >= 0 and j < len(grid[i])
 
+
 DIRS = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
+
+def walk_grid(
+    grid: list[list[int]], start: tuple[int, int]) -> list[list[tuple[int, int]]]:
+  """ Walk the grid and return the path - stops on 9, only go up by 1 """
+  r, c = start 
+  stack = [(r, c, [(r, c)])]
+  paths = []
+  while stack:
+    r, c, path = stack.pop()
+    if grid[r][c] == 9:
+      paths.append(path)
+      continue
+    for dr, dc in DIRS:
+      nr = r + dr
+      nc = c + dc
+      if valid(grid, nr, nc) and (grid[nr][nc] - grid[r][c]) == 1:
+        stack.append((nr, nc, path + [(nr, nc)]))
+  return paths
+
 
 @timeit
 def part1(filename: str) -> int:
   grid = [list(map(int, list(line))) for line in read_input(filename)]
-  # the potential starts are any grids that are 0
   starts = find_starts(grid)
-  # try each start - how many grids with a value of 9 can be reached?
-  score = { start : 0 for start in starts }
-
+  score = 0
   for start in starts:
-    stack = [start]
-    nines = set()
-    while stack:
-      r, c = stack.pop()
-
-      if grid[r][c] == 9:
-        nines.add((r, c))
-        continue
-
-      for dr, dc in DIRS:
-        nr = r + dr
-        nc = c + dc
-        # stay on the grid - and must go uphill by 1 exactly
-        if valid(grid, nr, nc) and (grid[nr][nc] - grid[r][c]) == 1:
-          stack.append((nr, nc))
-    score[start] = len(nines)
-
-  return sum(score.values())
-
+    paths = walk_grid(grid, start)
+    score +=  len(set([path[-1] for path in paths]))
+  return score
 
 
 @timeit
 def part2(filename: str) -> int:
   grid = [list(map(int, list(line))) for line in read_input(filename)]
-  # the potential starts are any grids that are 0
   starts = find_starts(grid)
-  # try each start - how many grids with a value of 9 can be reached?
-  score = { start : 0 for start in starts }
-
-  # going to try the same approach as part 1, but store the whole path instead?
-  # maybe need to use backtracking instead? lets see how bad it is if it can
-  # work on the small input
-  all_paths = {start: [] for start in starts}
-
-  for start in starts:
-    r, c = start 
-    p = set()
-    p.add((r, c))
-    stack = [(r, c, p)]
-    while stack:
-      r, c, path = stack.pop()
-
-      if grid[r][c] == 9:
-        all_paths[start].append(path)
-        continue
-
-      for dr, dc in DIRS:
-        nr = r + dr
-        nc = c + dc
-        # stay on the grid - and must go uphill by 1 exactly
-        if valid(grid, nr, nc) and (grid[nr][nc] - grid[r][c]) == 1:
-          p = path.copy()
-          p.add((nr, nc))
-          stack.append((nr, nc, p))
-  return sum(len(all_paths[start]) for start in starts)
+  return sum([len(walk_grid(grid, start)) for start in starts])
 
 
 def main():
