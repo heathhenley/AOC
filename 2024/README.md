@@ -114,3 +114,19 @@ is the same idea, but you need to get the all the valid grid points on the line
 between them. The trick I think was to get the gcd and then use it to reduce the
 slope to make sure you step through all the int grid points on the line. Did it
 in Python to start, will do it in Ocaml "tomorrow" (today).
+
+EDIT: did it in ocaml - this was another pretty tricky one for me to translate.
+
+### Day 9
+This was a tricky one to get right - for part 1 I read in the data and the moved
+two pointers along from start and end, swapping whenever there was an empty spot
+left and a full sport right.
+Part 2, switched to do it in blocks for each either file or empty spot. For each
+file from the right, stuck it into the first block that fits it. Not the most
+optimal - but it works. Really didn't see a nice way to do it in ocaml in a
+purely fp way, I saw some deque implementations that I might try to copy.
+
+### Day 10
+The input was a grid of numbers from 0 to 9 - we had to find (part 1) the number
+of distinct 9's that you could reach from 0 while only moving up in value (and  left, right, up, down on the grid). The second part the score for each 0 (starting point) is the number of valid paths that get to a 9, instead of the
+number of distinct 9's - actually used the same dfs function for both parts, returned the actual paths and then processed them differently for each part. I did it in Python first, and then in Ocaml - I actually really like the ocaml version this time!
