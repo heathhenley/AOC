@@ -130,3 +130,20 @@ purely fp way, I saw some deque implementations that I might try to copy.
 The input was a grid of numbers from 0 to 9 - we had to find (part 1) the number
 of distinct 9's that you could reach from 0 while only moving up in value (and  left, right, up, down on the grid). The second part the score for each 0 (starting point) is the number of valid paths that get to a 9, instead of the
 number of distinct 9's - actually used the same dfs function for both parts, returned the actual paths and then processed them differently for each part. I did it in Python first, and then in Ocaml - I actually really like the ocaml version this time!
+
+### Day 11
+This was a bunch of 'stones' that updated based on their current number at each
+'blink', so 0 turned into 1, etc, based on the given rules. The first part was
+very straightforward - just run the rules for 25 iterations and count the number
+of stones. The second, it was impossible to use brute forces because one of the
+rules resulted in stones splitting into two, so it blew up.
+The way I actually solved was to track how many of each stone there is at each
+'blink' instead of running it for all of the stones. Not before spending a lot
+of time trying to solve it by caching the results vertically or looking for a
+cycle in the results (both didn't work for me).
+
+I've done it Python so far, will add in Ocaml. I also found others did have
+success with using recursion and memoization to cache the results vertically -
+it's a really interesting solution. The memo table is ( number of blinks left,
+stone) -> number of stones it turns into after those blinks. Wish I had thought
+of that but glad I have it for next time!
