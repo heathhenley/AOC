@@ -147,3 +147,6 @@ success with using recursion and memoization to cache the results vertically -
 it's a really interesting solution. The memo table is ( number of blinks left,
 stone) -> number of stones it turns into after those blinks. Wish I had thought
 of that but glad I have it for next time!
+
+EDIT: added an ocaml version after getting a better understanding of the 
+recursive solution - used a hashtable for the memo
