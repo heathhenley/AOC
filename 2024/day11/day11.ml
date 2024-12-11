@@ -1,4 +1,3 @@
-
 let read_file_to_string filename =
   let ic = open_in filename in
   let n = in_channel_length ic in
@@ -13,6 +12,7 @@ let split_on_newline str =
   |> List.filter (fun x -> String.length x > 0) in
   split
 
+
 let time_function f arg =
   let start_time = Sys.time () in
   let result = f arg in
@@ -21,14 +21,17 @@ let time_function f arg =
   Printf.printf "Elapsed time: %.6f seconds\n" elapsed_time;
   result
 
+
 let parse_line line =
   line
   |> String.split_on_char ' '
   |> List.map int_of_string
 
+
 let has_even_digits n =
   let sn = string_of_int n in
   String.length sn mod 2 = 0
+
 
 let split_number n =
   let sn = string_of_int n in
@@ -37,6 +40,7 @@ let split_number n =
   let left = String.sub sn 0 mid in
   let right = String.sub sn mid (len - mid) in
   (int_of_string left, int_of_string right)
+
 
 let blink stone blinks_left =
   let ht = Hashtbl.create 100 in
@@ -62,6 +66,7 @@ let blink stone blinks_left =
         Hashtbl.add ht (blinks_left, stone) result;
         result
   in blink stone blinks_left
+
 
 let part1 filename =
   let final_stones = filename
