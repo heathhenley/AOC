@@ -150,3 +150,12 @@ of that but glad I have it for next time!
 
 EDIT: added an ocaml version after getting a better understanding of the 
 recursive solution - used a hashtable for the memo
+
+
+### Day 12
+The first part was counting the areas and perimeters of regions in a grid. It
+was straightforward. The second part was a minor change that asked for the
+number of sides of the region instead of the perimeter, which was much trickier
+to get right. I didn't complete it at open this time - had to put it down and
+go to bed. I was trying to detect edges along both directions and then use that
+to count the sides, but I ended up just counting the number of corners instead.
