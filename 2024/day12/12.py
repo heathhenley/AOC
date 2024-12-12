@@ -25,7 +25,7 @@ def get_number_of_sides(region):
   for (r, c) in region:
     # up is in out blob
     if (r - 1, c) in region:
-      # check for internal
+      # check for internal corner - two in region but the diagonal
       # right
       if (r, c + 1) in region and not (r - 1, c + 1) in region:
         sides += 1
@@ -33,11 +33,10 @@ def get_number_of_sides(region):
       if (r, c - 1) in region and not (r - 1, c - 1) in region:
         sides += 1
     else:
-      # external
+      # external two not in region
       sides += ((r, c + 1) not in region) + ((r, c - 1) not in region)
     # down is in our blob
     if (r + 1, c) in region:
-      # check for internal
       # right
       if (r, c + 1) in region and (r + 1, c + 1) not in region:
         sides += 1
@@ -47,7 +46,6 @@ def get_number_of_sides(region):
     else:
       # external
       sides += ((r, c + 1) not in region) +  ((r, c - 1) not in region)
-    print(r, c, sides)
   return sides
 
     
@@ -59,9 +57,7 @@ def part1(filename: str) -> int:
   rows = len(grid)
   cols = len(grid[0])
   total_price = 0
-  # keep track of what we've visited
   visited = set()
-  # flood fill the grid for each starting point
   for row in range(rows):
     for col in range(cols):
       if (row, col) in visited:
@@ -69,23 +65,17 @@ def part1(filename: str) -> int:
       region = set()
       queue = [(row, col)]
       val = grid[row][col]
-      #print(row, col, val)
       while queue:
         r, c = queue.pop(0)
         region.add((r, c))
         if (r, c) in visited:
           continue
         visited.add((r, c))
-
         for dr, dc in DIRS:
           nr, nc = r + dr, c + dc
           if (valid(nr, nc, rows, cols) and grid[nr][nc] == val):
             queue.append((nr, nc))
-
-      area = len(region)
-      perimeter = get_perimeter(region)
-      #print(val, area, perimeter)
-      total_price += area * perimeter
+      total_price += len(region) * get_perimeter(region)
 
   return total_price
 
@@ -97,9 +87,7 @@ def part2(filename: str) -> int:
   rows = len(grid)
   cols = len(grid[0])
   total_price = 0
-  # keep track of what we've visited
   visited = set()
-  # flood fill the grid for each starting point
   for row in range(rows):
     for col in range(cols):
       if (row, col) in visited:
@@ -113,16 +101,11 @@ def part2(filename: str) -> int:
         if (r, c) in visited:
           continue
         visited.add((r, c))
-
         for dr, dc in DIRS:
           nr, nc = r + dr, c + dc
           if (valid(nr, nc, rows, cols) and grid[nr][nc] == val):
             queue.append((nr, nc))
-
-      area = len(region)
-      number_of_sides = get_number_of_sides(region)
-      total_price += area * number_of_sides
-      #print(val, area, number_of_sides, total_price)
+      total_price += len(region) * get_number_of_sides(region)
   return total_price
 
 
