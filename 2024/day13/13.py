@@ -59,7 +59,13 @@ def solve(
     g: Game, offsets: np.ndarray = None, limits: list[int]= None) -> int:
   """ Plug in and filter non-int / out of bounds vals 
 
-  Wrote it out on paper an realized because there are only two eqxs in two unknowns you can just rearrange and solve - removes the overhead of np """
+  Wrote it out on paper an realized because there are only two eqxs in two 
+  unknowns you can just rearrange and solve - removes the overhead of np
+  
+  This doesn't work in general, but it does because it input is constrained and
+  it turned that in my input / samples there was always a single solution or
+  not. In general would probably need to go back to np and check coefficient
+  matrix, to determine what to do."""
   ba, bb = g.button_a, g.button_b
   tx, ty = g.target
   if offsets is not None:
