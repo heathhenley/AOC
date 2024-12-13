@@ -159,3 +159,14 @@ number of sides of the region instead of the perimeter, which was much trickier
 to get right. I didn't complete it at open this time - had to put it down and
 go to bed. I was trying to detect edges along both directions and then use that
 to count the sides, but I ended up just counting the number of corners instead.
+
+
+### Day 13
+This was two linear equations that we had to solve - a brute force solution was
+possible for part 1, you needed to actually solve Ax=b for part 2. I refactored
+to use the solve for both parts - I actually went for the linear solve right
+away - but I had an issue with rounding (I was using int() instead of round()) -
+and the brute-force solution helped me find the problem. Only python for this
+one and the previous one - I think I'll add ocaml at some point but I've been
+a little busy that last couple of days - day 12 part 2 took a lot out of me to
+get working.
