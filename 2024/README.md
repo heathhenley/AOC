@@ -170,3 +170,7 @@ and the brute-force solution helped me find the problem. Only python for this
 one and the previous one - I think I'll add ocaml at some point but I've been
 a little busy that last couple of days - day 12 part 2 took a lot out of me to
 get working.
+
+EDIT: simpler than I realized - should have written it down, only two eqnx and 
+two unknowns, don't need np or anything fancy, just eliminate one of the 
+unknowns solve and plug back in

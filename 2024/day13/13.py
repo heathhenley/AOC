@@ -57,50 +57,26 @@ def is_int(n: float, tol=0.001) -> bool:
 
 def solve(
     g: Game, offsets: np.ndarray = None, limits: list[int]= None) -> int:
-  
+  """ Plug in and filter non-int / out of bounds vals 
+
+  Wrote it out on paper an realized because there are only two eqxs in two unknowns you can just rearrange and solve - removes the overhead of np """
   ba, bb = g.button_a, g.button_b
   tx, ty = g.target
-
-  b = np.array(
-    [[tx],
-     [ty]]
-  ).astype(np.int64)
-
   if offsets is not None:
-    b = b + offsets
-  
-  A = np.zeros((2, 2)).astype(np.int64)
-  A = np.array(
-    [[ba.dx, bb.dx],
-     [ba.dy, bb.dy]]
-  ).astype(np.int64)
-
-  # Does this have a solution?
-  if np.linalg.det(A) == 0:
-    return 0
-
-  # Does it have many solutions?
-  ranka = np.linalg.matrix_rank(A)
-  rankb = np.linalg.matrix_rank(np.concatenate((A, b), axis=1))
-  if ranka != rankb:
-    # thankfully this never happens in my input or the samples, so it's not
-    # really an optimization problem - just need to solve it
-    raise Exception("Many solutions possible for this game!", g)
-  
-  # Solve
-  x = np.linalg.solve(A, b)
-  na, nb = x[0][0], x[1][0]
+    tx += offsets[0][0]
+    ty += offsets[1][0]
+  nb = (tx / ba.dx - ty / ba.dy) / (bb.dx / ba.dx - bb.dy / ba.dy)
+  na = (ty - nb * bb.dy) / ba.dy
   if na < 0 or nb < 0:
     return 0
   if limits is not None:
     if na > limits[0] or nb > limits[1]:
       return 0
-  if is_int(na) and is_int(nb): 
+  if is_int(na) and is_int(nb):
     na = np.round(na, 0).astype(np.int64)
     nb = np.round(nb, 0).astype(np.int64)
     return int(na * ba.cost + nb * bb.cost)
   return 0
-
 
 @timeit
 def part1(filename: str) -> int:
