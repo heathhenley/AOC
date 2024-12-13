@@ -77,8 +77,6 @@ def solve(
 
   # Does this have a solution?
   if np.linalg.det(A) == 0:
-    print("No solution")
-    print(g, A, b)
     return 0
 
   # Does it have many solutions?
