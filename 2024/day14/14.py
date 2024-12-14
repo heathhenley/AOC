@@ -20,8 +20,7 @@ def robo_walk(
   while t > 0:
     x, y = periodic_boundary(x + vx, y + vy, lim)
     t -= 1
-  return x + t * vx, y + t * vy
-
+  return x, y 
 
 def print_grid(locs: list[tuple[int, int]], lim: tuple[int, int]):
   grid = [['.' for _ in range(lim[0])] for _ in range(lim[1])]
@@ -36,17 +35,6 @@ def print_grid_r(locs: list[tuple[int, int, int, int]], lim: tuple[int, int]):
     grid[y][x] = str(int(grid[y][x]) + 1) if grid[y][x] != '.' else str(1)
   for row in grid:
     print(''.join(row))
-
-def get_robot_cycles(
-    robot: tuple[int, int, int, int], lim: tuple[int, int]) -> int:
-  x, y, vx, vy = robot
-  cycle = 0
-  while True:
-    x, y = periodic_boundary(x + vx, y + vy, lim)
-    cycle += 1
-    if x == robot[0] and y == robot[1]:
-      break
-  return cycle
 
 def advance(
     robot: tuple[int, int, int, int],
@@ -69,9 +57,6 @@ def part1(filename: str) -> int:
 
   # run all the robots for 100 seconds
   locs = [robo_walk(r, 100, lim) for r in robots]
-
-  #print_grid(locs, lim)
-  #print(locs)
 
   # count the number of robots in each quadrant
   # - robots exactly in the middle don't count (hor or ver)
@@ -125,14 +110,18 @@ def part2(filename: str) -> int:
     # numpy would make this way faster but idc rn
     neighbors = [count_neighbors(r, robots) for r in robots]
     navg = sum(neighbors) / len(neighbors)
+    max_robot_dist = []
     if navg > max_navg:
-      print(f"Time: {t}, Average neighbors: {navg}")
-      print_grid_r(robots, lim)
+      #print(f"Time: {t}, Average neighbors: {navg}")
+      #print_grid_r(robots, lim)
       max_navg = navg
       t_max = t
+      max_robot_dist = [r for r in robots]
     if t % 1000 == 0:
       print(f"Time: {t}, Max Average neighbors: {max_navg}, t_max: {t_max}")
+    
     t += 1
+  print_grid_r(max_robot_dist, lim)
 
   return t_max + 1
 
