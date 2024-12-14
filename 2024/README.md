@@ -174,3 +174,13 @@ get working.
 EDIT: simpler than I realized - should have written it down, only two eqnx and 
 two unknowns, don't need np or anything fancy, just eliminate one of the 
 unknowns solve and plug back in
+
+### Day 14
+This was an interesting one! The first part was straightforward to move a bunch
+of robots on a grid based on their positions and velocities. No real trick 
+except to handle bookkeeping errors, etc.
+For the second part, we're told that the robots will eventually make a christmas
+tree shape and we need to find the first time that happens. I just ran it and
+tracked the average number of neighbors for each robot at each time step - when
+it was the highest I've seen so far I printed the grid and the time step and
+saved it. That turned out to work!
