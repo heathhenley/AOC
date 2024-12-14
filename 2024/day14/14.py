@@ -103,6 +103,7 @@ def part2(filename: str) -> int:
 
   t = 0
   max_navg = 0
+  max_robot_dist = []
   while t < 10403:
     # advance all the robots by 1 second
     robots = [advance(r, lim) for r in robots]
@@ -110,13 +111,12 @@ def part2(filename: str) -> int:
     # numpy would make this way faster but idc rn
     neighbors = [count_neighbors(r, robots) for r in robots]
     navg = sum(neighbors) / len(neighbors)
-    max_robot_dist = []
     if navg > max_navg:
       #print(f"Time: {t}, Average neighbors: {navg}")
       #print_grid_r(robots, lim)
       max_navg = navg
       t_max = t
-      max_robot_dist = [r for r in robots]
+      max_robot_dist = [r for r in robots if count_neighbors(r, robots) > 1]
     if t % 1000 == 0:
       print(f"Time: {t}, Max Average neighbors: {max_navg}, t_max: {t_max}")
     
