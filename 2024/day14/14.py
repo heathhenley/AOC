@@ -2,25 +2,14 @@ from common.utils import problem_harness, timeit, read_input
 import re
 
 def periodic_boundary(x: int, y: int, lim: tuple[int, int]) -> tuple[int, int]:
-  if x >= lim[0]:
-    x = x % lim[0]
-  if y >= lim[1]:
-    y = y % lim[1]
-  if x < 0:
-    x = lim[0] - abs(x) % lim[0]
-  if y < 0:
-    y = lim[1] - abs(y) % lim[1]
-  return x, y
+  return x % lim[0], y % lim[1]
 
 def robo_walk(
     robot: tuple[int, int, int, int],
     t: int,
     lim: tuple[int, int]) -> tuple[int, int]:
   x, y, vx, vy = robot
-  while t > 0:
-    x, y = periodic_boundary(x + vx, y + vy, lim)
-    t -= 1
-  return x, y 
+  return periodic_boundary(x + t * vx, y +  t * vy, lim)
 
 def print_grid(locs: list[tuple[int, int]], lim: tuple[int, int]):
   grid = [['.' for _ in range(lim[0])] for _ in range(lim[1])]
