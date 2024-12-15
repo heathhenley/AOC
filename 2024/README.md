@@ -184,3 +184,23 @@ tree shape and we need to find the first time that happens. I just ran it and
 tracked the average number of neighbors for each robot at each time step - when
 it was the highest I've seen so far I printed the grid and the time step and
 saved it. That turned out to work!
+
+### Day 15
+This walking around a 'warehouse' grid pushing boxes around. Originally, I did
+part 1 iteratively (you could only push boxes if there was eventually a free
+spot behind them) - so I checked all the way to the end in the direction that
+was relevant - and if was good, swapped the boxes along that dir. Part 2 was
+trickier, because boxes could be two spaces long - so when going up or down, the
+box had to move together, eg both spaces had to be free. It was way easier to
+do it recursively, so to check my understanding I switched to do it that way for
+part 1 as well. After getting that working, did the same thing for part 2, just
+needs some extra checking to make sure both spaces can move up / down.
+
+One thing I'm wondering about - there might be a way to do it in 'one pass' like
+part 1 if you set up the function correctly. The way I set it up, it first
+first checks if the left part and the right part of the box can move recursively
+(but doesn't move) and then tries to move them if it can - I had to
+ do it that with the way I set it up because it kept moving just one side
+ otherwise when I didn't want it to.
+
+Also used pattern matching in python like it's a functional language lol
