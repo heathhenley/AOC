@@ -204,3 +204,11 @@ first checks if the left part and the right part of the box can move recursively
  otherwise when I didn't want it to.
 
 Also used pattern matching in python like it's a functional language lol
+
+### Day 16
+Walking around a maze - needed to use dijkstra's algorithm to find the lowest
+cost path - the trickier part was finding all of the actual lowest cost paths.
+The idea is pretty straightforward - just keep track of the parent of each cell
+as you go through the maze, the tricky part was figure out when to overwrite it
+(if this is the lowest cost path to this node etc) or append to it (if there is
+a tie). I had a cycle in there for a while that I couldn't quite figure out.

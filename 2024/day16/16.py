@@ -100,13 +100,9 @@ def part2(filename: str) -> int:
     if cost > min_cost[(r, c, direction)]:
         continue
 
-    # Skip if we've already visited this exact state
     if (r, c, direction) in visited:
         continue
     visited.add((r, c, direction))
-
-    if parent and parent not in parents[(r, c, direction)]:
-        parents[(r, c, direction)].append(parent)
 
     if grid[r][c] == 'E':
         continue
