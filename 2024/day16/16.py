@@ -1,3 +1,5 @@
+from collections import defaultdict
+import heapq
 from common.utils import problem_harness, timeit, read_input
 
 
@@ -34,58 +36,143 @@ dir_map = {
   'W': (0, -1)
 }
 
-@timeit
-def part1(filename: str) -> int:
-  grid = [list(line.strip()) for line in read_input(filename)]
-  for row in grid:
-    print("".join(row))
-  
+
+def find_min_cost(grid):
   start = find(grid, 'S')
-
   min_cost = float('inf')
-  stack = [(start, 0, 'E', set())]
+  q = [(0, start,'E')]
+  visited = set()
+  while q:
+    cost, (r, c), direction = heapq.heappop(q)
 
-
-  while stack:
-
-    (r, c), cost, direction, visited = stack.pop()
-
-    if cost > min_cost:
-      continue
-    
     if (r, c, direction) in visited:
       continue
     visited.add((r, c, direction))
 
     if grid[r][c] == 'E':
       min_cost = min(min_cost, cost)
-      best_path = visited
-      print("current_best", min_cost)
       continue
     # the options are to keep going in the same dir for a cost of 1
-    # or to turn left or right 90 degrees for a cost of 1000
-    # enqueue all of these options and track the min
-    # probably need to use djikstra's for pt2 but let's start with dfs
+    # or to turn left or right 90 degrees for a cost of 1000 - needed to use a
+    # heap to ensure we explore the lowest cost paths first (I think it's
+    # basically dijkstra's algorithm but I might be missing something
     # try walk forward
     dr, dc = dir_map[direction]
     new_r, new_c = r + dr, c + dc
     if valid(new_r, new_c, grid) and grid[new_r][new_c] != '#':
-      stack.append(((new_r, new_c), cost + 1, direction, visited.copy()))
+      heapq.heappush(q, (cost + 1, (new_r, new_c), direction))
 
     # try turn right 90 degrees
     new_direction = rotate_90deg_right(direction)
-    stack.append(((r, c), cost + 1000, new_direction, visited.copy()))
+    heapq.heappush(q, (cost + 1000, (r, c), new_direction))
 
     # try turn left 90 degrees
     new_direction = rotate_90deg_left(direction)
-    stack.append(((r, c), cost + 1000, new_direction, visited.copy()))
-
+    heapq.heappush(q, (cost + 1000, (r, c), new_direction))
   return min_cost
+
+@timeit
+def part1(filename: str) -> int:
+  grid = [list(line.strip()) for line in read_input(filename)]
+  return find_min_cost(grid)  
+
 
 
 @timeit
 def part2(filename: str) -> int:
-  return 0
+
+  # now we need to find all the paths that are min cost paths, and count how
+  # many 'seats' are on those paths (non wall '#' tiles) - I guess it will be
+  # the length of the set of all the visited tiles on the min cost paths
+  # how do we find all of the actual paths though?
+  grid = [list(line.strip()) for line in read_input(filename)]
+
+  start = find(grid, 'S')
+  visited = set()
+  parents = defaultdict(list)
+  min_cost = defaultdict(lambda: float('inf'))
+  min_cost[(start[0], start[1], 'E')] = 0
+  q = [(0, start, 'E', None)]
+
+  while q:
+    cost, (r, c), direction, parent = heapq.heappop(q)
+
+    if cost > min_cost[(r, c, direction)]:
+        continue
+
+    # Skip if we've already visited this exact state
+    if (r, c, direction) in visited:
+        continue
+    visited.add((r, c, direction))
+
+    if parent and parent not in parents[(r, c, direction)]:
+        parents[(r, c, direction)].append(parent)
+
+    if grid[r][c] == 'E':
+        continue
+
+    # try walk forward
+    dr, dc = dir_map[direction]
+    new_r, new_c = r + dr, c + dc
+    if valid(new_r, new_c, grid) and grid[new_r][new_c] != '#':
+        new_cost = cost + 1
+        if new_cost < min_cost[(new_r, new_c, direction)]:
+            min_cost[(new_r, new_c, direction)] = new_cost
+            heapq.heappush(q, (new_cost, (new_r, new_c), direction, (r, c, direction)))
+            parents[(new_r, new_c, direction)] = [(r, c, direction)]
+        elif new_cost == min_cost[(new_r, new_c, direction)]:
+            if (r, c, direction) not in parents[(new_r, new_c, direction)]:
+                parents[(new_r, new_c, direction)].append((r, c, direction))
+
+    # try turn
+    for d in [rotate_90deg_right, rotate_90deg_left]:
+        new_direction = d(direction)
+        new_cost = cost + 1000
+        if new_cost < min_cost[(r, c, new_direction)]:
+            min_cost[(r, c, new_direction)] = new_cost
+            heapq.heappush(q, (new_cost, (r, c), new_direction, (r, c, direction)))
+            parents[(r, c, new_direction)] = [(r, c, direction)]
+        elif new_cost == min_cost[(r, c, new_direction)]:
+            if (r, c, direction) not in parents[(r, c, new_direction)]:
+                parents[(r, c, new_direction)].append((r, c, direction))
+
+  # Now rebuild the paths and count the unique grid cells visited on the min
+  # cost paths
+  start = find(grid, 'S')
+  end = find(grid, 'E')
+  min_ = min(min_cost[(end[0], end[1], d)] for d in ['N', 'E', 'S', 'W'])
+  #print('found a min cost of (should match part 1): ', min_)
+
+  # what direction does the end need to be facing to have the min cost?
+  end_dir = None
+  for d in ['N', 'E', 'S', 'W']:
+    if min_cost[(end[0], end[1], d)] == min_:
+      end_dir = d
+      break
+
+  # DFS to build all the paths from the parent dict
+  stack = [((end[0], end[1], end_dir), [(end[0], end[1], end_dir)])]
+  all_paths = []
+  while stack:
+      (r, c, current_direction), current_path = stack.pop()
+      # start is always facing east
+      if (r, c, current_direction) == (*start, "E"):
+          all_paths.append([(r, c) for (r, c, _) in current_path])
+          continue
+
+      for parent in parents.get((r, c, current_direction), []):
+          stack.append((parent, current_path + [parent]))
+
+
+  #for i in range(len(grid)):
+  #  for j in range(len(grid[0])):
+  #    if (i, j) in set([p for path in all_paths for p in path]):
+  #      print('O', end='')
+  #    else:
+  #      print(grid[i][j], end='')
+  #  print()
+  
+  return len(set([p for path in all_paths for p in path]))
 
 
 def main():
