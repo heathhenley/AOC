@@ -84,9 +84,6 @@ def dijkstra_min_cost(grid, start, end):
   while q:
     cost, r, c, direction = heapq.heappop(q)
 
-    if cost > min_cost[(r, c, direction)]:
-        continue
-
     if (r, c, direction) in visited:
         continue
     visited.add((r, c, direction))
@@ -129,7 +126,6 @@ def part1(filename: str) -> int:
   return min(min_costs[(end[0], end[1], d)] for d in ['N', 'E', 'S', 'W'])
 
 
-
 @timeit
 def part2(filename: str) -> int:
   grid = [list(line.strip()) for line in read_input(filename)]
@@ -156,11 +152,9 @@ def part2(filename: str) -> int:
   all_paths = []
   while stack:
       (r, c, current_direction), current_path = stack.pop()
-      # start is always facing east
       if (r, c, current_direction) == start:
           all_paths.append([(r, c) for (r, c, _) in current_path])
           continue
-
       for parent in parents.get((r, c, current_direction), []):
           stack.append((parent, current_path + [parent]))
 
