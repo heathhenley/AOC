@@ -71,31 +71,18 @@ def find_min_cost(grid):
     heapq.heappush(q, (cost + 1000, (r, c), new_direction))
   return min_cost
 
-@timeit
-def part1(filename: str) -> int:
-  grid = [list(line.strip()) for line in read_input(filename)]
-  return find_min_cost(grid)  
-
-
-
-@timeit
-def part2(filename: str) -> int:
-
-  # now we need to find all the paths that are min cost paths, and count how
-  # many 'seats' are on those paths (non wall '#' tiles) - I guess it will be
-  # the length of the set of all the visited tiles on the min cost paths
-  # how do we find all of the actual paths though?
-  grid = [list(line.strip()) for line in read_input(filename)]
-
-  start = find(grid, 'S')
+def dijkstra_min_cost(grid, start, end):
+  """ Returns a dict of min cost to reach each cell from start, and a dict of
+  parents for each cell. The parents dict is used to reconstruct the paths
+  later in pt 2 """
   visited = set()
   parents = defaultdict(list)
   min_cost = defaultdict(lambda: float('inf'))
-  min_cost[(start[0], start[1], 'E')] = 0
-  q = [(0, start, 'E', None)]
+  min_cost[(start)] = 0
+  q = [(0, *start)]
 
   while q:
-    cost, (r, c), direction, parent = heapq.heappop(q)
+    cost, r, c, direction = heapq.heappop(q)
 
     if cost > min_cost[(r, c, direction)]:
         continue
@@ -104,7 +91,7 @@ def part2(filename: str) -> int:
         continue
     visited.add((r, c, direction))
 
-    if grid[r][c] == 'E':
+    if (r, c) == end:
         continue
 
     # try walk forward
@@ -114,7 +101,7 @@ def part2(filename: str) -> int:
         new_cost = cost + 1
         if new_cost < min_cost[(new_r, new_c, direction)]:
             min_cost[(new_r, new_c, direction)] = new_cost
-            heapq.heappush(q, (new_cost, (new_r, new_c), direction, (r, c, direction)))
+            heapq.heappush(q, (new_cost, new_r, new_c, direction))
             parents[(new_r, new_c, direction)] = [(r, c, direction)]
         elif new_cost == min_cost[(new_r, new_c, direction)]:
             if (r, c, direction) not in parents[(new_r, new_c, direction)]:
@@ -126,33 +113,51 @@ def part2(filename: str) -> int:
         new_cost = cost + 1000
         if new_cost < min_cost[(r, c, new_direction)]:
             min_cost[(r, c, new_direction)] = new_cost
-            heapq.heappush(q, (new_cost, (r, c), new_direction, (r, c, direction)))
+            heapq.heappush(q, (new_cost, r, c, new_direction))
             parents[(r, c, new_direction)] = [(r, c, direction)]
         elif new_cost == min_cost[(r, c, new_direction)]:
             if (r, c, direction) not in parents[(r, c, new_direction)]:
                 parents[(r, c, new_direction)].append((r, c, direction))
+  return min_cost, parents
+
+@timeit
+def part1(filename: str) -> int:
+  grid = [list(line.strip()) for line in read_input(filename)]
+  start = (*find(grid, 'S'), "E")
+  end = find(grid, 'E')
+  min_costs, _ = dijkstra_min_cost(grid, start, end)
+  return min(min_costs[(end[0], end[1], d)] for d in ['N', 'E', 'S', 'W'])
+
+
+
+@timeit
+def part2(filename: str) -> int:
+  grid = [list(line.strip()) for line in read_input(filename)]
+
+  start = (*find(grid, 'S'), "E") # always start facing east
+  end = find(grid, 'E')
+  min_cost, parents = dijkstra_min_cost(grid, start, end)
 
   # Now rebuild the paths and count the unique grid cells visited on the min
   # cost paths
-  start = find(grid, 'S')
-  end = find(grid, 'E')
   min_ = min(min_cost[(end[0], end[1], d)] for d in ['N', 'E', 'S', 'W'])
-  #print('found a min cost of (should match part 1): ', min_)
+  print('Found a min cost of (should match part 1): ', min_)
 
-  # what direction does the end need to be facing to have the min cost?
+  # What direction does the end need to be facing to have the min cost?
   end_dir = None
   for d in ['N', 'E', 'S', 'W']:
     if min_cost[(end[0], end[1], d)] == min_:
       end_dir = d
       break
+  print('End direction: ', end_dir)
 
   # DFS to build all the paths from the parent dict
-  stack = [((end[0], end[1], end_dir), [(end[0], end[1], end_dir)])]
+  stack = [((*end, end_dir), [(*end, end_dir)])]
   all_paths = []
   while stack:
       (r, c, current_direction), current_path = stack.pop()
       # start is always facing east
-      if (r, c, current_direction) == (*start, "E"):
+      if (r, c, current_direction) == start:
           all_paths.append([(r, c) for (r, c, _) in current_path])
           continue
 
