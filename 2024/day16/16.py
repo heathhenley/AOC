@@ -1,5 +1,6 @@
 from collections import defaultdict
 import heapq
+from typing import Callable
 from common.utils import problem_harness, timeit, read_input
 
 
@@ -71,7 +72,11 @@ def find_min_cost(grid):
     heapq.heappush(q, (cost + 1000, (r, c), new_direction))
   return min_cost
 
-def dijkstra_min_cost(grid, start, end):
+def dijkstra_min_cost(
+      grid,
+      start: tuple[int, int, str],
+      end: tuple[int, int],
+      dist: Callable[[tuple, tuple], int] = None) -> tuple[dict, dict]:
   """ Returns a dict of min cost to reach each cell from start, and a dict of
   parents for each cell. The parents dict is used to reconstruct the paths
   later in pt 2 """
@@ -79,10 +84,17 @@ def dijkstra_min_cost(grid, start, end):
   parents = defaultdict(list)
   min_cost = defaultdict(lambda: float('inf'))
   min_cost[(start)] = 0
-  q = [(0, *start)]
 
+  if dist is None:
+    dist = lambda a, b: 0
+
+  r, c, _ = start
+  # the A* heuristic plus the cost is the priority, but still need to save the
+  # real cost in the heap
+  pri = dist((r, c), end) + 0
+  q = [(pri, 0, *start)]
   while q:
-    cost, r, c, direction = heapq.heappop(q)
+    pri, cost, r, c, direction = heapq.heappop(q)
 
     if cost > min_cost[(r, c, direction)]:
         continue
@@ -99,9 +111,10 @@ def dijkstra_min_cost(grid, start, end):
     new_r, new_c = r + dr, c + dc
     if valid(new_r, new_c, grid) and grid[new_r][new_c] != '#':
         new_cost = cost + 1
+        pri = dist((new_r, new_c), end) + new_cost
         if new_cost < min_cost[(new_r, new_c, direction)]:
             min_cost[(new_r, new_c, direction)] = new_cost
-            heapq.heappush(q, (new_cost, new_r, new_c, direction))
+            heapq.heappush(q, (pri, new_cost, new_r, new_c, direction))
             parents[(new_r, new_c, direction)] = [(r, c, direction)]
         elif new_cost == min_cost[(new_r, new_c, direction)]:
             if (r, c, direction) not in parents[(new_r, new_c, direction)]:
@@ -111,9 +124,10 @@ def dijkstra_min_cost(grid, start, end):
     for d in [rotate_90deg_right, rotate_90deg_left]:
         new_direction = d(direction)
         new_cost = cost + 1000
+        pri = dist((r, c), end) + new_cost
         if new_cost < min_cost[(r, c, new_direction)]:
             min_cost[(r, c, new_direction)] = new_cost
-            heapq.heappush(q, (new_cost, r, c, new_direction))
+            heapq.heappush(q, (pri, new_cost, r, c, new_direction))
             parents[(r, c, new_direction)] = [(r, c, direction)]
         elif new_cost == min_cost[(r, c, new_direction)]:
             if (r, c, direction) not in parents[(r, c, new_direction)]:
@@ -125,7 +139,9 @@ def part1(filename: str) -> int:
   grid = [list(line.strip()) for line in read_input(filename)]
   start = (*find(grid, 'S'), "E")
   end = find(grid, 'E')
-  min_costs, _ = dijkstra_min_cost(grid, start, end)
+  def dist(a, b):
+    return (abs(a[0] - b[0]) + abs(a[1] - b[1]))
+  min_costs, _ = dijkstra_min_cost(grid, start, end, dist)
   return min(min_costs[(end[0], end[1], d)] for d in ['N', 'E', 'S', 'W'])
 
 
