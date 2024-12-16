@@ -1,4 +1,4 @@
-(* Learning how to use scanf for parsing fancier inputs - based on
+(* Trying out scanf for parsing fancier inputs - based on
   https://gist.github.com/p1xelHer0/98633ed78e74485c6827d08493884a8d
 
 *)
@@ -13,6 +13,7 @@ let rec try_parse parsers line =
     match parser line with
     | Some x -> x
     | None -> try_parse parsers line
+
 
 type button = {
   dx: float;
@@ -42,7 +43,6 @@ Prize: X=8400, Y=5400
 ...
 ...
 *)
-
 let parsers = [
   parse "Button %c: X+%d, Y+%d" (
     fun _ dx dy ->
@@ -69,6 +69,7 @@ let split_on_newline str =
   |> List.filter (fun x -> String.length x > 0) in
   split
 
+
 let time_function f arg =
   let start_time = Sys.time () in
   let result = f arg in
@@ -76,6 +77,7 @@ let time_function f arg =
   let elapsed_time = end_time -. start_time in
   Printf.printf "Elapsed time: %.6f seconds\n" elapsed_time;
   result
+
 
 let games_of_lines lines =
   (* each game is two rows of buttons and then a prize location *)
@@ -89,15 +91,18 @@ let games_of_lines lines =
   in
   loop lines []
 
+
 let round x = int_of_float (x +. 0.5)
+
 
 let is_integer x = abs_float (x -. float_of_int (round x)) < 0.001
 
+
 let cost a b = 3 * a + b
 
+
 let solve game offset =
-  (* this only works because of special input, yada yada, I'm so smart, matrix
-  rank, yada, determinant, blah *)
+  (* this only works because there are never multiple solutions in the input *)
   let tx, ty = game.prize.x +. offset, game.prize.y +. offset in
   let bady = game.button_a.dy in
   let badx = game.button_a.dx in
@@ -111,6 +116,7 @@ let solve game offset =
     cost (round na)  (round nb)
   else
     0
+
 
 let part1 filename =
   let cost = filename
