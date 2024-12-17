@@ -36,41 +36,16 @@ dir_map = {
   'W': (0, -1)
 }
 
+def get_neighbors(r, c, direction):
+  # we can either walk forward or turn left or right
+  dr, dc = dir_map[direction]
+  return [
+    (1, r + dr, c + dc, direction), # walk forward
+    (1000, r, c, rotate_90deg_right(direction)), # turn right
+    (1000, r, c, rotate_90deg_left(direction)) # turn left
+  ]
 
-def find_min_cost(grid):
-  start = find(grid, 'S')
-  min_cost = float('inf')
-  q = [(0, start,'E')]
-  visited = set()
-  while q:
-    cost, (r, c), direction = heapq.heappop(q)
-
-    if (r, c, direction) in visited:
-      continue
-    visited.add((r, c, direction))
-
-    if grid[r][c] == 'E':
-      min_cost = min(min_cost, cost)
-      continue
-    # the options are to keep going in the same dir for a cost of 1
-    # or to turn left or right 90 degrees for a cost of 1000 - needed to use a
-    # heap to ensure we explore the lowest cost paths first (I think it's
-    # basically dijkstra's algorithm but I might be missing something
-    # try walk forward
-    dr, dc = dir_map[direction]
-    new_r, new_c = r + dr, c + dc
-    if valid(new_r, new_c, grid) and grid[new_r][new_c] != '#':
-      heapq.heappush(q, (cost + 1, (new_r, new_c), direction))
-
-    # try turn right 90 degrees
-    new_direction = rotate_90deg_right(direction)
-    heapq.heappush(q, (cost + 1000, (r, c), new_direction))
-
-    # try turn left 90 degrees
-    new_direction = rotate_90deg_left(direction)
-    heapq.heappush(q, (cost + 1000, (r, c), new_direction))
-  return min_cost
-
+@timeit
 def dijkstra_min_cost(grid, start, end):
   """ Returns a dict of min cost to reach each cell from start, and a dict of
   parents for each cell. The parents dict is used to reconstruct the paths
@@ -91,30 +66,19 @@ def dijkstra_min_cost(grid, start, end):
     if (r, c) == end:
         continue
 
-    # try walk forward
-    dr, dc = dir_map[direction]
-    new_r, new_c = r + dr, c + dc
-    if valid(new_r, new_c, grid) and grid[new_r][new_c] != '#':
-        new_cost = cost + 1
-        if new_cost < min_cost[(new_r, new_c, direction)]:
-            min_cost[(new_r, new_c, direction)] = new_cost
-            heapq.heappush(q, (new_cost, new_r, new_c, direction))
-            parents[(new_r, new_c, direction)] = [(r, c, direction)]
-        elif new_cost == min_cost[(new_r, new_c, direction)]:
-            if (r, c, direction) not in parents[(new_r, new_c, direction)]:
-                parents[(new_r, new_c, direction)].append((r, c, direction))
-
-    # try turn
-    for d in [rotate_90deg_right, rotate_90deg_left]:
-        new_direction = d(direction)
-        new_cost = cost + 1000
-        if new_cost < min_cost[(r, c, new_direction)]:
-            min_cost[(r, c, new_direction)] = new_cost
-            heapq.heappush(q, (new_cost, r, c, new_direction))
-            parents[(r, c, new_direction)] = [(r, c, direction)]
-        elif new_cost == min_cost[(r, c, new_direction)]:
-            if (r, c, direction) not in parents[(r, c, new_direction)]:
-                parents[(r, c, new_direction)].append((r, c, direction))
+    # we can either walk forward or turn left or right - costs are hardcoded
+    # in the neighbors function
+    for step_cost, nr, nc, nd in get_neighbors(r, c, direction):
+      if not valid(nr, nc, grid) or not grid[nr][nc] != '#':
+        continue
+      new_cost = cost + step_cost
+      if new_cost < min_cost[(nr, nc, nd)]:
+        min_cost[(nr, nc, nd)] = new_cost
+        heapq.heappush(q, (new_cost, nr, nc, nd))
+        parents[(nr, nc, nd)] = [(r, c, direction)]
+      elif new_cost == min_cost[(nr, nc, nd)]:
+        if (r, c, direction) not in parents[(nr, nc, nd)]:
+          parents[(nr, nc, nd)].append((r, c, direction))
   return min_cost, parents
 
 @timeit
