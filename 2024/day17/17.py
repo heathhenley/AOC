@@ -64,13 +64,10 @@ def parse(lines):
       program = list(map(int, line.split(':')[1].strip().split(",")))
   return registers, program
 
-@timeit
-def part1(filename: str) -> int:
-  registers, program = parse(read_input(filename))
-  return ",".join([str(x) for x in run_program(registers, program)])
 
 def to_octal(num):
   return oct(num)[2:]
+
 
 def from_octal(digits: list[int]):
   a = 0
@@ -80,24 +77,14 @@ def from_octal(digits: list[int]):
 
 
 @timeit
+def part1(filename: str) -> int:
+  registers, program = parse(read_input(filename))
+  return ",".join([str(x) for x in run_program(registers, program)])
+
+
+@timeit
 def part2(filename: str) -> int:
   registers, program = parse(read_input(filename))
-  # look for each number individually, then "shift" them
-  # in to get the output we want?
-  print(program)
-  n_digits = len(program)
-  #registers["A"] = (((((0o6 * 8) + 0o5) * 8 + 0o1) * 8 + 0o7) * 8 + 0o7) * 8 + 0o0
-  # sample 
-  a = 117440
-  registers["A"] = a
-  registers["B"] = 0
-  registers["C"] = 0
-  output = run_program(registers, program)
-  print(a, oct(a))
-  print(output)
-  print(program)
-
-
   def solve(idx, registers, program, digits):
     # try all the octal digits (0, 7) for the current position
     # if we find a match, try the next one
@@ -108,58 +95,19 @@ def part2(filename: str) -> int:
     
     for digit in range(8):
       if idx == 0 and digit == 0:
-        continue # no leading zero
+        continue # no leading zero (it changes the output len)
       digits[idx] = digit
       a = from_octal(digits)
-      registers["A"] = a
-      registers["B"] = 0
-      registers["C"] = 0
+      registers["A"], registers["B"], registers["C"] = a, 0, 0
       output = run_program(registers, program)
-      #print('output:', output)
-      #print('program:', program)
       if output[n - idx - 1] == program[n - idx - 1]:
         sol = solve(idx+1, registers, program, digits.copy())
         if sol:
           return sol
     return None
 
-  digits = [0 for _ in range(n_digits)]
-  # solve for the digits
-  if (digits := solve(0, registers, program, digits)):
-    print(digits)
-    registers["A"] = from_octal(digits)
-    registers["B"] = 0
-    registers["C"] = 0
-    print(run_program(registers, program))
-    print(f"solution: {from_octal(digits)}")
-  else:
-    print('no solution found...')
-  return from_octal(digits) if digits else 0
-  # input ---> AH! Each digit can have more than one value that satisfies the
-  # that position in the output
-  digits = [0 for _ in range(n_digits)]
-  digits[0] = 6
-  digits[1] = 1
-  digits[2] = 1
-  digits[3] = 1
-  digits[4] = 7
-  digits[5] = 1
-  digits[6] = 2
-  digits[7] = 7
-  digits[8] = 1
-  a = from_octal(digits)
-  registers["A"] = a
-  registers["B"] = 0
-  registers["C"] = 0
-  output = run_program(registers, program)
-  print(a, oct(a))
-  print(output[-9:])
-  print(program[-9:])
-
-
-
-
-  return 0
+  digits = [0 for _ in range(len(program))]
+  return from_octal(solve(0, registers, program, digits)) or 0
 
 
 def main():
