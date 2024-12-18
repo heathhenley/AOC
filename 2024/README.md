@@ -212,3 +212,14 @@ The idea is pretty straightforward - just keep track of the parent of each cell
 as you go through the maze, the tricky part was figure out when to overwrite it
 (if this is the lowest cost path to this node etc) or append to it (if there is
 a tie). I had a cycle in there for a while that I couldn't quite figure out.
+
+### Day 17
+Given some custom instructions and reg contents, part 1 was to run the program
+and enter the values it outputs. Part 2 was wild, had to find a register start
+val that would make the program output itself. I tried to brute force it but
+it was not possible, had to write it out and notice the it's doing some ops on
+3 bits of the value in the register at a time, so each output is a function of
+the previous 3 bits, you can solve for the reg value recursively.
+Did it in python and ocaml this time.
+
+Really hoping for a break in the next few days lol
