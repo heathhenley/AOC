@@ -67,7 +67,6 @@ def part2(filename: str) -> int:
       right_ptr = mid
     else:
       left_ptr = mid + 1
-
   return locs[left_ptr][1], locs[left_ptr][0]
 
 

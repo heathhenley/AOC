@@ -20,6 +20,7 @@ let time_function f arg =
   Printf.printf "Elapsed time: %.6f seconds\n" elapsed_time;
   result
 
+
 let valid_dirs =[
   (0, 1);
   (0, -1);
@@ -27,8 +28,10 @@ let valid_dirs =[
   (-1, 0);
 ]
 
+
 let valid r c rmax cmax =
   r >= 0 && r <= rmax && c >= 0 && c <= cmax
+
 
 let get_neighbors r c rmax cmax =
   let neighbors  = valid_dirs 
@@ -36,6 +39,7 @@ let get_neighbors r c rmax cmax =
     |> List.filter (fun (r, c) -> valid r c rmax cmax)
   in
   neighbors
+
 
 let first_n lst n =
   List.filteri (fun i _ -> i < n) lst
@@ -88,6 +92,7 @@ let dijkstra start goal bad_locs rmax cmax =
   in
   dijkstra' ()
 
+
 let slice lst start stop =
   let rec slice' lst acc idx =
     match lst with
@@ -102,6 +107,7 @@ let slice lst start stop =
   in
   List.rev (slice' lst [] 0)
 
+
 let rec binary_search left right f bad_lst =
   if left >= right then
     List.nth bad_lst left
@@ -114,7 +120,6 @@ let rec binary_search left right f bad_lst =
     | Some _ ->
       binary_search (mid + 1) right f bad_lst
   
-
 
 let part1 filename =
   let cost = filename
