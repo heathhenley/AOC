@@ -223,3 +223,12 @@ the previous 3 bits, you can solve for the reg value recursively.
 Did it in python and ocaml this time.
 
 Really hoping for a break in the next few days lol
+
+### Day 18
+I think we got our break, scared for tomorrow though. This was a 2d grid -
+trying to get from top left to bottom right of the grid with some obstacles in
+the way. I used the same dijkstra implementation as a 16 basically - but it was
+simpler here. We have a list of locations - and in part you add them to grid
+until you can no longer reach the bottom right (the answer is the first coord
+results in your path being blocked). I used a binary search on the solution for
+part 1 to get the answer for part 1.

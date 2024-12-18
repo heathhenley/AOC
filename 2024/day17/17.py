@@ -89,7 +89,6 @@ def part2(filename: str) -> int:
   def solve(idx, registers, program, digits):
     # try all the octal digits (0, 7) for the current position
     # if we find a match, try the next one
-    digits = digits.copy()
     n = len(program)
     if idx == n:
       return digits
