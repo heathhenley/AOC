@@ -114,7 +114,6 @@ def part2(filename: str) -> int:
       registers["A"] = a
       registers["B"] = 0
       registers["C"] = 0
-      #print('trying digits:', digits)
       output = run_program(registers, program)
       #print('output:', output)
       #print('program:', program)
