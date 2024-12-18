@@ -85,6 +85,7 @@ def part1(filename: str) -> int:
 @timeit
 def part2(filename: str) -> int:
   registers, program = parse(read_input(filename))
+
   def solve(idx, registers, program, digits):
     # try all the octal digits (0, 7) for the current position
     # if we find a match, try the next one
