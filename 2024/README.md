@@ -232,3 +232,11 @@ simpler here. We have a list of locations - and in part you add them to grid
 until you can no longer reach the bottom right (the answer is the first coord
 results in your path being blocked). I used a binary search on the solution for
 part 1 to get the answer for part 1.
+
+### Day 19
+This was determining whether a bunch of strings could be made by a set of given
+substrings - I don't know why but this felt similar to one of the problems from
+2015 for 2025 I think it was nice and easy - I basically got it first shot which
+never happens. Did it in python and ocaml - uses recursion and caching to make
+it not super slow - it checks if the str begins with any of the allowed substrs
+and if it does, calls it self again on the rest of the string.
