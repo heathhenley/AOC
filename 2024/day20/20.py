@@ -72,14 +72,86 @@ def part1(filename: str) -> int:
   counter = defaultdict(int)
   for s, a, b, c in cheats:
     counter[s] += 1
-  #for c in counter:
-  #  print(f"cheats of length {c}: {counter[c]}")
   return sum([counter[c] for c in counter if c >= 100])
 
 
 @timeit
 def part2(filename: str) -> int:
-  return 0
+  grid = [ [c for c in line.strip()] for line in read_input(filename) ]
+  start = find(grid, 'S')
+  end = find(grid, 'E')
+
+  dist = defaultdict(lambda: float('inf'))
+  # walk the path starting at end
+  dist[end] = 0
+  stack = [end]
+  visited = set()
+  while stack:
+    r, c = stack.pop()
+    if (r, c) in visited:
+      continue
+    visited.add((r, c))
+    if (r, c) == start:
+      break
+    for nr, nc in get_neighbors(r, c, grid):
+      if grid[nr][nc] == '#' or (nr, nc) in visited:
+        continue
+      dist[(nr, nc)] = dist[(r, c)] + 1
+      stack.append((nr, nc))
+
+  # walk the path starting at start - check which nodes we can reach in 20 steps
+  # or fewer and how much we save going to each one
+  start_to_end = list(dist.keys())[::-1]
+  # the same start end point can have multiple cheats, and they
+  # all count as one even if you get there a different way - so switching to a
+  # set
+  cheats = {}
+  for (r, c) in start_to_end:
+    # check - is there a # as a neighbor? if so, try to go one more in that
+    # direction and see if we save distance
+    # now we need a stack - start at r, c and when we find a wall - push
+    # the next step through the wall onto the stack, along with how many steps
+    # we have left to take (19) - then push neighbors onto the stack, tracking
+    # the distance savings like before when we reach a non-wall
+    for nr, nc in get_neighbors(r, c, grid):
+      if grid[nr][nc] != '#':
+        continue
+      # found a wall - lets walk it up to 19 steps
+      q = [(nr, nc, 19)]
+      visited = set()
+      while q:
+        nnr, nnc, steps = q.pop(0)
+        if (nnr, nnc, steps) in visited:
+          continue
+        visited.add((nnr, nnc, steps))
+      
+        if grid[nnr][nnc] != '#':
+          # we could step and maybe save distance
+          savings = (dist[(r, c)] - dist[(nnr, nnc)]) - (20 - steps)
+          if savings > 0:
+            if ((r, c), (nnr, nnc)) not in cheats:
+              cheats[((r, c), (nnr, nnc))] = savings
+            else:
+              cheats[((r, c), (nnr, nnc))] = max(
+                cheats[((r, c), (nnr, nnc))], savings)
+          continue # don't push neighbors of a non-wall
+
+        if grid[nnr][nnc] == '#':
+          # we can step through the wall
+          for row, col in get_neighbors(nnr, nnc, grid):
+            if steps > 0: # can we take another step?
+              q.append((row, col, steps - 1))
+
+  print(dist[(9,1)], dist[start])
+  print(cheats[(start, (9,1))])
+  # count how many cheats we found for each length of savings
+  counter = defaultdict(int)
+  for (start, end), s in cheats.items():
+    counter[s] += 1
+  for c in sorted(counter.keys()):
+    if c >= 50:
+      print(c, counter[c])
+  return sum([counter[c] for c in counter if c >= 50])
 
 
 def main():
