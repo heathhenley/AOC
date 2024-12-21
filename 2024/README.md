@@ -151,7 +151,6 @@ of that but glad I have it for next time!
 EDIT: added an ocaml version after getting a better understanding of the 
 recursive solution - used a hashtable for the memo
 
-
 ### Day 12
 The first part was counting the areas and perimeters of regions in a grid. It
 was straightforward. The second part was a minor change that asked for the
@@ -159,7 +158,6 @@ number of sides of the region instead of the perimeter, which was much trickier
 to get right. I didn't complete it at open this time - had to put it down and
 go to bed. I was trying to detect edges along both directions and then use that
 to count the sides, but I ended up just counting the number of corners instead.
-
 
 ### Day 13
 This was two linear equations that we had to solve - a brute force solution was
@@ -250,3 +248,11 @@ though a single wall block, you can could go up to 20 steps through walls. I
 took the same part 1 approach but did a dfs from each point on the path to find
 all the potential paths - and then calculated the gain from each one that ended
 on a spot on the path
+
+### Day 21
+This one is a beast. You pushing buttons to control a robot controlling a robot 
+controlling a robot to push buttons... Definitely feels like I should be able 
+to do it recursively and memo it but no idea how to formulate it. Actually 
+generating even for the sample is out using the naive way...
+
+Going to think about it a bit more and peek hints if I get nowhere
