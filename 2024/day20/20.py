@@ -1,4 +1,5 @@
 from collections import defaultdict
+import heapq
 from common.utils import problem_harness, timeit, read_input
 
 def find(grid, target):
@@ -106,52 +107,56 @@ def part2(filename: str) -> int:
   # all count as one even if you get there a different way - so switching to a
   # set
   cheats = {}
-  for (r, c) in start_to_end:
-    # check - is there a # as a neighbor? if so, try to go one more in that
-    # direction and see if we save distance
-    # now we need a stack - start at r, c and when we find a wall - push
-    # the next step through the wall onto the stack, along with how many steps
-    # we have left to take (19) - then push neighbors onto the stack, tracking
-    # the distance savings like before when we reach a non-wall
-    for nr, nc in get_neighbors(r, c, grid):
-      if grid[nr][nc] != '#':
+  for idx, (r, c) in enumerate(start_to_end):
+    if idx % 100 == 0:
+      print(f"{idx} of {len(start_to_end)}")
+    # walk up to 20 steps in any direction
+    q = [(0, r, c)]
+    visited = set()
+    while q:
+      steps, nr, nc = q.pop(0)
+      if (nr, nc, steps) in visited:
         continue
-      # found a wall - lets walk it up to 19 steps
-      q = [(nr, nc, 19)]
-      visited = set()
-      while q:
-        nnr, nnc, steps = q.pop(0)
-        if (nnr, nnc, steps) in visited:
-          continue
-        visited.add((nnr, nnc, steps))
-      
-        if grid[nnr][nnc] != '#':
-          # we could step and maybe save distance
-          savings = (dist[(r, c)] - dist[(nnr, nnc)]) - (20 - steps)
-          if savings > 0:
-            if ((r, c), (nnr, nnc)) not in cheats:
-              cheats[((r, c), (nnr, nnc))] = savings
-            else:
-              cheats[((r, c), (nnr, nnc))] = max(
-                cheats[((r, c), (nnr, nnc))], savings)
-          continue # don't push neighbors of a non-wall
+      visited.add((nr, nc, steps))
 
-        if grid[nnr][nnc] == '#':
-          # we can step through the wall
-          for row, col in get_neighbors(nnr, nnc, grid):
-            if steps > 0: # can we take another step?
-              q.append((row, col, steps - 1))
+      if grid[nr][nc] != '#':
+        # we could step and maybe save distance
+        abs_distance = abs(r - nr) + abs(c - nc)
+        # distance to end at new spot - distance to end at current spot
+        # but the best possible walk there is abs_distance
+        savings = (dist[(r, c)] - dist[(nr, nc)]) - abs_distance
+        if savings > 0:
+          cheats[((r, c), (nr, nc))] = max(
+            savings,
+            cheats.get(((r, c), (nr, nc)), 0)
+          )
+      # we can step through the wall
+      for row, col in get_neighbors(nr, nc, grid):
+        if steps < 20: # can we take another step?
+          q.append((steps + 1, row, col))
+  
+  # print the grid but with count to end instead of '.'
+  #for r in range(len(grid)):
+  #  for c in range(len(grid[0])):
+  #    if (r, c) == start:
+  #      print(' S', end='')
+  #    elif (r, c) == end:
+  #      print(' E', end='')
+  #    elif grid[r][c] == '#':
+  #      print(' #', end='')
+  #    else:
+  #      # padding for single digit numbers to be the same width as a space
+  #      print(f"{dist[(r, c)]:2}", end='')
+  #  print()
 
-  print(dist[(9,1)], dist[start])
-  print(cheats[(start, (9,1))])
   # count how many cheats we found for each length of savings
   counter = defaultdict(int)
   for (start, end), s in cheats.items():
     counter[s] += 1
   for c in sorted(counter.keys()):
-    if c >= 50:
+    if c >= 100:
       print(c, counter[c])
-  return sum([counter[c] for c in counter if c >= 50])
+  return sum([counter[c] for c in counter if c >= 100])
 
 
 def main():
