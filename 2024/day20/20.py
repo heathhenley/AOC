@@ -1,5 +1,4 @@
 from collections import defaultdict
-import heapq
 from common.utils import problem_harness, timeit, read_input
 
 def find(grid, target):
@@ -16,23 +15,8 @@ def get_neighbors(r, c, grid):
   dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]
   return [(r + dr, c + dc) for dr, dc in dirs if valid(r + dr, c + dc, grid)]
 
-@timeit
-def part1(filename: str) -> int:
-  # a nother maze problem - but this time we can cheat for up to 2 steps in a
-  # row (eg we can walk through the walls)
-  # it's not actually a maze - it's a single path from start to finish
-  # - I think walk the path backwards and compute how far each step is from
-  # - the end
-  # - then walk the path forwards and check which nodes in all directions we can
-  # - reach in 2 steps
-  # - track the biggest 'distance to end' we can save (the difference between
-  #   the current distance to end the the distance to end at the new node)
-  grid = [ [c for c in line.strip()] for line in read_input(filename) ]
-  start = find(grid, 'S')
-  end = find(grid, 'E')
-
+def dist_along_path(grid, start, end):
   dist = defaultdict(lambda: float('inf'))
-  # walk the path starting at end
   dist[end] = 0
   stack = [end]
   visited = set()
@@ -48,14 +32,20 @@ def part1(filename: str) -> int:
         continue
       dist[(nr, nc)] = dist[(r, c)] + 1
       stack.append((nr, nc))
+  return dist
+
+@timeit
+def part1(filename: str) -> int:
+  grid = [ [c for c in line.strip()] for line in read_input(filename) ]
+  start = find(grid, 'S')
+  end = find(grid, 'E')
+  dist = dist_along_path(grid, start, end)
 
   # walk the path starting at start - check which nodes we can reach in 2 steps
   # and how much we save
   start_to_end = list(dist.keys())[::-1]
   cheats = []
   for (r, c) in start_to_end:
-    # check - is there a # as a neighbor? if so, try to go one more in that
-    # direction and see if we save distance
     dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]
     for dr, dc in dirs:
       nr, nc = r + dr, c + dc
@@ -68,7 +58,6 @@ def part1(filename: str) -> int:
       savings = (dist[(r, c)] - dist[(nnr, nnc)]) - 2
       if savings > 0:
         cheats.append((savings, (r, c), (nr, nc), (nnr, nnc))) 
-
   # count how many cheats we found for each length of savings
   counter = defaultdict(int)
   for s, a, b, c in cheats:
@@ -78,34 +67,19 @@ def part1(filename: str) -> int:
 
 @timeit
 def part2(filename: str) -> int:
+  # This is slow, but it works. I looked at other solutions and they just used a
+  # 'circle' around the each point on the path with a radius of 20 (a diamond
+  # kind of I guess) - that's probably faster than a bunch of bfs - there's a
+  # bunch of paths that don't matter
   grid = [ [c for c in line.strip()] for line in read_input(filename) ]
   start = find(grid, 'S')
   end = find(grid, 'E')
-
-  dist = defaultdict(lambda: float('inf'))
-  # walk the path starting at end
-  dist[end] = 0
-  stack = [end]
-  visited = set()
-  while stack:
-    r, c = stack.pop()
-    if (r, c) in visited:
-      continue
-    visited.add((r, c))
-    if (r, c) == start:
-      break
-    for nr, nc in get_neighbors(r, c, grid):
-      if grid[nr][nc] == '#' or (nr, nc) in visited:
-        continue
-      dist[(nr, nc)] = dist[(r, c)] + 1
-      stack.append((nr, nc))
+  dist = dist_along_path(grid, start, end)
 
   # walk the path starting at start - check which nodes we can reach in 20 steps
   # or fewer and how much we save going to each one
   start_to_end = list(dist.keys())[::-1]
   # the same start end point can have multiple cheats, and they
-  # all count as one even if you get there a different way - so switching to a
-  # set
   cheats = {}
   for idx, (r, c) in enumerate(start_to_end):
     if idx % 100 == 0:
@@ -135,20 +109,6 @@ def part2(filename: str) -> int:
         if steps < 20: # can we take another step?
           q.append((steps + 1, row, col))
   
-  # print the grid but with count to end instead of '.'
-  #for r in range(len(grid)):
-  #  for c in range(len(grid[0])):
-  #    if (r, c) == start:
-  #      print(' S', end='')
-  #    elif (r, c) == end:
-  #      print(' E', end='')
-  #    elif grid[r][c] == '#':
-  #      print(' #', end='')
-  #    else:
-  #      # padding for single digit numbers to be the same width as a space
-  #      print(f"{dist[(r, c)]:2}", end='')
-  #  print()
-
   # count how many cheats we found for each length of savings
   counter = defaultdict(int)
   for (start, end), s in cheats.items():
