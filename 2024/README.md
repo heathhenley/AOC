@@ -250,12 +250,21 @@ all the potential paths - and then calculated the gain from each one that ended
 on a spot on the path
 
 ### Day 21
-This one is a beast. You pushing buttons to control a robot controlling a robot 
-controlling a robot to push buttons... Definitely feels like I should be able 
-to do it recursively and memo it but no idea how to formulate it. Actually 
-generating even for the sample is out using the naive way...
+This one is a beast. You're pushing buttons to control a robot controlling a 
+robot controlling a robot to push buttons... Definitely feels like I should be 
+able  to do it recursively and memo it but no idea how to formulate it. 
+Actually generating even for the sample is out using the naive way... (see 
+below it is possible to generate for pt1, I just had an extra robot layer)
 
 Going to think about it a bit more and peek hints if I get nowhere
+
+UPDATE: I was actually on the right track for part 1 but I had put an extra
+robot in there, so I was bumping into pt2 scale problem before even solving pt1.
+In looking for hints, I found that method to generate the paths on the keypad
+was silly, can go back to taking the difference and just make sure to filter
+out ones that cross None. Actually thinking that it could just be hardcoded, eg
+specific shortest ways to get from one key to any other key.
+I know that pt 2 is based on a caching and memoization now for sure, but still don't 100% see how to formulate it into subproblems, tbd
 
 
 ### Day 22

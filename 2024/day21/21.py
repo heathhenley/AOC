@@ -1,6 +1,5 @@
-from collections import defaultdict
 from functools import cache
-import heapq
+from itertools import permutations
 import re
 from common.utils import problem_harness, timeit, read_input
 
@@ -28,6 +27,13 @@ keypads  = [
   ]
 ]
 
+to_dir = {
+  ">": (0, 1),
+  "<": (0, -1),
+  "^": (-1, 0),
+  "v": (1, 0)
+}
+
 @cache
 def move_to_target(
     start: tuple[int, int],
@@ -35,49 +41,32 @@ def move_to_target(
     keypad_idx: int) -> list[str]:
   
   """ Ways to get to a target from start for a given keypad option """
-  r, c = start 
   kp = keypads[keypad_idx]
   tr, tc = find(kp, target)
-  dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-  d = {(0, 1): '>', (0, -1): '<', (1, 0): 'v', (-1, 0): '^'}
-  q = [(0, r, c)]
-  v = set()
-  min_cost = defaultdict(lambda: float('inf'))
-  min_cost[(r, c)] = 0
-  parents = defaultdict(list)
-  while q:
-    cost, r, c = heapq.heappop(q)
-    if (r, c) == (tr, tc):
-      break
-    if cost > min_cost[(r, c)]: # we've already found a better path
-      continue
-    if (r, c) in v:
-      continue
-    v.add((r, c))
-    for dr, dc in dirs:
-      nr, nc = r + dr, c + dc
-      if valid(nr, nc, kp) and kp[nr][nc] is not None:
-        if cost + 1 < min_cost[(nr, nc)]:
-          min_cost[(nr, nc)] = cost + 1
-          parents[(nr, nc)] = [(r, c)]
-        elif cost + 1 == min_cost[(nr, nc)]:
-          parents[(nr, nc)].append((r, c))
-        heapq.heappush(q, (cost + 1, nr, nc))
-  
-  # reconstruct the valid paths
+  r, c = start 
+  dr, dc = tr - r, tc - c
+  moves = ""
+  if dr > 0:
+    moves += "v" * dr
+  elif dr < 0:
+    moves += "^" * abs(dr)
+  if dc > 0:
+    moves += ">" * dc
+  elif dc < 0:
+    moves += "<" * abs(dc)
+
+  any_paths = set(["".join(x) + "A" for x in permutations(moves)])
   paths = []
-  rr, rc = start
-  def dfs(r, c, moves):
-    if (r, c) == (rr, rc):
-      paths.append(moves)
-      return
-    for pr, pc in parents[(r, c)]:
-      if (pr, pc) == (r, c):
-        continue
-      dfs(pr, pc, moves + [d[(r - pr, c - pc)]])
-  dfs(tr, tc, [])
-  for p in paths:
-    p.append('A')
+  # clean out bad paths (if they cross the None spot)
+  for path in any_paths:
+    r, c = start
+    for move in path[:-1]:
+      dr, dc = to_dir[move]
+      r, c = r + dr, c + dc
+      if kp[r][c] is None:
+        break
+    else:
+      paths.append(path)
   return paths, (tr, tc)
 
 @cache
@@ -97,32 +86,30 @@ def all_possible_seqs(
     possible_ways = new_ways.copy() 
   return ["".join(p) for p in possible_ways]
 
-def process_code(code: str) -> int:
-  # robot 1
+def process_code(code: str, levels: int) -> int:
+  # robot 1 - at numeric keypad
   ways = all_possible_seqs(code, (3, 2), 0)
-  # robot 2
-  ways2 = []
-  for way in ways:
-    ways2.extend(all_possible_seqs(way, (0, 2), 1))
-  # me 
-  ways3 = []
-  for way in ways2:
-    ways3.extend(all_possible_seqs(way, (0, 2), 1))
+  # the rest
+  for _ in range(levels - 1):
+    tmp_ways = []
+    for way in ways:
+      tmp_ways.extend(all_possible_seqs(way, (0, 2), 1))
+    ways = tmp_ways.copy()
+  #s = ""
+  #for w in ways:
+  #  if len(w) < len(s) or s == "":
+  #    s = w
+  #print(s)
+  return min([len(w) for w in ways])
 
-  s = ""
-  for w in ways3:
-    if len(w) < len(s) or s == "":
-      s = w
-  print(s)
-  return min([len(w) for w in ways3])
- 
+
 @timeit
 def part1(filename: str) -> int:
   c = 0
   for line in read_input(filename):
     d = int(re.sub(r"[A-Za-z]", "", line))
-    l = process_code(line.strip())
-    print(line, d, l)
+    l = process_code(line.strip(), 3)
+    #print(line, d, l)
     c += d * l
   return c
 
