@@ -256,3 +256,9 @@ to do it recursively and memo it but no idea how to formulate it. Actually
 generating even for the sample is out using the naive way...
 
 Going to think about it a bit more and peek hints if I get nowhere
+
+
+### Day 22
+This was mostly straightforward - compute a number based on some instructions
+for part 1 - for part two cached the sequences as the came up and summed after,
+could definitely be done in fewer passes but going back to work on 21...
