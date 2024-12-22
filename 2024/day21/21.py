@@ -1,6 +1,7 @@
 from collections import defaultdict
 from functools import cache
 import heapq
+import re
 from common.utils import problem_harness, timeit, read_input
 
 def find(keys, target):
@@ -107,14 +108,23 @@ def process_code(code: str) -> int:
   ways3 = []
   for way in ways2:
     ways3.extend(all_possible_seqs(way, (0, 2), 1))
+
+  s = ""
+  for w in ways3:
+    if len(w) < len(s) or s == "":
+      s = w
+  print(s)
   return min([len(w) for w in ways3])
  
 @timeit
 def part1(filename: str) -> int:
+  c = 0
   for line in read_input(filename):
-    print(line)
-    print(process_code(line.strip()))
-  return 0
+    d = int(re.sub(r"[A-Za-z]", "", line))
+    l = process_code(line.strip())
+    print(line, d, l)
+    c += d * l
+  return c
 
 
 @timeit
