@@ -97,27 +97,23 @@ def all_possible_seqs(
   return ["".join(p) for p in possible_ways]
 
 def process_code(code: str) -> int:
-  min_len = float("inf")
   # robot 1
   ways = all_possible_seqs(code, (3, 2), 0)
   # robot 2
   ways2 = []
   for way in ways:
     ways2.extend(all_possible_seqs(way, (0, 2), 1))
-  # robot 3
+  # me 
   ways3 = []
   for way in ways2:
     ways3.extend(all_possible_seqs(way, (0, 2), 1))
-  # me
-  for way in ways3:
-    min_len = min(all_possible_seqs(way, (0, 2), 1), min_len)
-  return min_len
+  return min([len(w) for w in ways3])
  
 @timeit
 def part1(filename: str) -> int:
   for line in read_input(filename):
+    print(line)
     print(process_code(line.strip()))
-    break
   return 0
 
 
