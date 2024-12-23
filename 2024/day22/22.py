@@ -27,7 +27,6 @@ def get_diffs(prices: list) -> list:
 
 @timeit
 def part1(filename: str) -> int:
-  return 0
   seeds = [int(line.strip()) for line in read_input(filename)]
   return sum([generate(s, 2000) for s in seeds])
 

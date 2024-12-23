@@ -34,16 +34,17 @@ to_dir = {
   "v": (1, 0)
 }
 
-@cache
+
 def move_to_target(
-    start: tuple[int, int],
+    start: str,
     target: str,
     keypad_idx: int) -> list[str]:
   
   """ Ways to get to a target from start for a given keypad option """
   kp = keypads[keypad_idx]
   tr, tc = find(kp, target)
-  r, c = start 
+  r, c = find(kp, start)
+  sr, sc = r, c
   dr, dc = tr - r, tc - c
   moves = ""
   if dr > 0:
@@ -59,7 +60,7 @@ def move_to_target(
   paths = []
   # clean out bad paths (if they cross the None spot)
   for path in any_paths:
-    r, c = start
+    r, c = sr, sc
     for move in path[:-1]:
       dr, dc = to_dir[move]
       r, c = r + dr, c + dc
@@ -67,40 +68,32 @@ def move_to_target(
         break
     else:
       paths.append(path)
-  return paths, (tr, tc)
+  return paths
+
 
 @cache
-def all_possible_seqs(
-  code: str, curr: tuple[int, int], keypad_idx: int) -> list[str]:
-  possible_ways = []
-  for c in code:
-    c = c.strip()
-    moves, curr = move_to_target(curr, c, keypad_idx)
-    new_ways = []
-    for m in moves:
-      if possible_ways:
-        for prev in possible_ways:
-          new_ways.append(prev + m)
-      else:
-        new_ways.append(m)
-    possible_ways = new_ways.copy() 
-  return ["".join(p) for p in possible_ways]
+def min_ways(start, target, keypad_idx, depth=0):
+  if depth == 0:
+    return min([len(x) for x in move_to_target(start, target, 1)])
+  ways = move_to_target(start, target, keypad_idx) 
+  min_count = float("inf")
+  for way in ways:
+    count = 0
+    w = "A"
+    for i in range(len(way)):
+      count += min_ways(w, way[i], 1, depth - 1)
+      w = way[i]
+    min_count = min(min_count, count)
+  return min_count
 
-def process_code(code: str, levels: int) -> int:
-  # robot 1 - at numeric keypad
-  ways = all_possible_seqs(code, (3, 2), 0)
-  # the rest
-  for _ in range(levels - 1):
-    tmp_ways = []
-    for way in ways:
-      tmp_ways.extend(all_possible_seqs(way, (0, 2), 1))
-    ways = tmp_ways.copy()
-  #s = ""
-  #for w in ways:
-  #  if len(w) < len(s) or s == "":
-  #    s = w
-  #print(s)
-  return min([len(w) for w in ways])
+
+def process_code(code: str, depth: int) -> int:
+  curr, count = "A", 0
+  for c in code:
+    res = min_ways(curr, c, 0, depth)
+    count += res
+    curr = c
+  return count
 
 
 @timeit
@@ -108,7 +101,7 @@ def part1(filename: str) -> int:
   c = 0
   for line in read_input(filename):
     d = int(re.sub(r"[A-Za-z]", "", line))
-    l = process_code(line.strip(), 3)
+    l = process_code(line.strip(), 2)
     #print(line, d, l)
     c += d * l
   return c
@@ -116,7 +109,12 @@ def part1(filename: str) -> int:
 
 @timeit
 def part2(filename: str) -> int:
-  return 0
+  c = 0
+  for line in read_input(filename):
+    d = int(re.sub(r"[A-Za-z]", "", line))
+    l = process_code(line.strip(), 25)
+    c += d * l
+  return c
 
 
 def main():

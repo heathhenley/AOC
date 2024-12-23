@@ -264,8 +264,11 @@ In looking for hints, I found that method to generate the paths on the keypad
 was silly, can go back to taking the difference and just make sure to filter
 out ones that cross None. Actually thinking that it could just be hardcoded, eg
 specific shortest ways to get from one key to any other key.
-I know that pt 2 is based on a caching and memoization now for sure, but still don't 100% see how to formulate it into subproblems, tbd
+I know that pt 2 is based on a caching and memoization now for sure, but still don't 100% see how to formulate it into subproblems, tbd. 
 
+UPDATE 2: I understand it now, I had to look at youtube and reddit for hints
+otherwise I don't think there was anyway I was getting there. Specifically this
+walkthrough (https://youtu.be/q5I6ZvJmHEo?si=bIkIEbEPYTKAhI63) and this post and comments in that thread (https://www.reddit.com/r/adventofcode/comments/1hja685/2024_day_21_here_are_some_examples_and_hints_for/)
 
 ### Day 22
 This was mostly straightforward - compute a number based on some instructions
