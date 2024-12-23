@@ -274,3 +274,10 @@ walkthrough (https://youtu.be/q5I6ZvJmHEo?si=bIkIEbEPYTKAhI63) and this post and
 This was mostly straightforward - compute a number based on some instructions
 for part 1 - for part two cached the sequences as the came up and summed after,
 could definitely be done in fewer passes but going back to work on 21...
+
+
+### Day 23
+Had to find cycles of length three and the 'complete subgraphs' or 'cliques' in
+a graph. Was a pretty straighforward day, but I learned about "Bron-Kerbosch" so
+that's cool:
+- https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm

@@ -48,7 +48,43 @@ def part1(filename: str) -> int:
 
 @timeit
 def part2(filename: str) -> int:
-  return 0
+  adj = defaultdict(list)
+  for line in read_input(filename):
+    a, b = line.strip().split("-")
+    adj[a].append(b)
+    adj[b].append(a)
+  
+  # looking for the largest "complete subgraph" in the input...
+  # - definitely can do this with networkx... but searching to see if there's
+  #   a simple way to do it manually....
+  def bron_kerbosch(current_clique, potential, visited, clique):
+    # - "Bron kerbosch" algorithm on wiki:
+    #  - https://en.wikipedia.org/wiki/Clique_problem 
+    #  - https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+    if len(potential) == 0 and len(visited) == 0:
+      clique.append(current_clique)
+    for node in potential.copy():
+      neighbors = adj[node]
+      new_clique = current_clique + [node]
+      new_potential = potential.intersection(neighbors)
+      new_visited = visited.intersection(neighbors)
+      # Try adding node to clique
+      bron_kerbosch(new_clique, new_potential, new_visited, clique)
+      potential.remove(node)
+      visited.add(node)
+  
+  current = []
+  available = set(adj.keys())
+  visited = set()
+  clique = []
+  bron_kerbosch(current, available, visited, clique)
+
+  #print('Found cliques: ')
+  #for c in clique:
+  #  print(c)
+  clique.sort(key=lambda x: len(x), reverse=True)
+  c = ",".join(sorted(clique[0]))
+  return c
 
 
 def main():
