@@ -278,6 +278,15 @@ could definitely be done in fewer passes but going back to work on 21...
 
 ### Day 23
 Had to find cycles of length three and the 'complete subgraphs' or 'cliques' in
-a graph. Was a pretty straighforward day, but I learned about "Bron-Kerbosch" so
+a graph. Was a pretty straightforward day, but I learned about "Bron-Kerbosch" so
 that's cool:
 - https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+
+### Day 24
+Part 1 was just like 2015 day 7 - used almost the same code. Currently pretty
+stuck on part 2. We're supposed to have an adder circuit that can add two binary
+numbers (In the x and y registers) and put the result in the z registers - it
+doesn't work but we're given that there are exactly 4 pairs of outputs that need
+to be swapped to make it work. Generating all the possibilities was too slow,
+there are a lot. Currently thinking about "fixing" the least significant bit
+first, and then working up from there? Not sure yet.
