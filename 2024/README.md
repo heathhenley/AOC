@@ -290,3 +290,6 @@ doesn't work but we're given that there are exactly 4 pairs of outputs that need
 to be swapped to make it work. Generating all the possibilities was too slow,
 there are a lot. Currently thinking about "fixing" the least significant bit
 first, and then working up from there? Not sure yet.
+
+UPDATE: checked for each smallest wrong bit, drew out the adder and fixed them
+one by one. I don't have an algorithmic solution for it yet...

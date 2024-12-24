@@ -76,48 +76,37 @@ def part2(filename: str) -> int:
   # count incorrect bits
   print(bin(incorrect).count('1'))
 
-
-  # make a deps dict that maps each val to anything it depends on
-  deps = {}
-  for out in exprs.keys():
-    if isinstance(exprs[out], int):
-      continue
-    a, _, b = exprs[out]
-    if isinstance(a, str):
-      deps[out] = deps.get(out, []) + [a]
-    if isinstance(b, str):
-      deps[out] = deps.get(out, []) + [b]
-
-  dz = {}
-  for k, v in deps.items():
-    print(f"{k}: {v}")
-    if not k.startswith("z"):
-      continue
-    # find all the vals that contribute to this output
-    stack = [k]
-    seen = set()
-    while stack:
-      out = stack.pop()
-      if out in seen:
-        continue
-      seen.add(out)
-      if out in deps:
-        stack += deps[out]
-    dz[k] = [x for x in seen.copy()]
-  
-
-  possible_swaps = []
-  # find the least significant bit that is incorrect
+  # swap - manually inspecting each adder where the output to z is not an XOR
+  exprs["z05"], exprs["frn"] = exprs["frn"], exprs["z05"]
+  exprs["z21"], exprs["gmq"] = exprs["gmq"], exprs["z21"]
+  exprs["z39"], exprs["wtt"] = exprs["wtt"], exprs["z39"]
+  exprs["wnf"], exprs["vtj"] = exprs["vtj"], exprs["wnf"]
+  z = get_z(exprs.copy())
+  print(f"{z:048b}")
+  print(f"{x + y:048b}")
+  # find the bits that are already correct
+  correct = z & (x + y) | (~z & ~(x + y)) & 0xFFFFFFFFFFFF
+  incorrect = ~correct & 0xFFFFFFFFFFFF
+  # count incorrect bits
+  print(bin(incorrect).count('1'))
+  # find which bits are incorrect
   for i in range(48):
     if incorrect & (1 << i):
-      # controlled by the output
-      print("first incorrect bit: ", i)
-      zout = f"z{i:02d}"
-      print(f"zout: {zout}")
-      print(f"dz[zout]: {dz[zout]}")
-      # we can swap up to 2 pairs to see if it fixes the bit
-      break
-  return 0
+      print("bit", i, "is incorrect")
+  # all the assignments to Z should be XORs (they're all output from full
+  # adders)
+  sus_gates = []
+  for out in exprs.keys():
+    if not out.startswith("z"):
+      continue
+    a, op, b = exprs[out]
+    if op != "XOR":
+      sus_gates.append(out)
+  sus_gates.sort()
+  print(sus_gates[:-1]) # z45 is the last carry so it should be an or (it is)
+
+  swapped = ["z05", "z21", "z39", "wnf", "frn", "gmq", "wtt", "vtj"]
+  return ",".join(sorted(swapped))
 
 
 def main():
