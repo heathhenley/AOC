@@ -10,6 +10,7 @@ def get_height(key):
     counts.append(count)
   return counts 
 
+
 @timeit
 def part1(filename: str) -> int:
   keys, locks = [], []
@@ -28,23 +29,10 @@ def part1(filename: str) -> int:
       locks.append(grid)
     else:
       keys.append(grid)
-  
-  print("KEYS:")
-  for key in keys:
-    for k in key:
-      print(k)
-    print(get_height(key))
-    print()
-  print("LOCKS:")
-  for lock in locks:
-    for l in lock:
-      print(l)
-    print(get_height(lock))
-    print()
 
   matches = 0
-  for i, key in enumerate(keys):
-    for j, lock in enumerate(locks):
+  for key in keys:
+    for lock in locks:
       kh = get_height(key)
       lh = get_height(lock)
       if all(k + l <= len(key[0]) for k, l in zip(kh, lh)):

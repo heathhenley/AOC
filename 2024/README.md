@@ -293,3 +293,6 @@ first, and then working up from there? Not sure yet.
 
 UPDATE: checked for each smallest wrong bit, drew out the adder and fixed them
 one by one. I don't have an algorithmic solution for it yet...
+
+### Day 25
+Merry Christmas! 🎄
