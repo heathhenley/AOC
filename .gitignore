@@ -1,4 +1,4 @@
-*input*.txt
+input.txt
 .vscode
 venv
 __pycache__
