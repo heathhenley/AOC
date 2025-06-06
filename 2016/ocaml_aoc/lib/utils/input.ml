@@ -6,9 +6,8 @@ let read_file_to_string filename =
   s
 
 let split_on_newline str =
-  let split = str
-  |> String.split_on_char '\n'
-  |> List.map String.trim
-  |> List.filter (fun x -> String.length x > 0) in
+  let split =
+    str |> String.split_on_char '\n' |> List.map String.trim
+    |> List.filter (fun x -> String.length x > 0)
+  in
   split
-

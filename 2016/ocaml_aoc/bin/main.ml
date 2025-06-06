@@ -1,8 +1,5 @@
 let days : (string * (module Solution.Day)) list =
-  [ ("1", (module Day01))
-  ; ("6", (module Day06))
-  ; ("7", (module Day07))
-  ]
+  [ ("1", (module Day01)); ("6", (module Day06)); ("7", (module Day07)) ]
 
 let run_day day_module filename =
   let module D = (val day_module : Solution.Day) in
