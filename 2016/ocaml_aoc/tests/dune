@@ -2,4 +2,5 @@
  (name test_ocaml_aoc)
  (libraries ocaml_aoc)
  (inline_tests)
- (preprocess (pps ppx_expect)))
+ (preprocess
+  (pps ppx_expect)))
