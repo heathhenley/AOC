@@ -38,7 +38,9 @@ let part1 filename =
   let file_contents = Utils.Input.read_file_to_string filename in
   let lines = Utils.Input.split_on_newline file_contents in
   let x, y, _ =
-    List.hd lines |> String.split_on_char ',' |> List.map String.trim
+    List.hd lines
+    |> String.split_on_char ','
+    |> List.map String.trim
     |> List.map parse_instruction
     |> List.fold_left apply_instruction (0, 0, 'N')
   in
@@ -74,7 +76,9 @@ let part2 filename =
   let file_contents = Utils.Input.read_file_to_string filename in
   let lines = Utils.Input.split_on_newline file_contents in
   let inst =
-    List.hd lines |> String.split_on_char ',' |> List.map String.trim
+    List.hd lines
+    |> String.split_on_char ','
+    |> List.map String.trim
     |> List.map parse_instruction
   in
   let x, y, d = (0, 0, 'N') in

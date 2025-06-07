@@ -1,16 +1,7 @@
 let is_abba str =
   (* some checks *)
   if String.length str < 4 then false
-  else if str.[0] = str.[1] then
-    (* can't be abba if the first two chars are the same *)
-    false
-  else
-    let rec aux i j =
-      if i >= j then true
-      else if str.[i] = str.[j] then aux (i + 1) (j - 1)
-      else false
-    in
-    aux 0 (String.length str - 1)
+  else str.[0] = str.[3] && str.[1] = str.[2] && str.[0] <> str.[1]
 
 let is_line_abba line =
   (* start at zero index, increment and check chunks of 4*)
@@ -42,7 +33,10 @@ let is_aba str =
 let bab_of_aba str =
   [ str.[1]; str.[0]; str.[1] ] |> List.to_seq |> String.of_seq
 
-type bracket_state = In | Out | Both
+type substr_state =
+  | In
+  | Out
+  | Both
 
 let new_state state inside_bracket =
   match state with
@@ -102,7 +96,9 @@ let part1 filename =
   - early return if we have an abba in bracket
   *)
   let count_tls =
-    filename |> Utils.Input.read_file_to_string |> Utils.Input.split_on_newline
+    filename
+    |> Utils.Input.read_file_to_string
+    |> Utils.Input.split_on_newline
     |> List.fold_left (fun acc l -> if is_line_abba l then acc + 1 else acc) 0
   in
   Printf.printf "Part 1: %d\n" count_tls
@@ -117,16 +113,13 @@ let part2 filename =
   - this time, instead of deciding on the fly - and to avoid a double loop
   - use one pass to find all the aba/bab sequences and save if they are in or
     out of brackets
-  - if we find one that is both in and out, we support ssl, else we don't
-  
-  - so we find aba outside
-  - check our 'in bracket' structure for corresponding bab to early stop
-  - if not, add aba to outside structure and continue, etc
-
-  - should it just be one structure - aba: 0 or 1?
+  - track it in a hash table, we can still do it in one pass - just need to
+    track if we've seen the substring in brackets, out of brackets, or both
   *)
   let count_ssl =
-    filename |> Utils.Input.read_file_to_string |> Utils.Input.split_on_newline
+    filename
+    |> Utils.Input.read_file_to_string
+    |> Utils.Input.split_on_newline
     |> List.fold_left (fun acc l -> if is_line_ssl l then acc + 1 else acc) 0
   in
   Printf.printf "Part 2: %d\n" count_ssl
