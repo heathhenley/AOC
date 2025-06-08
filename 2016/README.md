@@ -11,3 +11,6 @@ Python).
 Moved around in the keypad checking that the move was valid - for practice I
 switched my original python soln to be totally functional and then translated it
 to ocaml.
+
+## Days 2-8
+Mostly been straightforward so far but fun to do in Ocaml.
