@@ -13,4 +13,9 @@ switched my original python soln to be totally functional and then translated it
 to ocaml.
 
 ## Days 2-8
-Mostly been straightforward so far but fun to do in Ocaml.
+Mostly been straightforward so far but fun to do in OCaml.
+
+### Day 9: Explosives in Cyberspace
+This was similar to one of the stones problems from 2024 - I gambled on not
+actually making the string for part 1 and just computing the length and that
+helped (part 2 would blow up otherwise but can might be able to be memod)

@@ -5,6 +5,7 @@ let days : (string * (module Solution.Day)) list =
     ("6", (module Day06));
     ("7", (module Day07));
     ("8", (module Day08));
+    ("9", (module Day09));
   ]
 
 let run_day day_module filename =

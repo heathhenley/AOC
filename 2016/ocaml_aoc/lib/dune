@@ -1,4 +1,4 @@
 (library
  (name ocaml_aoc)
- (libraries utils)
+ (libraries utils str)
  (wrapped false))

@@ -110,3 +110,51 @@ let%expect_test "Day 8 - count_pixels" =
   let count = Day08.count_pixels grid in
   print_endline (string_of_int count);
   [%expect {| 8 |}]
+
+let%expect_test "Day 9 - part 1 - expanded_size" =
+  let strs =
+    [
+      "ADVENT";
+      "(1x10)A(1x10)A";
+      "(3x3)XYZ";
+      "A(1x5)BC";
+      "X(8x2)(3x3)ABCY";
+      "AAAA(1x20)B";
+    ]
+  in
+  List.iter
+    (fun str -> Printf.printf "%s: %d\n" str (Day09.expanded_size str))
+    strs;
+  [%expect
+    {|
+    ADVENT: 6
+    (1x10)A(1x10)A: 20
+    (3x3)XYZ: 9
+    A(1x5)BC: 7
+    X(8x2)(3x3)ABCY: 18
+    AAAA(1x20)B: 24
+    |}]
+
+let%expect_test "Day 9 - part 2 - expanded_size_rec" =
+  let strs =
+    [
+      "ADVENT";
+      "(1x10)A(1x10)A";
+      "X(8x2)(3x3)ABCY";
+      "AAAA(1x20)B";
+      "(27x12)(20x12)(13x14)(7x10)(1x12)A";
+      "(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN";
+    ]
+  in
+  List.iter
+    (fun str -> Printf.printf "%s: %d\n" str (Day09.expanded_size_rec str))
+    strs;
+  [%expect
+    {|
+    ADVENT: 6
+    (1x10)A(1x10)A: 20
+    X(8x2)(3x3)ABCY: 20
+    AAAA(1x20)B: 24
+    (27x12)(20x12)(13x14)(7x10)(1x12)A: 241920
+    (25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN: 445
+    |}]
