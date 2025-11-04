@@ -159,9 +159,8 @@ let%expect_test "Day 9 - part 2 - expanded_size_rec" =
     (25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN: 445
     |}]
 
-
 let%expect_test "Day 10 - part 1" =
   Day10.part1_impl (input_files_path ^ "/day10/sample_input.txt") 2 5;
   [%expect {| Part 1: Bot 2 is the one we're looking for |}];
   Day10.part2 (input_files_path ^ "/day10/sample_input.txt");
-  [%expect {| Not implemented |}]
+  [%expect {| Part 2: 30 |}]
