@@ -1,12 +1,5 @@
-(* state looks like:
-   item: floor
-
-   - parse input into state - I'm an idiot - input is only 4 floors and
-     it's text, not a grid - so just going to input it
-   - try all available moves (need an "is valid state" check)
-   - stop when we find one with all on the last floor
+(* Day 11 - 2016 - Radioisotope Thermoelectric Generators
 *)
-
 type t = {
   items : string list array; (* a list of the items on each floor *)
   elevator : int; (* the floor the elevator is on *)
