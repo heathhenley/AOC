@@ -164,3 +164,8 @@ let%expect_test "Day 10 - part 1" =
   [%expect {| Part 1: Bot 2 is the one we're looking for |}];
   Day10.part2 (input_files_path ^ "/day10/sample_input.txt");
   [%expect {| Part 2: 30 |}]
+
+let%expect_test "Day 11 - part 1" =
+  let state = [| [ "HM"; "LM" ]; [ "HG" ]; [ "LG" ]; [] |] in
+  Day11.partn_impl 1 state;
+  [%expect {| Part 1: 11 |}]

@@ -32,3 +32,16 @@ gets updated and we move on. We're doing the same in the recursive solution but
 it's super hard to read and debug and it hurt my head. Maybe I modeled the
 / state / types / problem incorrectly... Might come back to it and switch to an
 iterative solution to compare.
+
+### Day 11: Radioisotope Thermoelectric Generators
+
+I did so many things wrong in this one just because I didn't think it through
+all the way. In the end, I used a DFS with a LOT of trimming to make it work. It
+runs pretty slowly though so I think BFS would be better. Biggest optimization
+(didn't find on my own) was to notice that a lot of states are duplicates just
+with the labels swapped. So switching the "key" function that tracks visited to
+respect that makes it a lot faster.
+
+TBD if I redo with a better approach. Reminder to think though a bit further
+before starting to code - eg I did dump stuff like set up parsing for the
+example steps, when the input was actually text, not a grid, etc.
