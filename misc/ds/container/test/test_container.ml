@@ -23,6 +23,14 @@ let test_const_clear () =
   Container.Const_clear.clear cont;
   assert (Container.Const_clear.get cont 0 = false);
   assert (Container.Const_clear.get cont 1 = false);
-  assert (Container.Const_clear.get cont 2 = false)
+  assert (Container.Const_clear.get cont 2 = false);
+
+  match Container.Const_clear.get cont 10 with
+  | _ -> assert false
+  | exception Invalid_argument _ -> ();
+
+  match Container.Const_clear.set cont 10 true with
+  | _ -> assert false
+  | exception Invalid_argument _ -> ()
 
 let () = test_const_clear ()

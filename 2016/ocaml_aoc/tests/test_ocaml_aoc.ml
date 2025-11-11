@@ -169,3 +169,11 @@ let%expect_test "Day 11 - part 1" =
   let state = [| [ "HM"; "LM" ]; [ "HG" ]; [ "LG" ]; [] |] in
   Day11.partn_impl 1 state;
   [%expect {| Part 1: 11 |}]
+
+let%expect_test "Day 12 - part 1" =
+  Day12.part1 (input_files_path ^ "/day12/sample_input.txt");
+  [%expect {| Part 1: 42 |}]
+
+let%expect_test "Day 12 - part 2" =
+  Day12.part2 (input_files_path ^ "/day12/sample_input.txt");
+  [%expect {| Part 2: 42 |}]
