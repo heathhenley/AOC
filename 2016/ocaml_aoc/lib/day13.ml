@@ -23,51 +23,32 @@ let get_neighbors c (x, y) =
          let nx, ny = (x + dx, y + dy) in
          if is_valid nx ny c then Some (nx, ny) else None)
 
-let bfs start ~get_neighbors ~stop_condition ~init_result ~result_maker =
-  let q = Queue.create () in
-  let v = Hashtbl.create 100 in
-  let res = init_result () in
-  Queue.add (start, 0) q;
-  Hashtbl.add v start ();
-
-  while not (Queue.is_empty q) do
-    let node, dist = Queue.pop q in
-    (* get all neighbors
-       filter invalid
-       enque
-    *)
-    if stop_condition dist node v then res := result_maker node dist v
-    else
-      get_neighbors node
-      |> List.iter (fun n ->
-             if not (Hashtbl.mem v n) then (
-               Queue.add (n, dist + 1) q;
-               Hashtbl.add v n ()))
-  done;
-  !res
-
 let part1_impl number start goal =
   Printf.printf "Start: (%d, %d)\n" (fst start) (snd start);
   Printf.printf "Goal: (%d, %d)\n" (fst goal) (snd goal);
-  Printf.printf "Secrete number: %d\n" number;
+  Printf.printf "Secret number: %d\n" number;
   let res =
-    bfs start
-      ~get_neighbors:(get_neighbors number)
-      ~stop_condition:(fun _ node _ -> node = goal) 
-      ~init_result:(fun () -> ref 0)
-      ~result_maker:(fun _ dist _ -> dist)
+    Utils.Search.bfs start
+      ~neighbors:(get_neighbors number)
+      ~on_visit:(fun node dist -> if node = goal then `Stop dist else `Continue)
   in
-  Printf.printf "Part 1: %d\n" res
+  Printf.printf "Part 1: %d\n" (Option.get res)
 
 let part2_impl number start steps =
+  let visited = ref 0 in 
   let res =
-    bfs start
-      ~get_neighbors:(get_neighbors number)
-      ~stop_condition:(fun dist _ _ -> dist = steps)
-      ~init_result:(fun () -> ref 0)
-      ~result_maker:(fun _ _ v -> Hashtbl.length v)
+    Utils.Search.bfs start
+      ~neighbors:(get_neighbors number)
+      ~on_visit:(
+        fun _ dist ->
+          if dist > steps then `Stop (!visited)
+          else (
+            visited := !visited + 1;
+            `Continue
+          )
+      )
   in
-  Printf.printf "Part 2: %d\n" res
+  Printf.printf "Part 2: %d\n" (Option.get res)
 
 let part1 _ = part1_impl 1362 (1, 1) (31, 39)
 let part2 _ = part2_impl 1362 (1, 1) 50
