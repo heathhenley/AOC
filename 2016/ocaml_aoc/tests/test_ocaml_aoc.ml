@@ -177,3 +177,28 @@ let%expect_test "Day 12 - part 1" =
 let%expect_test "Day 12 - part 2" =
   Day12.part2 (input_files_path ^ "/day12/sample_input.txt");
   [%expect {| Part 2: 42 |}]
+
+let%expect_test "Day 13 - shift" =
+  Printf.printf "1 has %d set bits" (Day13.num_set_bits 0 1);
+  [%expect {| 1 has 1 set bits |}];
+  Printf.printf "2 has %d set bits" (Day13.num_set_bits 0 2);
+  [%expect {| 2 has 1 set bits |}];
+  Printf.printf "3 has %d set bits" (Day13.num_set_bits 0 3);
+  [%expect {| 3 has 2 set bits |}];
+  Printf.printf "5 has %d set bits" (Day13.num_set_bits 0 5);
+  [%expect {| 5 has 2 set bits |}];
+  Printf.printf "413 has %d set bits" (Day13.num_set_bits 0 413);
+  [%expect {| 413 has 6 set bits |}];
+  Printf.printf "2^63 - 1 has %d set bits" (Day13.num_set_bits 0 max_int);
+  [%expect {| 2^63 - 1 has 62 set bits |}];
+  Day13.part1_impl 10 (1, 1) (7, 4);
+  [%expect {|
+    Start: (1, 1)
+    Goal: (7, 4)
+    Secrete number: 10
+    Part 1: 11
+    |}]
+
+let%expect_test "Day 13 - part 2" =
+  Day13.part2_impl 10 (1, 1) 50;
+  [%expect {| Part 2: 151 |}]
