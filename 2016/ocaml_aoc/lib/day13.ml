@@ -39,10 +39,10 @@ let bfs start ~get_neighbors ~stop_condition ~init_result ~result_maker =
     if stop_condition dist node v then res := result_maker node dist v
     else
       get_neighbors node
-      |> List.iter (fun (nx, ny) ->
-             if not (Hashtbl.mem v (nx, ny)) then (
-               Queue.add ((nx, ny), dist + 1) q;
-               Hashtbl.add v (nx, ny) ()))
+      |> List.iter (fun n ->
+             if not (Hashtbl.mem v n) then (
+               Queue.add (n, dist + 1) q;
+               Hashtbl.add v n ()))
   done;
   !res
 
