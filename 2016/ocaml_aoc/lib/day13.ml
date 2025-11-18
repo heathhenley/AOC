@@ -10,11 +10,8 @@ let rec num_set_bits acc num =
   if num <= 0 then acc else num_set_bits (acc + (num land 1)) (num asr 1)
 
 let is_odd x = x mod 2 = 1
-
 let f x y c = (x * x) + (3 * x) + (2 * x * y) + y + (y * y) + c
-
 let is_wall x y c = f x y c |> num_set_bits 0 |> is_odd
-
 let is_valid x y c = x >= 0 && y >= 0 && not (is_wall x y c)
 
 let get_neighbors c (x, y) =
@@ -28,25 +25,20 @@ let part1_impl number start goal =
   Printf.printf "Goal: (%d, %d)\n" (fst goal) (snd goal);
   Printf.printf "Secret number: %d\n" number;
   let res =
-    Utils.Search.bfs start
-      ~neighbors:(get_neighbors number)
+    Utils.Search.bfs start ~neighbors:(get_neighbors number)
       ~on_visit:(fun node dist -> if node = goal then `Stop dist else `Continue)
   in
   Printf.printf "Part 1: %d\n" (Option.get res)
 
 let part2_impl number start steps =
-  let visited = ref 0 in 
+  let visited = ref 0 in
   let res =
-    Utils.Search.bfs start
-      ~neighbors:(get_neighbors number)
-      ~on_visit:(
-        fun _ dist ->
-          if dist > steps then `Stop (!visited)
-          else (
-            visited := !visited + 1;
-            `Continue
-          )
-      )
+    Utils.Search.bfs start ~neighbors:(get_neighbors number)
+      ~on_visit:(fun _ dist ->
+        if dist > steps then `Stop !visited
+        else (
+          visited := !visited + 1;
+          `Continue))
   in
   Printf.printf "Part 2: %d\n" (Option.get res)
 

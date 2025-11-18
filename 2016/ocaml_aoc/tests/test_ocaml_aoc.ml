@@ -192,7 +192,8 @@ let%expect_test "Day 13 - shift" =
   Printf.printf "2^63 - 1 has %d set bits" (Day13.num_set_bits 0 max_int);
   [%expect {| 2^63 - 1 has 62 set bits |}];
   Day13.part1_impl 10 (1, 1) (7, 4);
-  [%expect {|
+  [%expect
+    {|
     Start: (1, 1)
     Goal: (7, 4)
     Secrete number: 10
