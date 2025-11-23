@@ -13,11 +13,8 @@ let combinations lst n =
   in
   aux [] 0 []
 
-let rec gcd a b =
-  if b = 0 then a
-  else gcd b (a mod b)
-
-let lcm a b = (a * b) / (gcd a b)
+let rec gcd a b = if b = 0 then a else gcd b (a mod b)
+let lcm a b = a * b / gcd a b
 
 let rec lcm_list lst =
   match lst with
