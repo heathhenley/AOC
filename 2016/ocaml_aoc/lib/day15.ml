@@ -74,9 +74,8 @@ let part2 filename =
   |> Utils.Input.split_on_newline
   |> List.map (fun x -> x |> String.split_on_char '.' |> fun l -> List.nth l 0)
   |> List.map disk_of_line
-  |> (fun (* add a new disk with 11 positions that starts at 0 *)
-            ds
-     ->
+  (* add a new disk with 11 positions that starts at 0 *)
+  |> (fun ds ->
   ds @ [ { disk_num = List.length ds + 1; start = 0; num_positions = 11 } ])
   |> solve_optimized
   |> Printf.printf "Part 2: %d\n"
