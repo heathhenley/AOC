@@ -196,10 +196,17 @@ let%expect_test "Day 13 - shift" =
     {|
     Start: (1, 1)
     Goal: (7, 4)
-    Secrete number: 10
+    Secret number: 10
     Part 1: 11
     |}]
 
 let%expect_test "Day 13 - part 2" =
   Day13.part2_impl 10 (1, 1) 50;
   [%expect {| Part 2: 151 |}]
+
+
+let%expect_test "Day 15 - part 1" =
+  Day15.part1 (input_files_path ^ "/day15/sample_input.txt");
+  [%expect {| Part 1: 5 |}];
+  Day15.part2 (input_files_path ^ "/day15/sample_input.txt");
+  [%expect {| Part 2: 85 |}]
