@@ -22,7 +22,7 @@ let disk_pos_at t_start disk =
   (* where is the disk when we get there if we start at t_start? *)
   (t_start + disk.start + disk.disk_num) mod disk.num_positions
 
-(*let solve_naive disks =
+let solve_naive disks =
   (* naive solution - just increment by 1 and check *)
   let rec solve' t_start disks =
     if List.for_all (fun d -> disk_pos_at t_start d = 0) disks then
@@ -31,7 +31,7 @@ let disk_pos_at t_start disk =
       solve' (t_start + 1) disks
   in
   solve' 0 disks
-*)
+
 
 let solve_optimized disks =
   let rec solve' t_start disks =

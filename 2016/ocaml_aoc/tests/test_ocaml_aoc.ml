@@ -209,3 +209,8 @@ let%expect_test "Day 15 - part 1" =
   [%expect {| Part 1: 5 |}];
   Day15.part2 (input_files_path ^ "/day15/sample_input.txt");
   [%expect {| Part 2: 85 |}]
+
+
+let%expect_test "Day 16 - part 1" =
+  Day16.part1_impl 20 "10000";
+  [%expect {| Part 1: 01100 |}]
