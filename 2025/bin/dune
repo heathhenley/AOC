@@ -2,4 +2,5 @@
  (public_name aoc)
  (name main)
  (libraries aoc)
- (link_flags (:standard -linkall)))
+ (link_flags
+  (:standard -linkall)))

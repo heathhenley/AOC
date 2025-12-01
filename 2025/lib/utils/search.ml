@@ -17,9 +17,9 @@ let bfs ?(size = 10) ?(key = fun x -> x) start ~neighbors ~on_visit =
       | `Continue ->
           neighbors node
           |> List.iter (fun neighbor ->
-                 if not (Hashtbl.mem visited (key neighbor)) then (
-                   Queue.add (neighbor, dist + 1) queue;
-                   Hashtbl.add visited (key neighbor) ()));
+              if not (Hashtbl.mem visited (key neighbor)) then (
+                Queue.add (neighbor, dist + 1) queue;
+                Hashtbl.add visited (key neighbor) ()));
           bfs' ()
   in
   bfs' ()
