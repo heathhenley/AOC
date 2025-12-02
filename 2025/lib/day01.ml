@@ -1,4 +1,4 @@
-module Day01 : Solution.Day = struct
+module Day01_impl = struct
   let dial_size = 100
 
   let instruction_of_line line =
@@ -55,6 +55,8 @@ module Day01 : Solution.Day = struct
     |> Printf.printf "Part 2: %d\n"
 end
 
-include Day01
+module Day01 : Solution.Day = Day01_impl
+
+include Day01_impl
 
 let () = Days.register "1" (module Day01)
