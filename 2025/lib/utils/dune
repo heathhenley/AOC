@@ -1,3 +1,3 @@
 (library
  (name utils)
- (modules timing input iter search memo))
+ (modules timing input iter search memo math))
