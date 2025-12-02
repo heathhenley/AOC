@@ -56,7 +56,6 @@ module Day01_impl = struct
 end
 
 module Day01 : Solution.Day = Day01_impl
-
 include Day01_impl
 
 let () = Days.register "1" (module Day01)
