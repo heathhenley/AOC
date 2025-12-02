@@ -11,8 +11,7 @@ module Day02_impl : Solution.Day = struct
 
   let parse s = String.split_on_char '-' s |> List.map int_of_string
 
-  let part1 filename =
-    let checker = is_valid (Str.regexp {|^\(.+\)\1$|}) in
+  let solve filename checker =
     filename
     |> Utils.Input.read_file_to_string
     |> String.split_on_char ','
@@ -22,23 +21,21 @@ module Day02_impl : Solution.Day = struct
            let invalid = check_range (List.hd x) (List.nth x 1) checker in
            acc + List.fold_left (fun acc2 y -> acc2 + y) 0 invalid)
          0
+
+  let part1 filename =
+    let checker = is_valid (Str.regexp {|^\(.+\)\1$|}) in
+    solve filename checker
     |> Printf.printf "Part 1: %d\n"
 
   let part2 filename =
     let checker = is_valid (Str.regexp {|^\(.+\)\1+$|}) in
-    filename
-    |> Utils.Input.read_file_to_string
-    |> String.split_on_char ','
-    |> List.map parse
-    |> List.fold_left
-         (fun acc x ->
-           let invalid = check_range (List.hd x) (List.nth x 1) checker in
-           acc + List.fold_left (fun acc2 y -> acc2 + y) 0 invalid)
-         0
+    solve filename checker
     |> Printf.printf "Part 2: %d\n"
+
 end
 
 module Day02 : Solution.Day = Day02_impl
+
 include Day02_impl
 
 let () = Days.register "2" (module Day02)
