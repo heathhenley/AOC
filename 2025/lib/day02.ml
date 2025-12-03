@@ -19,7 +19,7 @@ module Day02_impl = struct
     |> List.fold_left
          (fun acc x ->
            let invalid = check_range (List.hd x) (List.nth x 1) valid in
-           acc + List.fold_left (fun acc2 y -> acc2 + y) 0 invalid)
+           acc + List.fold_left (+) 0 invalid)
          0
 
   let halves n =
@@ -29,10 +29,12 @@ module Day02_impl = struct
 
   let part1 filename =
     let valid n =
-      if Utils.Math.digit_count n mod 2 <> 0 then true
+      let nd = Utils.Math.digit_count n in
+      if nd mod 2 <> 0 then true
       else
-        let top, bottom = halves n in
-        top <> bottom
+        let period = nd / 2 in
+        let pattern = int_of_float (1. +. 10. ** (float_of_int period)) in
+        n mod pattern <> 0
     in
     solve filename valid |> Printf.printf "Part 1: %d\n"
 
