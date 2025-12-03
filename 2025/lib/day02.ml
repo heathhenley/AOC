@@ -22,11 +22,6 @@ module Day02_impl = struct
            acc + List.fold_left (+) 0 invalid)
          0
 
-  let halves n =
-    let nd = Utils.Math.digit_count n in
-    let half = nd / 2 in
-    (Utils.Math.get_subnumber n 0 half, Utils.Math.get_subnumber n half half)
-
   let part1 filename =
     let valid n =
       let nd = Utils.Math.digit_count n in
@@ -39,7 +34,27 @@ module Day02_impl = struct
     solve filename valid |> Printf.printf "Part 1: %d\n"
 
   let part2 filename =
-    let valid = is_valid_re (Str.regexp {|^\(.+\)\1+$|}) in
+    let valid n =
+      let nd = Utils.Math.digit_count n in
+      let half = nd / 2 in
+      (* now we need to try more periods / repeats - test numbers up to half *)
+      let rec aux period =
+        if period > half then true
+        else if nd mod period <> 0 then aux (period + 1)
+        else (* found a valid period *)
+          let repeats = nd / period in
+          (* need to make the pattern like
+          p = 10^(0*period) + 10^(1*period) + 10^(2*period) + ... + 10^((repeats-1)*period) *)
+          let pattern = List.fold_left (
+            fun acc k -> 
+              int_of_float (10. ** (float_of_int (k * period))) + acc
+            ) 0 (Utils.Iter.range 0 repeats)
+            in
+          (* check if any patterns divide n evenly *)
+          if n mod pattern <> 0 then aux (period + 1) else false
+        in
+        aux 1
+    in
     solve filename valid |> Printf.printf "Part 2: %d\n"
 end
 

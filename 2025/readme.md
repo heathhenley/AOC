@@ -1,7 +1,7 @@
 # Advent of Code 2025
 ## using OCaml ( and maybe other languages )
 
-## Day 1
+### Day 1
 Nice start to the year! Straightforward and fun to do in OCaml - had some silly
 mistakes with the counting logic for part 2 to sort out.
 
@@ -42,3 +42,9 @@ so for a 6 digit number we need to check:
 - 3 segments of 2: p = 1 + 10^2 + 10^4 = 10101 --> 101010, 202020, 303030, etc.
 - 6 segments of 1: p = 1 + 10 + 10^2 + 10^3 + 10^4 + 10^5 = 111111 --> 111111, 222222, 333333, etc.
 
+EDIT2: after all that debugging - the math version (at least my impl) is still
+slower than the regex version 🤷‍♂️ - for part 2 it's roughly 1.5 the runtime.
+It's about 5x faster for part 1 though. At least I guess I learned a cool trick.
+
+### Day 3:
+TODO - tired!

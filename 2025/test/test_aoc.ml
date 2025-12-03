@@ -35,4 +35,10 @@ let%expect_test "Day 2" =
   Day02.part1 (input_files_path ^ "/day2/sample.txt");
   [%expect {| Part 1: 1227775554 |}];
   Day02.part2 (input_files_path ^ "/day2/sample.txt");
-  [%expect {| Part 2: 6 |}]
+  [%expect {| Part 2: 4174379265 |}]
+
+let%expect_test "Day 3" =
+  Day03.part1 (input_files_path ^ "/day3/sample.txt");
+  [%expect {| Part 1: 357 |}];
+  Day03.part2 (input_files_path ^ "/day3/sample.txt");
+  [%expect {| Part 2: 3121910778619 |}]
