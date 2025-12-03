@@ -20,3 +20,6 @@ let rec lcm_list lst =
   match lst with
   | [] -> 1
   | h :: t -> lcm h (lcm_list t)
+
+let range start stop =
+  List.init (stop - start) (fun i -> start + i)

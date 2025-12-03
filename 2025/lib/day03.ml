@@ -50,31 +50,20 @@ module Day03_impl = struct
     in
     aux "" 0
 
+  let solve filename n =
+    filename
+    |> Utils.Input.read_file_to_string
+    |> Utils.Input.split_on_newline
+    |> List.map split_to_ints
+    |> List.fold_left (
+      fun acc row -> (acc + find_best_combo row n)
+    ) 0 
+
   let part1 filename =
-    let file_contents = Utils.Input.read_file_to_string filename in
-    let lines = Utils.Input.split_on_newline file_contents in
-    let numbers = List.map split_to_ints lines in
-    let res = List.fold_left (
-      fun acc row ->
-        let combos = Utils.Iter.combinations row 2 in
-        let max_combo = List.fold_left (
-          fun acc combo ->
-            let x = List.nth combo 0 in
-            let y = List.nth combo 1 in
-            max acc (int_of_string (string_of_int x ^ string_of_int y))
-        ) 0 combos in
-        acc + max_combo
-      ) 0 numbers in
-    Printf.printf "Part 1: %d\n" res
+    solve filename 2 |> Printf.printf "Part 1: %d\n"
 
   let part2 filename =
-    let file_contents = Utils.Input.read_file_to_string filename in
-    let lines = Utils.Input.split_on_newline file_contents in
-    let numbers = List.map split_to_ints lines in
-    let res = List.fold_left (
-      fun acc row -> (acc + find_best_combo row 12)
-    ) 0 numbers in
-    Printf.printf "Part 2: %d\n" res
+    solve filename 12 |> Printf.printf "Part 2: %d\n"
 
 end
 
