@@ -3,11 +3,6 @@ module Day03_impl = struct
   let split_to_ints s =
     String.to_seq s |> List.of_seq |> List.map ( fun c -> int_of_char c - int_of_char '0')
 
-  let print_numbers numbers =
-    Array.iteri (
-      fun i n -> Printf.printf "%d: %s\n" i (String.concat " " (List.map string_of_int n))
-    ) numbers
-
   let find_best_combo row n =
     (* need to take n numbers from the row, in order, and concat them
       to form the largest number possible - too big to brute force, so we need to pick smarter

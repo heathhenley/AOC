@@ -46,5 +46,14 @@ EDIT2: after all that debugging - the math version (at least my impl) is still
 slower than the regex version 🤷‍♂️ - for part 2 it's roughly 1.5 the runtime.
 It's about 5x faster for part 1 though. At least I guess I learned a cool trick.
 
+EDIT3: Just realized that the approach above lets you not check each number -
+duh! Need to rearrange but then it can get just produce the multiple of the
+pattern that are within the range instead of checking.
+
+Another update: implemented based on that reddit solution and it's super fast!
+
 ### Day 3:
-TODO - tired!
+Originally brute forced part 1, used greedy approach for part 2 - it always
+the largest digit that will leave enough digits left to take to create the
+number. I had the solution approach pretty early but I've been bumping against
+my Ocaml-incompetence lol.
