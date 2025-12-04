@@ -21,5 +21,4 @@ let rec lcm_list lst =
   | [] -> 1
   | h :: t -> lcm h (lcm_list t)
 
-let range start stop =
-  List.init (stop - start) (fun i -> start + i)
+let range start stop = List.init (stop - start) (fun i -> start + i)

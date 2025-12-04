@@ -1,7 +1,8 @@
 module Day03_impl = struct
-
   let split_to_ints s =
-    String.to_seq s |> List.of_seq |> List.map ( fun c -> int_of_char c - int_of_char '0')
+    String.to_seq s
+    |> List.of_seq
+    |> List.map (fun c -> int_of_char c - int_of_char '0')
 
   let find_best_combo row n =
     (* need to take n numbers from the row, in order, and concat them
@@ -9,10 +10,8 @@ module Day03_impl = struct
     *)
     let rec aux acc i =
       let nd = String.length acc in
-      if nd = n then
-        int_of_string acc
-      else if i >= List.length row then
-        0
+      if nd = n then int_of_string acc
+      else if i >= List.length row then 0
       else
         (* how many digits are left to take? *)
         let digits_left = n - nd in
@@ -23,24 +22,20 @@ module Day03_impl = struct
           row
           |> List.mapi (fun idx digit -> (idx, digit))
           |> List.fold_left
-            (fun best (idx, digit) ->
-              match best with
-              | None ->
-                  if idx >= start_idx && idx <= end_idx then
-                    Some (idx, digit)
-                  else
-                    None
-              | Some (best_idx, best_digit) ->
-                  if idx >= start_idx && idx <= end_idx && digit > best_digit then
-                    Some (idx, digit)
-                  else
-                    Some (best_idx, best_digit)
-            )
-            None
+               (fun best (idx, digit) ->
+                 match best with
+                 | None ->
+                     if idx >= start_idx && idx <= end_idx then Some (idx, digit)
+                     else None
+                 | Some (best_idx, best_digit) ->
+                     if idx >= start_idx && idx <= end_idx && digit > best_digit
+                     then Some (idx, digit)
+                     else Some (best_idx, best_digit))
+               None
           |> Option.get
         in
         (* it's backwards so switch *)
-        let new_acc = acc ^ (string_of_int max_digit) in
+        let new_acc = acc ^ string_of_int max_digit in
         aux new_acc (max_idx + 1)
     in
     aux "" 0
@@ -50,16 +45,10 @@ module Day03_impl = struct
     |> Utils.Input.read_file_to_string
     |> Utils.Input.split_on_newline
     |> List.map split_to_ints
-    |> List.fold_left (
-      fun acc row -> (acc + find_best_combo row n)
-    ) 0 
+    |> List.fold_left (fun acc row -> acc + find_best_combo row n) 0
 
-  let part1 filename =
-    solve filename 2 |> Printf.printf "Part 1: %d\n"
-
-  let part2 filename =
-    solve filename 12 |> Printf.printf "Part 2: %d\n"
-
+  let part1 filename = solve filename 2 |> Printf.printf "Part 1: %d\n"
+  let part2 filename = solve filename 12 |> Printf.printf "Part 2: %d\n"
 end
 
 module Day03 : Solution.Day = Day03_impl

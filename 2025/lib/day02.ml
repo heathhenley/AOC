@@ -12,20 +12,21 @@ module Day02_impl = struct
 
   let get_invalid pattern period start stop =
     (* make all the multiples of the pattern that are within the range inc.*)
-    let d_start = if start mod pattern = 0 then (start / pattern) else ((start / pattern) + 1) in
+    let d_start =
+      if start mod pattern = 0 then start / pattern else (start / pattern) + 1
+    in
     let d_min = if period = 0 then 0 else Utils.Math.pow10 (period - 1) in
     let d_min = max d_min d_start in
-    let d_max = (Utils.Math.pow10 period) - 1 in
+    let d_max = Utils.Math.pow10 period - 1 in
     let d_max = min d_max (stop / pattern) in
     if d_min > d_max then []
     else
       let rec aux acc d =
-        if d > d_max then acc
-        else aux ((d * pattern):: acc) (d + 1)
+        if d > d_max then acc else aux ((d * pattern) :: acc) (d + 1)
       in
-    let res = aux [] d_min in
-    res
-  
+      let res = aux [] d_min in
+      res
+
   let generate_valid_periods part stop =
     let nd = Utils.Math.digit_count stop in
     let half_nd = nd / 2 in
@@ -41,8 +42,7 @@ module Day02_impl = struct
     let build_pattern period repeats =
       let pow = Utils.Math.pow10 period in
       let rec aux acc remaining =
-        if remaining <= 1 then acc
-        else aux ((acc * pow) + 1) (remaining - 1)
+        if remaining <= 1 then acc else aux ((acc * pow) + 1) (remaining - 1)
       in
       aux 1 repeats
     in
@@ -56,17 +56,16 @@ module Day02_impl = struct
     | 1 ->
         List.fold_left
           (fun acc period ->
-             if period <= 0 then acc
-             else (build_pattern period 2, period) :: acc)
+            if period <= 0 then acc else (build_pattern period 2, period) :: acc)
           [] periods
     | 2 ->
         List.fold_left
           (fun acc period ->
-             if period <= 0 then acc
-             else
-               let repeat_max = nd / period in
-               if repeat_max < 2 then acc
-               else collect_repeats period repeat_max 2 acc)
+            if period <= 0 then acc
+            else
+              let repeat_max = nd / period in
+              if repeat_max < 2 then acc
+              else collect_repeats period repeat_max 2 acc)
           [] periods
     | _ -> failwith "invalid part"
 
@@ -75,7 +74,7 @@ module Day02_impl = struct
     let invalid_ids =
       List.fold_left
         (fun acc (pattern, period) ->
-          (get_invalid pattern period start stop) @ acc)
+          get_invalid pattern period start stop @ acc)
         [] patterns
       |> List.sort_uniq compare
     in
@@ -87,15 +86,13 @@ module Day02_impl = struct
     |> String.split_on_char ','
     |> List.map parse
     |> List.fold_left
-         (fun acc x -> (check_range part (List.hd x) (List.nth x 1)) @ acc) []
+         (fun acc x -> check_range part (List.hd x) (List.nth x 1) @ acc)
+         []
     |> List.sort_uniq compare
-    |> List.fold_left (+) 0
+    |> List.fold_left ( + ) 0
 
-  let part1 filename =
-    solve 1 filename |> Printf.printf "Part 1: %d\n"
-
-  let part2 filename =
-    solve 2 filename |> Printf.printf "Part 2: %d\n"
+  let part1 filename = solve 1 filename |> Printf.printf "Part 1: %d\n"
+  let part2 filename = solve 2 filename |> Printf.printf "Part 2: %d\n"
 end
 
 module Day02 : Solution.Day = Day02_impl

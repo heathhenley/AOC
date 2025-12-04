@@ -5,7 +5,10 @@ let run_day day_module filename =
 
 let run day_str filename =
   Printf.printf
-  "**************************************\n******** 2025 - Day %s ****************\n**************************************\n" day_str;
+    "**************************************\n\
+     ******** 2025 - Day %s ****************\n\
+     **************************************\n"
+    day_str;
   match Days.find day_str with
   | Some day_module -> run_day day_module filename
   | None -> Printf.printf "Day %s not implemented yet\n" day_str
