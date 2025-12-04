@@ -57,3 +57,7 @@ Originally brute forced part 1, used greedy approach for part 2 - it always
 the largest digit that will leave enough digits left to take to create the
 number. I had the solution approach pretty early but I've been bumping against
 my Ocaml-incompetence lol.
+
+### Day 4
+Very straightforward grid problem - probably a bit of foreshadowing for what is
+to come... At least I'll have some grid parsing / walking down for the those.
