@@ -52,25 +52,20 @@ module Day05_impl = struct
       filename
       |> Utils.Input.read_file_to_string
       |> Utils.Input.split_on_newline
+      |> List.filter (fun line -> line <> "")
       |> List.map (Utils.Input.try_parse parsers)
     in
     let ranges =
       parsed
-      |> List.filter (function
-        | Range _ -> true
-        | _ -> false)
-      |> List.map (function
-        | Range x -> x
-        | _ -> failwith "Expected range")
+      |> List.filter_map (function
+        | Range x -> Some x
+        | _ -> None)
     in
     let available =
       parsed
-      |> List.filter (function
-        | Ingredient _ -> true
-        | _ -> false)
-      |> List.map (function
-        | Ingredient x -> x
-        | _ -> failwith "Expected ingredient")
+      |> List.filter_map (function
+        | Ingredient x -> Some x
+        | _ -> None)
     in
     let fresh_ingredients =
       available |> List.filter (fun ingredient -> is_fresh ingredient ranges)
@@ -82,16 +77,14 @@ module Day05_impl = struct
       filename
       |> Utils.Input.read_file_to_string
       |> Utils.Input.split_on_newline
+      |> List.filter (fun line -> line <> "")
       |> List.map (Utils.Input.try_parse parsers)
     in
     let res =
       parsed
-      |> List.filter (function
-        | Range _ -> true
-        | _ -> false)
-      |> List.map (function
-        | Range x -> x
-        | _ -> failwith "Expected range")
+      |> List.filter_map (function
+        | Range x -> Some x
+        | _ -> None)
       |> merge_ranges
       (*|> List.iter (
       fun range -> Printf.printf "Range: %d-%d\n" range.start range.stop

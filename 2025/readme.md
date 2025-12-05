@@ -61,3 +61,8 @@ my Ocaml-incompetence lol.
 ### Day 4
 Very straightforward grid problem - probably a bit of foreshadowing for what is
 to come... At least I'll have some grid parsing / walking down for the those.
+
+### Day 5
+This was a cool one - merging ranges, just did part 1 brute force but for part 2
+had to merge the ranges together. Really similar to a problem for last year or
+2023 I think, so I recognized what to do right away.
