@@ -38,7 +38,7 @@ module Day05_impl = struct
     in
     aux [] sorted
 
-  let part1 filename =
+  let handle_input filename =
     let parsed =
       filename
       |> Utils.Input.read_file_to_string
@@ -46,42 +46,28 @@ module Day05_impl = struct
       |> List.filter (fun line -> line <> "")
       |> List.map (Utils.Input.try_parse parsers)
     in
-    let ranges =
-      parsed
+    ( parsed
       |> List.filter_map (function
         | Range x -> Some x
-        | _ -> None)
-    in
-    let available =
+        | _ -> None),
       parsed
       |> List.filter_map (function
         | Ingredient x -> Some x
-        | _ -> None)
-    in
-    let fresh_ingredients =
-      available |> List.filter (fun ingredient -> is_fresh ingredient ranges)
-    in
-    Printf.printf "Part 1: %d\n" (List.length fresh_ingredients)
+        | _ -> None) )
+
+  let part1 filename =
+    let ranges, available = handle_input filename in
+    available
+    |> List.filter (fun ingredient -> is_fresh ingredient ranges)
+    |> List.length
+    |> Printf.printf "Part 1: %d\n"
 
   let part2 filename =
-    let parsed =
-      filename
-      |> Utils.Input.read_file_to_string
-      |> Utils.Input.split_on_newline
-      |> List.filter (fun line -> line <> "")
-      |> List.map (Utils.Input.try_parse parsers)
-    in
-    let res =
-      parsed
-      |> List.filter_map (function
-        | Range x -> Some x
-        | _ -> None)
-      |> merge_ranges
-      |> List.fold_left
-           (fun acc range -> acc + (range.stop - range.start + 1))
-           0
-    in
-    Printf.printf "Part 2: %d\n" res
+    handle_input filename
+    |> fst
+    |> merge_ranges
+    |> List.fold_left (fun acc range -> acc + (range.stop - range.start + 1)) 0
+    |> Printf.printf "Part 2: %d\n"
 end
 
 module Day05 : Solution.Day = Day05_impl
