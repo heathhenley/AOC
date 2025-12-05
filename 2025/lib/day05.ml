@@ -23,16 +23,7 @@ module Day05_impl = struct
       ranges
 
   let merge_ranges ranges =
-    (* we need to merge overlapping ranges int minimal set of ranges so we
-     figure out how many ingredients they all cover
-     - sort ranges by start
-     - if end of current is greater than end of next, merge (start_current, end_next) --> (this is actually covered the max below)
-     - if end of current is greater than start of next, merge them with
-      (start_current, max(end_current, end_next))
-    - if end of current is less than start of next, add current to result - they cannot be merged
-     *)
     let sorted = List.sort (fun a b -> compare a.start b.start) ranges in
-
     let rec aux acc remaining =
       match remaining with
       | [] -> List.rev acc
@@ -86,9 +77,6 @@ module Day05_impl = struct
         | Range x -> Some x
         | _ -> None)
       |> merge_ranges
-      (*|> List.iter (
-      fun range -> Printf.printf "Range: %d-%d\n" range.start range.stop
-    )*)
       |> List.fold_left
            (fun acc range -> acc + (range.stop - range.start + 1))
            0
