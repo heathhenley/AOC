@@ -66,3 +66,13 @@ to come... At least I'll have some grid parsing / walking down for the those.
 This was a cool one - merging ranges, just did part 1 brute force but for part 2
 had to merge the ranges together. Really similar to a problem for last year or
 2023 I think, so I recognized what to do right away.
+
+### Day 6
+Really interesting part 2 of this one, I had to stop thinking about the input
+as a bunch of rows of numbers when to parsing chars down the the columns
+instead. I'm really struggling with the string manip stuff in ocaml, this was
+one where I was feeling to the pull to switch to python and just bang it out..
+but managed to push through it. Not tricky algorithm or anything though, just
+reads down the nth column of each line, pushes the non ' ' chars to a string,
+and then converts to an int. Anytime all the columns are ' ' chars, we've read
+the whole problem.
