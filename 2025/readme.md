@@ -2,10 +2,16 @@
 ## using OCaml ( and maybe other languages )
 
 ### Day 1
+
+[day01.ml](lib/day01.ml)
+
 Nice start to the year! Straightforward and fun to do in OCaml - had some silly
 mistakes with the counting logic for part 2 to sort out.
 
 ### Day 2
+
+[day02.ml](lib/day02.ml)
+
 Mostly straightforward again - had a lot of weird trouble just getting the input
 parsed etc but that's just an Ocaml-with-no-autocompletion problem.
 
@@ -53,21 +59,33 @@ pattern that are within the range instead of checking.
 Another update: implemented based on that reddit solution and it's super fast!
 
 ### Day 3:
+
+[day03.ml](lib/day03.ml)
+
 Originally brute forced part 1, used greedy approach for part 2 - it always
 the largest digit that will leave enough digits left to take to create the
 number. I had the solution approach pretty early but I've been bumping against
 my Ocaml-incompetence lol.
 
 ### Day 4
+
+[day04.ml](lib/day04.ml)
+
 Very straightforward grid problem - probably a bit of foreshadowing for what is
 to come... At least I'll have some grid parsing / walking down for the those.
 
 ### Day 5
+
+[day05.ml](lib/day05.ml)
+
 This was a cool one - merging ranges, just did part 1 brute force but for part 2
 had to merge the ranges together. Really similar to a problem for last year or
 2023 I think, so I recognized what to do right away.
 
 ### Day 6
+
+[day06.ml](lib/day06.ml)
+
 Really interesting part 2 of this one, I had to stop thinking about the input
 as a bunch of rows of numbers when to parsing chars down the the columns
 instead. I'm really struggling with the string manip stuff in ocaml, this was
@@ -78,6 +96,9 @@ and then converts to an int. Anytime all the columns are ' ' chars, we've read
 the whole problem.
 
 ### Day 7
+
+[day07.ml](lib/day07.ml)
+
 Another grid problem - really forced being able to re-use my bfs util, but I
 wasn't able to re-use it on part 2 to get the paths. Might need to extent it
 a bit more to be able to handle that or add a new util function - I feel like
