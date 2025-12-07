@@ -76,3 +76,18 @@ but managed to push through it. Not tricky algorithm or anything though, just
 reads down the nth column of each line, pushes the non ' ' chars to a string,
 and then converts to an int. Anytime all the columns are ' ' chars, we've read
 the whole problem.
+
+### Day 7
+Another grid problem - really forced being able to re-use my bfs util, but I
+wasn't able to re-use it on part 2 to get the paths. Might need to extent it
+a bit more to be able to handle that or add a new util function - I feel like
+number of paths comes up a lot.
+Less of a twist from part 1 to part 2 compared to yesterday, but I'm also tired
+so I'm cool with that!
+I used my bfd util to get the start node (overkill) and then used again in part
+1 to walk the grid and count the splits. Part 2 I had to kind of re-write it
+because with the visited set inside my bfd impl I coulnd't figure out how to
+set it up to track paths. Same idea though, but for each neighbor node, if you
+have already been there, add the paths to the current node to the neighbor node,
+otherwise add the number of paths - used a hashtbl for this and returned the
+sum of the paths to the last row.

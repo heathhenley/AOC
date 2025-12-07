@@ -61,24 +61,19 @@ module Day07_impl = struct
     Hashtbl.add paths_to_node start 1;
     while not (Queue.is_empty q) do
       let (r, c) = Queue.pop q in
-      (* ways to get to this node *)
       let current_paths = Hashtbl.find paths_to_node (r, c) in
       List.iter (fun (new_r, new_c) -> (
-        (* have we been to this node *)
         if not (Hashtbl.mem paths_to_node (new_r, new_c)) then (
           Queue.add (new_r, new_c) q;
           Hashtbl.add paths_to_node (new_r, new_c) current_paths;
         )
         else (
-          (* don't need to add to the queue because we've already been here *)
-          (* update the paths to node neighbor node *)
           let prev_paths = Hashtbl.find paths_to_node (new_r, new_c) in
           Hashtbl.replace paths_to_node (new_r, new_c) (prev_paths + current_paths);
         )
       ))
       (neighbors grid r c)
     done;
-    (* find the number of paths to any of the end nodes (last row) *)
     let num_rows = Array.length grid in
     Hashtbl.fold (
       fun (r, _) paths acc ->
