@@ -91,3 +91,6 @@ set it up to track paths. Same idea though, but for each neighbor node, if you
 have already been there, add the paths to the current node to the neighbor node,
 otherwise add the number of paths - used a hashtbl for this and returned the
 sum of the paths to the last row.
+
+UPDATE: Didn't think of this while solving, but there's a way simpler dfs
+solution. Implemented to test it out in `count_paths_dfs`.
