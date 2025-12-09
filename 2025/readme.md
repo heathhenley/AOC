@@ -115,3 +115,18 @@ sum of the paths to the last row.
 
 UPDATE: Didn't think of this while solving, but there's a way simpler dfs
 solution. Implemented to test it out in `count_paths_dfs`.
+
+
+### Day 8
+
+[day08.ml](lib/day08.ml)
+
+This was brutal for me. I was not really able to see the right approach. First
+I tried an octree to keep track of the points / find the closest points - I was
+struggling to get that to do what I wanted so I switched to managing my own
+lists of circuits and merging them when needed, that wasn't working correctly
+either, but it felt like union / find - and then I finally got it working with
+a crappy union / find implementation. I definitely did not choose the right data
+structures at all for this and it's pretty slow but got the stars.
+
+Really need to clean this one up please don't look.

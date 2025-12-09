@@ -4,46 +4,72 @@ module Day08_impl = struct
     position: int * int * int;
     idx: int;
   }
-
+  (* union find type - each junction will start as it's own circuit
+  *)
   type circuit = {
-    junctions: junction list;
-    edges: (int * int) list; (* junction.idx * junction.idx *)
+    (* the root of the circuit for each junction *)
+    junction_parents: (int, int) Hashtbl.t;
+    (* the rank of the circuit for each junction *)
+    junction_ranks: (int, int) Hashtbl.t;
+    (* the size of the circuit for each junction *)
+    junction_sizes: (int, int) Hashtbl.t;
   }
 
-  let add_node circuit node =
-    { circuit with junctions = node :: circuit.junctions }
-
-  let add_edge circuit node1 node2 =
-    { circuit with edges = (node1, node2) :: circuit.edges }
-
-  let get_neighbors circuit node =
-    let node_idx = node.idx in
-    List.filter_map (
-      fun (n1, n2) -> if n1 = node_idx then Some n2 else if n2 = node_idx then Some n1 else None) circuit.edges
-    |> List.map (fun idx -> List.find (fun j -> j.idx = idx) circuit.junctions)
+  let create_circuit junctions =
+    (* initialize the parents and sizes - each junction is it's own root *)
+    let circuit = {
+      junction_parents = Hashtbl.create 100;
+      junction_ranks = Hashtbl.create 100;
+      junction_sizes = Hashtbl.create 100
+    } in
+    List.iter (fun j ->
+      Hashtbl.add circuit.junction_parents j.idx j.idx;
+      Hashtbl.add circuit.junction_sizes j.idx 1;
+      Hashtbl.add circuit.junction_ranks j.idx 0;
+    ) junctions;
+    circuit
   
-  let search circuit start goal =
-    Utils.Search.bfs start
-    ~neighbors:(get_neighbors circuit)
-    ~on_visit:(
-      fun node _ ->
-        if node.idx = goal.idx then
-          `Stop (Some node)
-        else
-          `Continue)
-  
-  let get_connected_components circuit =
-    (* use a dfs to find the connected components *)
-    let rec dfs acc cur visited =
-      if List.mem cur visited then
-        acc
-      else
-        (* add the neighbors to the accumulator *)
-        let neighbors = get_neighbors circuit cur in
-        let acc = List.fold_left (fun acc n -> n :: acc) acc neighbors in
-        (* recurse on the neighbors *)
-        List.fold_left (fun acc n -> dfs acc n (n :: visited)) acc neighbors
-      in List.map (fun j -> dfs [] j []) circuit.junctions
+  let rec find_root c j_idx =
+    match Hashtbl.find_opt c.junction_parents j_idx with
+    | Some parent when parent = j_idx -> j_idx (* j is the root *)
+    | Some parent ->
+      let r = find_root c parent in
+      Hashtbl.replace c.junction_parents j_idx r; (* path compression *)
+      r
+    | None -> failwith "Junction not found in circuit"
+
+  let union c j1_idx j2_idx =
+    let root1 = find_root c j1_idx in
+    let root2 = find_root c j2_idx in
+    if root1 = root2 then
+      (* already in the same circuit *)
+      ()
+    else (
+      (* union the two circuits *)
+      let rank1 = Hashtbl.find c.junction_ranks root1 in
+      let rank2 = Hashtbl.find c.junction_ranks root2 in
+      let size1 = Hashtbl.find c.junction_sizes root1 in
+      let size2 = Hashtbl.find c.junction_sizes root2 in
+      if rank1 > rank2 then (
+        (* root1 is the new root - stick smaller rank under larger rank *)
+        Hashtbl.replace c.junction_parents root2 root1;
+        Hashtbl.replace c.junction_sizes root1 (size1 + size2);
+        ()
+      )
+      else if rank1 < rank2 then (
+        (* root2 is the new root - stick smaller rank under larger rank *)
+        Hashtbl.replace c.junction_parents root1 root2;
+        Hashtbl.replace c.junction_sizes root2 (size1 + size2);
+        ()
+      )
+      else if rank1 = rank2 then (
+        (* tie - choose root1 as the new root and increment the rank *)
+        Hashtbl.replace c.junction_parents root2 root1;
+        Hashtbl.replace c.junction_sizes root1 (size1 + size2);
+        Hashtbl.replace c.junction_ranks root1 (rank1 + 1);
+        ()
+      )
+    )
 
   let print_points points =
     List.iter (fun (x, y, z) ->
@@ -65,22 +91,58 @@ module Day08_impl = struct
       |> (function [x; y; z] -> { position = (x, y, z); idx = idx } | _ -> failwith "Invalid point")
     )
 
-  let closest_junction juction junctions =
-    junctions
-    |> List.map (fun j -> (j,  junction_distance juction j))
-    |> List.sort (fun (_, d1) (_, d2) -> compare d1 d2)
-    |> List.take 2
-    |> (fun x -> List.nth x 1)
+  let is_directly_connected ht j1 j2 =
+    match Hashtbl.find_opt ht (j1.idx, j2.idx) with
+    | Some _ -> true
+    | None -> (
+      match Hashtbl.find_opt ht (j2.idx, j1.idx) with
+      | Some _ -> true
+      | None -> false
+    )
 
-  let dedup_compare j1 j2 k1 k2 d1 d2 =
-    (* make ij and ji compare equal so sort_uniq works *)
-    if d1 < d2 then -1 else if d1 > d2 then 1
-    else if j1.position < k2.position then -1
-    else if j2.position > k1.position then 1 else 0
+  let closest_junction juction junctions ht =
+    (* closest not -directly- connected *)
+    junctions
+    |> List.filter_map (
+      fun j -> match is_directly_connected ht juction j with
+      | true -> None
+      | false -> Some (j,  junction_distance juction j)
+    )
+    |> List.sort (fun (_, d1) (_, d2) -> compare d1 d2)
+    |> List.hd
 
   let fst3 (x, _, _) = x
   let snd3 (_, y, _) = y
   let trd3 (_, _, z) = z
+
+  let compute_closest ht sorted_pair_distances =
+    (* take the next one that isn't in the hashtable *)
+    let rec aux dists =
+      match dists with
+      | [] -> None
+      | (j1_idx, j2_idx, _) :: tl ->
+        if Hashtbl.mem ht (j1_idx, j2_idx) || Hashtbl.mem ht (j2_idx, j1_idx) then
+          aux tl
+        else
+          Some (j1_idx, j2_idx)
+    in
+    aux sorted_pair_distances
+
+  let compute_pair_distances junctions =
+    let n = List.length junctions in
+    let distances = ref [] in
+    for i = 0 to n - 1 do
+      for j = i + 1 to n - 1 do
+        let j1 = List.nth junctions i in
+        let j2 = List.nth junctions j in
+        let d = junction_distance j1 j2 in
+        distances := (j1.idx, j2.idx, d) :: !distances;
+      done;
+    done;
+    !distances
+        
+  let compare_unique (r1, s1) (r2, s2) =
+    if s1 > s2 then -1 else if s1 < s2 then 1 else if r1 < r2 then -1 else if r1 > r2 then 1 else 0
   
   let part1 filename = 
     let junctions =
@@ -88,34 +150,84 @@ module Day08_impl = struct
       |> Utils.Input.split_on_newline
       |> junctions_of_lines
     in
-    (* for each point junction, find the point closest to it, and the distance 
-       between, them and sort by that, this is the order to process them in,
-       but we need to depulicate
-    *)
-    let ordered =
-    junctions
-    |> List.map (
-      fun j -> let (j2, dist) = closest_junction j junctions in (j, j2, dist))
-    |> List.sort_uniq (fun (j1, j2, d1) (k1, k2, d2) -> dedup_compare j1 j2 k1 k2 d1 d2)
-    |> List.map (
-      fun (j1, j2, dist) ->
-        Printf.printf "%d: (%d, %d, %d) -> (%d, %d, %d) = %d\n" j1.idx (fst3 j1.position) (snd3 j1.position) (trd3 j1.position) (fst3 j2.position) (snd3 j2.position) (trd3 j2.position) dist; (j1, j2, dist))
-    in
-    (* for each of the top ordered pairs, make new circuit connection between
-       them unless they are already connected
-    *)
-    (* add all the edges to the circuit *)
-    let circuit = List.fold_left (
-      fun circuit (j1, j2, _) ->
-        match search circuit j1 j2 with
-        | Some _ -> circuit (* already connected *)
-        | None -> add_edge circuit j1.idx j2.idx
-    ) { junctions = junctions; edges = [] } ordered in
-    let connected_components = get_connected_components circuit in
-    List.iter (fun c -> Printf.printf "Connected component: %d\n" (List.length c)) connected_components;
-    Printf.printf "Part 1: %d\n" 0
+    let circuit = create_circuit junctions in
+    let ht = Hashtbl.create 100 in
+    List.iter (fun j ->
+      Hashtbl.add ht (j.idx, j.idx) true;
+    ) junctions;
+    (* start with the closest junction to each other junction*)
 
-  let part2 _ = Printf.printf "Part 2: %d\n" 0
+    let pair_distances = compute_pair_distances junctions in
+
+    let sorted_pair_distances = List.sort (fun (_, _, d1) (_, _, d2) -> compare d1 d2) pair_distances in
+
+    let count = ref 0 in
+  
+    while !count < 10 do
+      (* find the closest two junction boxes that are not already *directly*
+         connected to each other
+      *)
+      match compute_closest ht sorted_pair_distances with
+      | Some (j1_idx, j2_idx) ->
+        union circuit j1_idx j2_idx;
+        Hashtbl.add ht (j1_idx, j2_idx) true;
+        Hashtbl.add ht (j2_idx, j1_idx) true;
+        count := !count + 1;
+      | None -> ()
+    done;
+
+    List.map (
+      fun j ->
+        let root = find_root circuit j.idx in
+        (root, Hashtbl.find circuit.junction_sizes root)
+    ) junctions
+    |> List.sort_uniq compare_unique
+    |> List.take 3
+    |> List.fold_left (fun acc (_, size) -> acc * size) 1
+    |> Printf.printf "Part 1: %d\n"
+
+  let part2 filename = 
+    let junctions =
+      Utils.Input.read_file_to_string filename
+      |> Utils.Input.split_on_newline
+      |> junctions_of_lines
+    in
+    let circuit = create_circuit junctions in
+    let ht = Hashtbl.create 100 in
+    List.iter (fun j ->
+      Hashtbl.add ht (j.idx, j.idx) true;
+    ) junctions;
+    (* start with the closest junction to each other junction*)
+
+    let pair_distances = compute_pair_distances junctions in
+
+    let sorted_pair_distances = List.sort (fun (_, _, d1) (_, _, d2) -> compare d1 d2) pair_distances in
+
+    let num_junctions = List.length junctions in
+
+    let largest_circuit = ref 0 in
+
+    while !largest_circuit < num_junctions do
+      (* find the closest two junction boxes that are not already *directly*
+         connected to each other
+      *)
+      (match compute_closest ht sorted_pair_distances with
+      | Some (j1_idx, j2_idx) ->
+        union circuit j1_idx j2_idx;
+        Hashtbl.add ht (j1_idx, j2_idx) true;
+        Hashtbl.add ht (j2_idx, j1_idx) true;
+
+        largest_circuit := Hashtbl.fold (
+          fun _ size acc -> if size > acc then size else acc) circuit.junction_sizes 0;
+        if !largest_circuit = num_junctions then
+          let j1 = List.nth junctions j1_idx in
+          let j2 = List.nth junctions j2_idx in
+          Printf.printf "J1 x: %d, J2 x: %d\n" (fst3 j1.position) (fst3 j2.position);
+          Printf.printf "Part 2: %d\n" (abs (fst3 j1.position * fst3 j2.position))
+      | None -> ()
+      );
+    done;
+
 end
 
 module Day08 : Solution.Day = Day08_impl
