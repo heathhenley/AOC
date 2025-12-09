@@ -163,7 +163,7 @@ module Day08_impl = struct
 
     let count = ref 0 in
   
-    while !count < 10 do
+    while !count < 1000 do
       (* find the closest two junction boxes that are not already *directly*
          connected to each other
       *)
