@@ -137,3 +137,13 @@ Really need to clean this one up please don't look.
 
 Still a WIP - working on part 2, I think it's really close but still removing
 too many valid rectangles.
+
+UPDATE: Spent too much time trying to get my ray casting and then edge check
+approach to work. I finally took a look at reddit and used one of the simpler
+"AABB" hit detection algorithms instead - it doesn't work in general but it
+works for the input of this problem. Ref: https://www.reddit.com/r/adventofcode/comments/1pi3hff/2025_day_9_part_2_a_simple_method_spoiler/
+
+Might come back to it and figure out how to get it working the way I was
+trying originally - it was close but filtering out too many valid rects.
+
+On to Day 10 - which appears to be another banger if the meme-ing is any indication!
