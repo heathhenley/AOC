@@ -91,29 +91,26 @@ module Day10_impl = struct
     let buttons = buttons_of_string (List.tl parts) in
     { indicator_goal; buttons; joltage_goal }
 
-  let neighbors machine current_state =
-    (* use the buttons to map the current state to the possible next states *)
-    let buttons = machine.buttons in
-    Array.map (
-      fun btn -> (* apply the button the current state *)
-          let new_state = Array.copy current_state in
-          (* todo- use map*)
-          Array.iter (
-            fun idx -> 
-              (* toggle the indicator *)
-              new_state.(idx) <- if new_state.(idx) = 0 then 1 else 0
-          ) btn;
-          new_state
-    ) buttons
-    |> Array.to_list
-
-  let key_of_state state =
-    (* we need some sort of key that will be used for the visited set *)
-    Array.to_list state
-    |> List.map string_of_int
-    |> String.concat ","
-
   let solve_machine machine =
+    (* use a vanilla bfs to find the shortest path to the goal state *)
+    let neighbors machine current_state =
+      (* use the buttons to map the current state to the possible next states *)
+      let buttons = machine.buttons in
+      Array.map (
+        fun btn -> (* apply the button the current state *)
+            let new_state = Array.copy current_state in
+            (* todo- use map*)
+            Array.iter (
+              fun idx -> 
+                (* toggle the indicator *)
+                new_state.(idx) <- if new_state.(idx) = 0 then 1 else 0
+            ) btn;
+            new_state
+      ) buttons
+      |> Array.to_list
+    
+    in
+
     (* start with all indicators off *)
     let start_state = Array.make (Array.length machine.indicator_goal) 0 in
     (* use the bfs to find the shortest path to the goal state *)
@@ -125,6 +122,42 @@ module Day10_impl = struct
      )
     start_state ~size:100
     |> Option.get
+
+  let solve_machine_part2 machine =
+    (* of course it's not going to work but let's set it up anyway and see if
+      if can solve the sample input *)
+    let neighbors machine current_state =
+      (* use the buttons to map the current state to the possible next states *)
+      let buttons = machine.buttons in
+      Array.map (
+        fun btn -> (* apply the button the current state *)
+            let new_state = Array.copy current_state in
+            Array.iter (
+              fun idx -> 
+                (* UP THE JOLTAGE! *)
+                new_state.(idx) <- new_state.(idx) + 1
+            ) btn;
+            new_state
+      ) buttons
+      |> Array.to_list
+      |> List.filter (fun state ->
+        Array.for_all2 (fun x y -> x <= y) state machine.joltage_goal
+      )
+    
+    in
+
+    (* start with all indicators off *)
+    let start_state = Array.make (Array.length machine.joltage_goal) 0 in
+    (* use the bfs to find the shortest path to the goal state *)
+    Utils.Search.bfs
+     ~neighbors:(neighbors machine)
+     ~on_visit:(fun state dist ->
+      if state = machine.joltage_goal then `Stop dist
+      else `Continue
+     )
+    start_state ~size:100
+    |> Option.get
+
 
   let part1 filename =
     (* for any given state - the buttons describe the possible neighbors that
@@ -163,15 +196,15 @@ module Day10_impl = struct
         help would it? 
       
       - first things first - need to add the joltage part of the input to the machine
+      - normal bfs solves the sample input... so maybe we need to make the
+        neighbors smarter - eg stop exploring any states that bump the
+        joltage beyond the goal?
     *)
     filename
     |> Utils.Input.read_file_to_string
     |> Utils.Input.split_on_newline
     |> List.map machine_of_line
-    |> List.map (fun machine ->
-      print_machine machine; machine
-    )
-    |> List.map solve_machine
+    |> List.map solve_machine_part2
     (*|> List.iteri (fun i ans ->
       Printf.printf "Machine %d: %d\n" i ans
     )*)
