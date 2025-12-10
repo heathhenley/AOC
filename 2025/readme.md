@@ -130,3 +130,10 @@ a crappy union / find implementation. I definitely did not choose the right data
 structures at all for this and it's pretty slow but got the stars.
 
 Really need to clean this one up please don't look.
+
+### Day 9
+
+[day09.ml](lib/day09.ml)
+
+Still a WIP - working on part 2, I think it's really close but still removing
+too many valid rectangles.
