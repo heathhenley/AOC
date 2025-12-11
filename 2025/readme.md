@@ -157,3 +157,21 @@ Part 1 was straightforward, got to use my bfs util again so that was cool.
 No idea if there is an algorithmic solution to part 2, used scipy to solve it. I
 am looking forward to checking out the reddit solutions to see if there is a
 less 'cheap' way to solve it.
+
+### Day 11
+
+[day11.ml](lib/day11.ml)
+
+This was another tough one for me, at least part 2 was. Normal dfs for part 1,
+but part was way too deep for that. Searching around and found info on how to
+use dp and memo to solve, not redo-ing all the same work over and over as you
+walk the graph. Need to first toposort the graph and the update each node in
+turn - the number of ways you can get to a child node is the number of ways you
+already knew about, plus the number of ways you can get to the parent you're
+looking at now. Topo order is to make the parents are always processed before
+the children. I actually really enjoyed this one!
+
+some refs
+https://www.geeksforgeeks.org/dsa/topological-sorting-indegree-based-solution/
+
+https://www.geeksforgeeks.org/competitive-programming/dynamic-programming-dp-and-directed-acyclic-graphs-dag/

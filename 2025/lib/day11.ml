@@ -1,5 +1,4 @@
 module Day11_impl = struct
-
   type node = string
 
   (* adjacency list - node -> list of nodes it connects to
@@ -9,105 +8,199 @@ module Day11_impl = struct
   -> {aaa: [you], you: [bbb, ccc]}
   will switch to ht or set if needed
   *)
-  type graph = 
-    (node * node list) list
+  type graph = (node * node list) list
 
   let parse_line line =
     match String.split_on_char ':' line with
-    | [node; rest] ->
-      let connections =
-        rest
-        |> String.split_on_char ' '
-        |> List.filter (fun x -> x <> "")
-        |> List.map (fun x -> String.trim x)
-      in
-      (node, connections)
+    | [ node; rest ] ->
+        let connections =
+          rest
+          |> String.split_on_char ' '
+          |> List.filter (fun x -> x <> "")
+          |> List.map (fun x -> String.trim x)
+        in
+        (node, connections)
     | _ -> failwith "Invalid line"
 
-  let find_paths graph start goal skip =
+  let find_paths graph start goal =
     let rec dfs current_node visited acc =
       if current_node = goal then (
-        Printf.printf "Found a path: %s -> %s\n" start goal; flush stdout;
-        acc + 1
-      )
-      else if List.mem current_node skip then
-        0
-      else (
-        if List.mem current_node visited then
-          0
-        else if current_node = "out" then
-          0
-        else
-          let neighbors = List.assoc current_node graph in
-          List.fold_left (fun nacc neighbor ->
+        Printf.printf "Found a path: %s -> %s\n" start goal;
+        flush stdout;
+        acc + 1)
+      else if List.mem current_node visited then 0
+      else if current_node = "out" then 0
+      else
+        let neighbors = List.assoc current_node graph in
+        List.fold_left
+          (fun nacc neighbor ->
             (* recurse on the neighbors and add up *)
-            nacc + dfs neighbor (current_node :: visited) acc
-          ) 0 neighbors
-      )
+            nacc + dfs neighbor (current_node :: visited) acc)
+          0 neighbors
     in
     dfs start [] 0
 
-
-  (* of course this doesn't work but had to try
-  let find_paths_2 graph start goal =
-    let rec dfs current_node visited acc =
-      if current_node = goal then
-        if List.mem "dac" visited && List.mem "fft" visited then (
-          Printf.printf "Found a path: %d\n" (acc + 1); flush stdout;
-          acc + 1
-        )
-        else
-          0
-      else (
-        if List.mem current_node visited then
-          0
-        else
-          let neighbors = List.assoc current_node graph in
-          List.fold_left (fun nacc neighbor ->
-            (* recurse on the neighbors and add up *)
-            nacc + dfs neighbor (current_node :: visited) acc
-          ) 0 neighbors
-      )
-    in
-    dfs start [] 0
+  let build_indegree_graph graph =
+    (* loop over the graph and build a ht with node -> indegree
+       where indegree is the number of nodes that point to this node 
+       https://www.geeksforgeeks.org/dsa/topological-sorting-indegree-based-solution/
+      - anything with 0 has nothing pointing to it
     *)
+    let indegree = Hashtbl.create 100 in
+    List.iter (fun (node, _) -> Hashtbl.add indegree node 0) graph;
+    List.iter
+      (fun (_, neighbors) ->
+        List.iter
+          (fun neighbor ->
+            if not (Hashtbl.mem indegree neighbor) then
+              Hashtbl.add indegree neighbor 1
+            else
+              let current = Hashtbl.find indegree neighbor in
+              Hashtbl.replace indegree neighbor (current + 1))
+          neighbors)
+      graph;
+    indegree
 
-  let part1 _ = ()
-  (*
-  let part1 filename = ()
-    let adj_list = filename
-    |> Utils.Input.read_file_to_string
-    |> Utils.Input.split_on_newline
-    |> List.map parse_line
+  let build_topological_sort graph =
+    (* return the nodes in topo order
+     used: https://www.geeksforgeeks.org/dsa/topological-sorting-indegree-based-solution/
+    *)
+    let indegree = build_indegree_graph graph in
+    let indegree_list = Hashtbl.to_seq indegree |> List.of_seq in
+    let sorted_nodes =
+      List.sort
+        (fun (_, indegree1) (_, indegree2) -> compare indegree1 indegree2)
+        indegree_list
+    in
+    let q = Queue.create () in
+    List.iter
+      (fun (node, indegree) -> if indegree = 0 then Queue.add node q else ())
+      sorted_nodes;
+    let rec aux acc =
+      if Queue.is_empty q then acc
+      else
+        let node = Queue.pop q in
+        (* put in the result list *)
+        let res = acc @ [ node ] in
+        (* loop over the neighbors
+          - decrease the indegree
+          - if the indegree is 0, add to the queue
+        *)
+        match List.assoc_opt node graph with
+        | Some neighbors ->
+            List.iter
+              (fun neighbor ->
+                let current = Hashtbl.find indegree neighbor in
+                Hashtbl.replace indegree neighbor (current - 1);
+                if current - 1 = 0 then Queue.add neighbor q else ())
+              neighbors;
+            aux res
+        | None -> aux res
+    in
+    aux []
+
+  let build_memo graph =
+    (*
+    - start with the nodes in topo order - they have no dependencies/we've
+      already visited all of their dependencies
+    - memo is (node, saw_fft, saw_dac) -> number of paths to this node from the
+      start (srv - check this in real input - might be multiple starts... no
+      it's fine)
+    - how do we update the memo though...
+    walk in topo order ...
+    memo(node, saw_fft, saw_dac) = sum ( different ways to get to this node )
+    - update the children of the currernt node?
+    we have
+    srv: aaa bbb
+    aaa: fft
+    fft: ccc
+    bbb: tty
+    so we set memo(srv) = (1, 0, 0, 0) (*num paths w/o fft or dac, w/ fft, w/ dac, w/ both*)
+    process in topo? or use indegree 
+    do we need the reverse dependencies - or just update the children?
+    for children:
+      memo(child) += memo(node)
+    *)
+    let memo = Hashtbl.create 100 in
+    Hashtbl.add memo ("svr", false, false) 1;
+    Hashtbl.add memo ("svr", true, false) 0;
+    Hashtbl.add memo ("svr", false, true) 0;
+    Hashtbl.add memo ("svr", true, true) 0;
+    let sorted_nodes = build_topological_sort graph in
+    let rec aux nodes =
+      match nodes with
+      | [] -> ()
+      | node :: rest -> (
+          Printf.printf "Processing %s\n" node;
+          flush stdout;
+          let children = List.assoc_opt node graph in
+          match children with
+          | Some children ->
+              (* update this node's memo entry*)
+              List.iter
+                (fun child ->
+                  let fft = if child = "fft" then true else false in
+                  let dac = if child = "dac" then true else false in
+                  (* update each state (whether found fft or dac) *)
+                  List.iter
+                    (fun (saw_fft, saw_dac) ->
+                      let pnum =
+                        match
+                          Hashtbl.find_opt memo (node, saw_fft, saw_dac)
+                        with
+                        | Some num -> num
+                        | None -> 0
+                      in
+                      let new_state = (child, saw_fft || fft, saw_dac || dac) in
+                      let cnum =
+                        match Hashtbl.find_opt memo new_state with
+                        | Some num -> num
+                        | None -> 0
+                      in
+                      Printf.printf "Updating %s %b %b: %d + %d = %d\n" child
+                        (saw_fft || fft) (saw_dac || dac) cnum pnum (cnum + pnum);
+                      flush stdout;
+                      Hashtbl.replace memo new_state (cnum + pnum))
+                    [
+                      (false, false); (true, false); (false, true); (true, true);
+                    ])
+                children;
+              aux rest
+          | None -> aux rest)
+    in
+    aux sorted_nodes;
+    memo
+
+  let part1 filename =
+    let adj_list =
+      filename
+      |> Utils.Input.read_file_to_string
+      |> Utils.Input.split_on_newline
+      |> List.map parse_line
     in
     find_paths adj_list "you" "out" |> Printf.printf "Part 1: %d\n"
-    *)
 
   let part2 filename =
-    let adj_list = filename
-    |> Utils.Input.read_file_to_string
-    |> Utils.Input.split_on_newline
-    |> List.map parse_line
+    (* adding together the chunks didn't work...
+    - i guess we are doing a bunch of repeated work...
+    - maybe make a map of memo[node][saw_fft][saw_dac] =
+      number of paths to this node from the start? (with or without fft or dac)
+    - don't know how to set that up though yet
+    
+    *)
+    let adj_list =
+      filename
+      |> Utils.Input.read_file_to_string
+      |> Utils.Input.split_on_newline
+      |> List.map parse_line
     in
-    let svr_to_dac = find_paths adj_list "svr" "dac" ["fft"] in
-    let svr_to_fft = find_paths adj_list "svr" "fft" ["dac"] in
-    let dac_to_fft = find_paths adj_list "dac" "fft" ["out"] in
-    let fft_to_dac = find_paths adj_list "fft" "dac" ["out"] in
-    let fft_to_out = find_paths adj_list "fft" "out" ["dac"] in
-    let dac_to_out = find_paths adj_list "dac" "out" ["fft"] in
-    Printf.printf "svr to dac: %d\n" svr_to_dac; flush stdout;
-    Printf.printf "svr to fft: %d\n" svr_to_fft; flush stdout;
-    Printf.printf "dac to fft: %d\n" dac_to_fft; flush stdout;
-    Printf.printf "fft to dac: %d\n" fft_to_dac; flush stdout;
-    Printf.printf "fft to out: %d\n" fft_to_out; flush stdout;
-    Printf.printf "dac to out: %d\n" dac_to_out; flush stdout;
-    let n1 = svr_to_dac * dac_to_fft * fft_to_out in
-    let n2 = svr_to_fft * fft_to_dac * dac_to_out in
-    Printf.printf "Part 2: %d\n" (n1 + n2)
-
-
-
-
+    let memo = build_memo adj_list in
+    Hashtbl.iter
+      (fun (node, saw_fft, saw_dac) num ->
+        Printf.printf "%s %b %b: %d\n" node saw_fft saw_dac num;
+        flush stdout)
+      memo;
+    Printf.printf "Part 2: %d\n" (Hashtbl.find memo ("out", true, true))
 end
 
 module Day11 : Solution.Day = Day11_impl

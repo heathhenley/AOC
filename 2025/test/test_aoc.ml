@@ -67,20 +67,17 @@ let%expect_test "Day 7" =
   Day07.part2 (input_files_path ^ "/day7/sample.txt");
   [%expect {| Part 2: 40 |}]
 
-
 let%expect_test "Day 8" =
   Day08.Day08_impl.part1_impl (input_files_path ^ "/day8/sample.txt") 10;
   [%expect {| Part 1: 40 |}];
   Day08.Day08_impl.part2 (input_files_path ^ "/day8/sample.txt");
   [%expect {| Part 2: 25272 |}]
 
-
 let%expect_test "Day 9" =
   Day09.part1 (input_files_path ^ "/day9/sample.txt");
   [%expect {| Part 1: 50 |}];
   Day09.part2 (input_files_path ^ "/day9/sample.txt");
   [%expect {| Part 2: 24 |}]
-
 
 let%expect_test "Day 10" =
   Day10.part1 (input_files_path ^ "/day10/sample.txt");

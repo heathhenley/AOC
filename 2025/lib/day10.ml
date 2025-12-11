@@ -1,5 +1,4 @@
 module Day10_impl = struct
-
   type button = int array
 
   type machine = {
@@ -18,7 +17,6 @@ module Day10_impl = struct
        indicator 0.
     *)
     buttons : button array;
-
     (* list of joltage desired state - the goal is to have the joltage array 
        incremented by button presses to the desired state
        eg. [| 3; 5; 4; 7|]
@@ -50,35 +48,25 @@ module Day10_impl = struct
     |> Array.of_list
     |> Array.map (fun lst -> Array.of_list lst)
 
-
   let print_machine machine =
     Printf.printf "Machine:\n";
     machine.indicator_goal
     |> Array.to_seq
     |> Seq.map string_of_int
-    |> Seq.iter (
-      fun s -> Printf.printf "%s " s
-    );
+    |> Seq.iter (fun s -> Printf.printf "%s " s);
     Printf.printf "\n";
     machine.buttons
     |> Array.to_seq
     |> Seq.iter (fun btn ->
-      Printf.printf "Button: ";
-      Array.to_seq btn
-      |> Seq.iter (
-        fun i -> Printf.printf "%d " i
-      );
-      Printf.printf "\n"
-    );
+        Printf.printf "Button: ";
+        Array.to_seq btn |> Seq.iter (fun i -> Printf.printf "%d " i);
+        Printf.printf "\n");
     Printf.printf "Joltage goal: ";
     machine.joltage_goal
     |> Array.to_seq
     |> Seq.map string_of_int
-    |> Seq.iter (
-      fun s -> Printf.printf "%s " s
-    );
+    |> Seq.iter (fun s -> Printf.printf "%s " s);
     Printf.printf "\n"
-
 
   let machine_of_line line =
     (* parse the line into a machine record
@@ -96,31 +84,28 @@ module Day10_impl = struct
     let neighbors machine current_state =
       (* use the buttons to map the current state to the possible next states *)
       let buttons = machine.buttons in
-      Array.map (
-        fun btn -> (* apply the button the current state *)
-            let new_state = Array.copy current_state in
-            (* todo- use map*)
-            Array.iter (
-              fun idx -> 
-                (* toggle the indicator *)
-                new_state.(idx) <- if new_state.(idx) = 0 then 1 else 0
-            ) btn;
-            new_state
-      ) buttons
+      Array.map
+        (fun btn ->
+          (* apply the button the current state *)
+          let new_state = Array.copy current_state in
+          (* todo- use map*)
+          Array.iter
+            (fun idx ->
+              (* toggle the indicator *)
+              new_state.(idx) <- (if new_state.(idx) = 0 then 1 else 0))
+            btn;
+          new_state)
+        buttons
       |> Array.to_list
-    
     in
 
     (* start with all indicators off *)
     let start_state = Array.make (Array.length machine.indicator_goal) 0 in
     (* use the bfs to find the shortest path to the goal state *)
-    Utils.Search.bfs
-     ~neighbors:(neighbors machine)
-     ~on_visit:(fun state dist ->
-      if state = machine.indicator_goal then `Stop dist
-      else `Continue
-     )
-    start_state ~size:100
+    Utils.Search.bfs ~neighbors:(neighbors machine)
+      ~on_visit:(fun state dist ->
+        if state = machine.indicator_goal then `Stop dist else `Continue)
+      start_state ~size:100
     |> Option.get
 
   let solve_machine_part2 machine =
@@ -129,35 +114,30 @@ module Day10_impl = struct
     let neighbors machine current_state =
       (* use the buttons to map the current state to the possible next states *)
       let buttons = machine.buttons in
-      Array.map (
-        fun btn -> (* apply the button the current state *)
-            let new_state = Array.copy current_state in
-            Array.iter (
-              fun idx -> 
-                (* UP THE JOLTAGE! *)
-                new_state.(idx) <- new_state.(idx) + 1
-            ) btn;
-            new_state
-      ) buttons
+      Array.map
+        (fun btn ->
+          (* apply the button the current state *)
+          let new_state = Array.copy current_state in
+          Array.iter
+            (fun idx ->
+              (* UP THE JOLTAGE! *)
+              new_state.(idx) <- new_state.(idx) + 1)
+            btn;
+          new_state)
+        buttons
       |> Array.to_list
       |> List.filter (fun state ->
-        Array.for_all2 (fun x y -> x <= y) state machine.joltage_goal
-      )
-    
+          Array.for_all2 (fun x y -> x <= y) state machine.joltage_goal)
     in
 
     (* start with all indicators off *)
     let start_state = Array.make (Array.length machine.joltage_goal) 0 in
     (* use the bfs to find the shortest path to the goal state *)
-    Utils.Search.bfs
-     ~neighbors:(neighbors machine)
-     ~on_visit:(fun state dist ->
-      if state = machine.joltage_goal then `Stop dist
-      else `Continue
-     )
-    start_state ~size:100
+    Utils.Search.bfs ~neighbors:(neighbors machine)
+      ~on_visit:(fun state dist ->
+        if state = machine.joltage_goal then `Stop dist else `Continue)
+      start_state ~size:100
     |> Option.get
-
 
   let part1 filename =
     (* for any given state - the buttons describe the possible neighbors that
@@ -208,12 +188,11 @@ module Day10_impl = struct
     |> List.map machine_of_line
     |> List.map solve_machine_part2
     |> List.map (fun ans ->
-      Printf.printf "Answer: %d\n" ans; flush stdout; ans
-    )
+        Printf.printf "Answer: %d\n" ans;
+        flush stdout;
+        ans)
     |> List.fold_left ( + ) 0
     |> Printf.printf "Part 2: %d\n"
-
-
 end
 
 module Day10 : Solution.Day = Day10_impl
