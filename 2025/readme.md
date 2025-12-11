@@ -147,3 +147,13 @@ Might come back to it and figure out how to get it working the way I was
 trying originally - it was close but filtering out too many valid rects.
 
 On to Day 10 - which appears to be another banger if the meme-ing is any indication!
+
+### Day 10
+
+[day10.ml](lib/day10.ml) and [day10_2.py](python_diversion/day10_2.py)
+
+Part 1 was straightforward, got to use my bfs util again so that was cool.
+
+No idea if there is an algorithmic solution to part 2, used scipy to solve it. I
+am looking forward to checking out the reddit solutions to see if there is a
+less 'cheap' way to solve it.

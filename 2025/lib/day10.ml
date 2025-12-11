@@ -195,19 +195,21 @@ module Day10_impl = struct
       - would djikstra make sense? the edges don't have weights so it wouldn't
         help would it? 
       
-      - first things first - need to add the joltage part of the input to the machine
       - normal bfs solves the sample input... so maybe we need to make the
         neighbors smarter - eg stop exploring any states that bump the
         joltage beyond the goal?
+      - super slow as expected...
+      - maybe go backwards from the goal state and try the ones that get us
+        closer to the start state first
     *)
     filename
     |> Utils.Input.read_file_to_string
     |> Utils.Input.split_on_newline
     |> List.map machine_of_line
     |> List.map solve_machine_part2
-    (*|> List.iteri (fun i ans ->
-      Printf.printf "Machine %d: %d\n" i ans
-    )*)
+    |> List.map (fun ans ->
+      Printf.printf "Answer: %d\n" ans; flush stdout; ans
+    )
     |> List.fold_left ( + ) 0
     |> Printf.printf "Part 2: %d\n"
 
