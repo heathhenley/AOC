@@ -25,8 +25,6 @@ module Day11_impl = struct
   let find_paths graph start goal =
     let rec dfs current_node visited acc =
       if current_node = goal then (
-        Printf.printf "Found a path: %s -> %s\n" start goal;
-        flush stdout;
         acc + 1)
       else if List.mem current_node visited then 0
       else if current_node = "out" then 0
@@ -77,11 +75,11 @@ module Day11_impl = struct
       (fun (node, indegree) -> if indegree = 0 then Queue.add node q else ())
       sorted_nodes;
     let rec aux acc =
-      if Queue.is_empty q then acc
+      if Queue.is_empty q then List.rev acc
       else
         let node = Queue.pop q in
         (* put in the result list *)
-        let res = acc @ [ node ] in
+        let res = node :: acc in
         (* loop over the neighbors
           - decrease the indegree
           - if the indegree is 0, add to the queue
@@ -131,8 +129,6 @@ module Day11_impl = struct
       match nodes with
       | [] -> ()
       | node :: rest -> (
-          Printf.printf "Processing %s\n" node;
-          flush stdout;
           let children = List.assoc_opt node graph in
           match children with
           | Some children ->
@@ -157,9 +153,6 @@ module Day11_impl = struct
                         | Some num -> num
                         | None -> 0
                       in
-                      Printf.printf "Updating %s %b %b: %d + %d = %d\n" child
-                        (saw_fft || fft) (saw_dac || dac) cnum pnum (cnum + pnum);
-                      flush stdout;
                       Hashtbl.replace memo new_state (cnum + pnum))
                     [
                       (false, false); (true, false); (false, true); (true, true);
@@ -195,11 +188,6 @@ module Day11_impl = struct
       |> List.map parse_line
     in
     let memo = build_memo adj_list in
-    Hashtbl.iter
-      (fun (node, saw_fft, saw_dac) num ->
-        Printf.printf "%s %b %b: %d\n" node saw_fft saw_dac num;
-        flush stdout)
-      memo;
     Printf.printf "Part 2: %d\n" (Hashtbl.find memo ("out", true, true))
 end
 
