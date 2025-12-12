@@ -181,3 +181,16 @@ the dp table. It looks like you can do a normal dfs but memo on the same state
 that we used for the dp (node, saw_fft, saw_dac). Probably should have tried
 that but I didn't see it that way - might refactor as it will be a lot less
 code (no indegree / topological sort, etc).
+
+### Day 12
+
+[day12.ml](lib/day12.ml)
+
+This was fun / kind of a troll! Could be a crazy difficult problem (packing) but
+everything either doesn't fit at all or fits with plenty of space left!
+
+I actually wasted a lot of time because I thought that the input looked like a
+hexdump, so I thought that there might be some clever Christmas message hidden
+in there or something. I tried sorting the rows and interpreting the cols as
+dec or hex and to convert to chars but no luck. It's pretty sus that they're all
+basically printable chars...
