@@ -175,3 +175,9 @@ some refs
 https://www.geeksforgeeks.org/dsa/topological-sorting-indegree-based-solution/
 
 https://www.geeksforgeeks.org/competitive-programming/dynamic-programming-dp-and-directed-acyclic-graphs-dag/
+
+UPDATE: reviewing solutions - there's no need to do the topo sort and build
+the dp table. It looks like you can do a normal dfs but memo on the same state
+that we used for the dp (node, saw_fft, saw_dac). Probably should have tried
+that but I didn't see it that way - might refactor as it will be a lot less
+code (no indegree / topological sort, etc).

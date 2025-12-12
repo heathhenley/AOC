@@ -5,8 +5,7 @@ module Day11_impl = struct
   - example:
     aaa: you hhh
     you: bbb ccc
-  -> {aaa: [you], you: [bbb, ccc]}
-  will switch to ht or set if needed
+  -> [(aaa, [you]); (you, [bbb; ccc]);)
   *)
   type graph = (node * node list) list
 
@@ -78,12 +77,7 @@ module Day11_impl = struct
       if Queue.is_empty q then List.rev acc
       else
         let node = Queue.pop q in
-        (* put in the result list *)
         let res = node :: acc in
-        (* loop over the neighbors
-          - decrease the indegree
-          - if the indegree is 0, add to the queue
-        *)
         match List.assoc_opt node graph with
         | Some neighbors ->
             List.iter
@@ -98,32 +92,11 @@ module Day11_impl = struct
     aux []
 
   let build_memo graph =
-    (*
-    - start with the nodes in topo order - they have no dependencies/we've
-      already visited all of their dependencies
-    - memo is (node, saw_fft, saw_dac) -> number of paths to this node from the
-      start (srv - check this in real input - might be multiple starts... no
-      it's fine)
-    - how do we update the memo though...
-    walk in topo order ...
-    memo(node, saw_fft, saw_dac) = sum ( different ways to get to this node )
-    - update the children of the currernt node?
-    we have
-    srv: aaa bbb
-    aaa: fft
-    fft: ccc
-    bbb: tty
-    so we set memo(srv) = (1, 0, 0, 0) (*num paths w/o fft or dac, w/ fft, w/ dac, w/ both*)
-    process in topo? or use indegree 
-    do we need the reverse dependencies - or just update the children?
-    for children:
-      memo(child) += memo(node)
+    (* build memo table in topo order
+    memo(node, saw_fft, saw_dac) = number of paths to this node from the start
     *)
     let memo = Hashtbl.create 100 in
     Hashtbl.add memo ("svr", false, false) 1;
-    Hashtbl.add memo ("svr", true, false) 0;
-    Hashtbl.add memo ("svr", false, true) 0;
-    Hashtbl.add memo ("svr", true, true) 0;
     let sorted_nodes = build_topological_sort graph in
     let rec aux nodes =
       match nodes with
@@ -174,13 +147,6 @@ module Day11_impl = struct
     find_paths adj_list "you" "out" |> Printf.printf "Part 1: %d\n"
 
   let part2 filename =
-    (* adding together the chunks didn't work...
-    - i guess we are doing a bunch of repeated work...
-    - maybe make a map of memo[node][saw_fft][saw_dac] =
-      number of paths to this node from the start? (with or without fft or dac)
-    - don't know how to set that up though yet
-    
-    *)
     let adj_list =
       filename
       |> Utils.Input.read_file_to_string
