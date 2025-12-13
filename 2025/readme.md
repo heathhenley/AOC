@@ -105,9 +105,9 @@ a bit more to be able to handle that or add a new util function - I feel like
 number of paths comes up a lot.
 Less of a twist from part 1 to part 2 compared to yesterday, but I'm also tired
 so I'm cool with that!
-I used my bfd util to get the start node (overkill) and then used again in part
+I used my bfs util to get the start node (overkill) and then used again in part
 1 to walk the grid and count the splits. Part 2 I had to kind of re-write it
-because with the visited set inside my bfd impl I coulnd't figure out how to
+because with the visited set inside my bfs impl I coulnd't figure out how to
 set it up to track paths. Same idea though, but for each neighbor node, if you
 have already been there, add the paths to the current node to the neighbor node,
 otherwise add the number of paths - used a hashtbl for this and returned the
@@ -115,7 +115,6 @@ sum of the paths to the last row.
 
 UPDATE: Didn't think of this while solving, but there's a way simpler dfs
 solution. Implemented to test it out in `count_paths_dfs`.
-
 
 ### Day 8
 
@@ -130,6 +129,8 @@ a crappy union / find implementation. I definitely did not choose the right data
 structures at all for this and it's pretty slow but got the stars.
 
 Really need to clean this one up please don't look.
+
+UPDATE: Updated a little bit you can look now lol.
 
 ### Day 9
 
@@ -181,6 +182,11 @@ the dp table. It looks like you can do a normal dfs but memo on the same state
 that we used for the dp (node, saw_fft, saw_dac). Probably should have tried
 that but I didn't see it that way - might refactor as it will be a lot less
 code (no indegree / topological sort, etc).
+
+UPDATE2: Refactored - should have tried this first I was so close to it early
+on (I wrote the dfs but didn't memo it). There must be some use for the bottom
+up approach I took, maybe if you don't want to use recursion - but it's way
+easier to use cached recursion here.
 
 ### Day 12
 
