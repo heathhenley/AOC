@@ -160,39 +160,10 @@ module Day10_impl = struct
     )*)
     |> List.fold_left ( + ) 0
     |> Printf.printf "Part 1: %d\n"
+  
+  (* part 2 - used python *)
+  let part2 _ = Printf.printf "Not implemented\n"
 
-  let part2 filename =
-    (* part 2 - similar to part 1 but now uses the joltage part of the input
-      - each time the button is pressed the relevant joltage idx's are incremented
-      - need to hit the goal indicated by the state in the line in the minimum
-        number of button presses
-
-      - assuming that bfs will blow up this time...
-      the state would need to be the current state of the joltage array - some
-      of these are probably redundant, like with day 11 2016 elevator (many
-      headaches were had) - it's a little tricker with the buttons corresponding
-      to differenct sets of indicies I think..
-      - would djikstra make sense? the edges don't have weights so it wouldn't
-        help would it? 
-      
-      - normal bfs solves the sample input... so maybe we need to make the
-        neighbors smarter - eg stop exploring any states that bump the
-        joltage beyond the goal?
-      - super slow as expected...
-      - maybe go backwards from the goal state and try the ones that get us
-        closer to the start state first
-    *)
-    filename
-    |> Utils.Input.read_file_to_string
-    |> Utils.Input.split_on_newline
-    |> List.map machine_of_line
-    |> List.map solve_machine_part2
-    |> List.map (fun ans ->
-        Printf.printf "Answer: %d\n" ans;
-        flush stdout;
-        ans)
-    |> List.fold_left ( + ) 0
-    |> Printf.printf "Part 2: %d\n"
 end
 
 module Day10 : Solution.Day = Day10_impl
