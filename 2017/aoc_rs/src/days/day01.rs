@@ -1,13 +1,9 @@
 fn solve(nums: &Vec<u32>, step: usize) -> u32 {
-    let n = nums.len();
-    let mut sum = 0;
-    for (idx, &num) in nums.iter().enumerate() {
-        let next = (idx + step) % n; // wrap around
-        if num == nums[next] {
-            sum += num;
-        }
-    }
-    sum
+    nums.iter()
+        .zip(nums.iter().cycle().skip(step))
+        .filter(|(a, b)| a == b)
+        .map(|(a, _)| a)
+        .sum()
 }
 
 pub fn part1(s: &str) -> String {
