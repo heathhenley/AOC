@@ -9,7 +9,7 @@ fn step(pos: &(i32, i32), dir: i32) -> (i32, i32) {
     }
 }
 
-fn spiral_idx_of_2d(target_idx: u32) -> (i32, i32) {
+fn spiral_index_to_2d(target_idx: u32) -> (i32, i32) {
     let mut position = (0, 0);
     let mut idx = 1;
     let mut seg_max = 1;
@@ -40,7 +40,7 @@ fn spiral_idx_of_2d(target_idx: u32) -> (i32, i32) {
 }
 
 pub fn part1(s: &str) -> String {
-    let (x, y) = spiral_idx_of_2d(s.trim().parse().expect("input should be an int"));
+    let (x, y) = spiral_index_to_2d(s.trim().parse().expect("input should be an int"));
     let d = x.abs() + y.abs();
     return format!("Part 1: {}", d);
 }
