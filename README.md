@@ -10,3 +10,6 @@ Notes / learnings from previous year:
 - [2023](/2023/README.md) (done ✅, during the event)
 - [2024](/2024/README.md) (done ✅, during the event)
 - [2025](/2025/README.md) (done ✅, during the event)
+
+NOTE: repo is kind of mess - probably should have used different repo per year / per
+language, but here we are. Also been using it as place to dump random problems etc.
