@@ -104,6 +104,7 @@ fn check(node: &Node, graph: &HashMap<Node, Vec<&str>>) -> Option<i32> {
     // try each index, find the one which only matches itself
     let odd = (0..ws.len()).find(|&i| ws.iter().filter(|&&w| w == ws[i]).count() == 1)?;
     let target = ws[(odd + 1) % ws.len()];
+    // it might be off because the child is off so recurse down the bad child
     if let Some(fix) = check(children[odd], graph) {
         return Some(fix);
     }
