@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
 struct Node {
     name: String,
     weight: i32,
@@ -51,10 +51,22 @@ fn build_adjacency(s: &str) -> HashMap<Node, Vec<&str>> {
     graph
 }
 
-pub fn part1(s: &str) -> String {
-    let graph = build_adjacency(s);
-    // find node with no-one pointing at it?
-    // look at 'holding' values and increment each of those node?
+fn total_weight(node: &Node, graph: &HashMap<Node, Vec<&str>>) -> i32 {
+    node.weight
+        + graph
+            .get(&node)
+            .expect("node should be in graph...")
+            .iter()
+            .fold(0, |acc, &n| {
+                let node = graph
+                    .keys()
+                    .find(|k| k.name == n)
+                    .expect("node missing from graph");
+                total_weight(&node, graph) + acc
+            })
+}
+
+fn find_root(graph: &HashMap<Node, Vec<&str>>) -> Node {
     let mut incident = HashMap::new();
     graph.iter().for_each(|(_, holding)| {
         for &v in holding {
@@ -72,11 +84,42 @@ pub fn part1(s: &str) -> String {
     if root.len() == 0 {
         panic!("no roots...")
     }
-    return format!("Part 1: {}", root[0].name);
+    if root.len() > 1 {
+        panic!("too many roots, something is wonky")
+    }
+    root[0].clone()
 }
 
-pub fn part2(_: &str) -> String {
-    return "Part 2: 0".to_string();
+fn check(node: &Node, graph: &HashMap<Node, Vec<&str>>) -> Option<i32> {
+    let children: Vec<&Node> = graph[node]
+        .iter()
+        .map(|&n| {
+            graph
+                .keys()
+                .find(|k| k.name == n)
+                .expect("node missing from graph")
+        })
+        .collect();
+    let ws: Vec<i32> = children.iter().map(|c| total_weight(c, graph)).collect();
+    // try each index, find the one which only matches itself
+    let odd = (0..ws.len()).find(|&i| ws.iter().filter(|&&w| w == ws[i]).count() == 1)?;
+    let target = ws[(odd + 1) % ws.len()];
+    if let Some(fix) = check(children[odd], graph) {
+        return Some(fix);
+    }
+    Some(children[odd].weight + target - ws[odd])
+}
+
+pub fn part1(s: &str) -> String {
+    let graph = build_adjacency(s);
+    return format!("Part 1: {}", find_root(&graph).name);
+}
+
+pub fn part2(s: &str) -> String {
+    let graph = build_adjacency(s);
+    let root = find_root(&graph);
+    let diff = check(&root, &graph).unwrap();
+    return format!("Part 2: {}", diff);
 }
 
 #[cfg(test)]
@@ -102,5 +145,10 @@ mod tests {
     #[test]
     fn p1_ex1() {
         assert_eq!(part1(EX1), "Part 1: tknk");
+    }
+
+    #[test]
+    fn p2_ex1() {
+        assert_eq!(part2(EX1), "Part 2: 60");
     }
 }
