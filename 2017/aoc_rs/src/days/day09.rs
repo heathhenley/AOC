@@ -1,46 +1,61 @@
-fn process(chars: &[char], lb: i32, lc: i32, sc: i32, gb: i32) -> (i32, i32) {
-    // TODO: doesn't work in debug need to switch to loop (stack overflow)
-    // works in release probably gets optimized to loop
-    match chars {
-        [] => (sc, gb),
-        [c, rest @ ..] if *c == '{' => {
-            if lc > 0 {
-                return process(rest, lb, lc, sc, gb + 1);
+fn process(chars: &[char]) -> (i32, i32) {
+    let mut lb = 0;
+    let mut lc = 0;
+    let mut sc = 0;
+    let mut gb = 0;
+    let mut ch = chars;
+    loop {
+        ch = match ch {
+            [] => return (sc, gb),
+            ['{', rest @ ..] => {
+                if lc > 0 {
+                    gb = gb + 1;
+                } else {
+                    lb = lb + 1;
+                }
+                rest
             }
-            process(rest, lb + 1, lc, sc, gb)
-        }
-        [c, rest @ ..] if *c == '}' => {
-            if lc > 0 {
-                return process(rest, lb, lc, sc, gb + 1);
+            ['}', rest @ ..] => {
+                if lc > 0 {
+                    gb += 1;
+                } else {
+                    sc += lb;
+                    lb -= 1;
+                }
+                rest
             }
-            process(rest, lb - 1, lc, sc + lb, gb)
-        }
-        [c, rest @ ..] if *c == '<' => {
-            if lc > 0 {
-                return process(rest, lb, lc, sc, gb + 1);
+            ['<', rest @ ..] => {
+                if lc > 0 {
+                    gb += 1;
+                } else {
+                    lc += 1;
+                }
+                rest
             }
-            process(rest, lb, lc + 1, sc, gb)
-        }
-        [c, rest @ ..] if *c == '>' => process(rest, lb, lc - 1, sc, gb),
-        [c, rest @ ..] if *c == '!' => process(&rest[1..], lb, lc, sc, gb),
-        [_, rest @ ..] => {
-            if lc > 0 {
-                return process(rest, lb, lc, sc, gb + 1);
+            ['>', rest @ ..] => {
+                lc -= 1;
+                rest
             }
-            process(rest, lb, lc, sc, gb)
-        }
+            ['!', _, rest @ ..] => rest,
+            [_, rest @ ..] => {
+                if lc > 0 {
+                    gb += 1;
+                }
+                rest
+            }
+        };
     }
 }
 
 pub fn part1(s: &str) -> String {
     let chars: Vec<char> = s.trim().chars().collect();
-    let (sc, _) = process(&chars, 0, 0, 0, 0);
+    let (sc, _) = process(&chars);
     return format!("Part 1: {}", sc);
 }
 
 pub fn part2(s: &str) -> String {
     let chars: Vec<char> = s.trim().chars().collect();
-    let (_, garb) = process(&chars, 0, 0, 0, 0);
+    let (_, garb) = process(&chars);
     return format!("Part 2: {}", garb);
 }
 
