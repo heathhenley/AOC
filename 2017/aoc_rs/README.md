@@ -12,5 +12,8 @@ Part 2 probably has nice way to do that that I'm missing, going to look that up
 I was lucky to have worked with spiral grid before from knight game: https://heathhenley.dev/knight-spiral-grid-thing
 After gettign it working I looked up how to re-write into an iterator in rust, ugly version in history of course
 
-# Day 4 + 5
+# Day 4, 5, 6
 Straightforward, good reps
+
+# Day 6
+This one was tough - honestly took me a while to set up parsing. Did pt recursively and an annoying issue where it was working on sample(s) but not on real input, but got it
