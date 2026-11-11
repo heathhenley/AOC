@@ -7,6 +7,7 @@ fn process(chars: &[char]) -> (i32, i32) {
     loop {
         ch = match ch {
             [] => return (sc, gb),
+            ['!', _, rest @ ..] => rest,
             ['{', rest @ ..] => {
                 if lc > 0 {
                     gb = gb + 1;
@@ -36,7 +37,6 @@ fn process(chars: &[char]) -> (i32, i32) {
                 lc -= 1;
                 rest
             }
-            ['!', _, rest @ ..] => rest,
             [_, rest @ ..] => {
                 if lc > 0 {
                     gb += 1;
