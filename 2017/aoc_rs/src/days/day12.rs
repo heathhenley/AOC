@@ -28,7 +28,6 @@ fn bfs(start: u32, graph: &HashMap<u32, Vec<u32>>) -> HashSet<u32> {
         }
         seen.insert(visit);
 
-        // add neighbors
         for &neighbor in &graph[&visit] {
             if !seen.contains(&neighbor) {
                 queue.push_back(neighbor);
@@ -50,11 +49,8 @@ pub fn part2(s: &str) -> String {
     let mut group_count = 0;
     while let Some(&start) = nodes.iter().next() {
         nodes.remove(&start);
-        // vist it's whole group
         let group = bfs(start, &graph);
-        // remove it's group from set
         nodes = &nodes - &group;
-        // increment
         group_count += 1;
     }
     return format!("Part 2: {}", group_count);
