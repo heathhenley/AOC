@@ -15,5 +15,10 @@ After gettign it working I looked up how to re-write into an iterator in rust, u
 # Day 4, 5, 6
 Straightforward, good reps
 
-# Day 6
+# Day 7
 This one was tough - honestly took me a while to set up parsing. Did pt recursively and an annoying issue where it was working on sample(s) but not on real input, but got it
+
+# Day 8 - 12
+Straight forward mostly, more good reps...
+
+10 was an exercise in reading comprehension that I failed for a bit (was not re-using the same numbers as state between rounds - just the start and skip). Once I got that it was straightforward. Day 11 would have been pretty tough in a vacuum but I've used hex grid cube coords before so I just looked them up. Day 12 was a a bunch of bfs.
