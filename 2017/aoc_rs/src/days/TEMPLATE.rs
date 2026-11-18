@@ -1,9 +1,9 @@
 pub fn part1(_: &str) -> String {
-    return "Part 1: 0".to_string();
+    return format!("Part 1: {}", 0);
 }
 
 pub fn part2(_: &str) -> String {
-    return "Part 2: 0".to_string();
+    return format!("Part 2: {}", 0);
 }
 
 #[cfg(test)]
