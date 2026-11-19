@@ -42,6 +42,11 @@ fn part1_internal(s: &str, n: i32) -> i32 {
     nums[0] * nums[1]
 }
 
+// just a better name to use it elsewhere
+pub fn knot_hash(s: &str) -> String {
+    part2_internal(s, 256)
+}
+
 fn part2_internal(s: &str, n: i32) -> String {
     let lens: Vec<i32> = s.trim().chars().map(|c| c as i32).collect();
     let fixed = vec![17, 31, 73, 47, 23];
