@@ -70,11 +70,11 @@ fn find_new_grid(grid: &Vec<Vec<bool>>, seen: &HashSet<(usize, usize)>) -> Optio
     None
 }
 
-fn get_neighbors((i, j): (i32, i32), n: i32, m: i32) -> Vec<(usize, usize)> {
+fn get_neighbors((i, j): (usize, usize), n: i32, m: i32) -> Vec<(usize, usize)> {
     //no diags
     vec![(1, 0), (-1, 0), (0, 1), (0, -1)]
         .iter()
-        .map(|(di, dj)| (i + di, j + dj))
+        .map(|(di, dj)| (i as i32 + di, j as i32 + dj))
         .filter(|(x, y)| (*x >= 0 && *x < n) && (*y >= 0 && *y < m))
         .map(|(x, y)| (x as usize, y as usize))
         .collect::<Vec<(usize, usize)>>()
@@ -91,14 +91,14 @@ pub fn part2(s: &str) -> String {
         let (i, j) =
             find_new_grid(&grid, &seen).expect("unexpected state, no unexplored grids left");
         let mut queue = VecDeque::new();
-        queue.push_back((i as i32, j as i32));
+        queue.push_back((i, j));
         seen.insert((i, j));
         group_count += 1;
         // follow neighbors, track seen, thats a group
         while let Some((i, j)) = queue.pop_back() {
             get_neighbors((i, j), n, n).iter().for_each(|(ni, nj)| {
                 if grid[*ni][*nj] && !seen.contains(&(*ni, *nj)) {
-                    queue.push_back((*ni as i32, *nj as i32));
+                    queue.push_back((*ni, *nj));
                     seen.insert((*ni, *nj));
                 }
             });
