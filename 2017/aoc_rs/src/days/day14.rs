@@ -1,4 +1,4 @@
-use std::collections::{HashSet, VecDeque, vec_deque};
+use std::collections::{HashSet, VecDeque};
 
 use crate::days::day10::knot_hash;
 use hex;
@@ -46,7 +46,7 @@ fn input_to_grid(s: &str) -> (i32, Vec<Vec<bool>>) {
     (occupied, grid)
 }
 
-fn print_grid(grid: &Vec<Vec<bool>>) {
+/*fn print_grid(grid: &Vec<Vec<bool>>) {
     grid.iter().for_each(|row| {
         row.iter().for_each(|cell| {
             if *cell {
@@ -57,7 +57,7 @@ fn print_grid(grid: &Vec<Vec<bool>>) {
         });
         println!("");
     });
-}
+}*/
 
 fn find_new_grid(grid: &Vec<Vec<bool>>, seen: &HashSet<(usize, usize)>) -> Option<(usize, usize)> {
     for i in 0..grid.len() {
